@@ -1,0 +1,22 @@
+build --action_env=http_proxy
+build --action_env=https_proxy
+build --action_env=no_proxy
+build --action_env=HTTP_PROXY
+build --action_env=HTTPS_PROXY
+build --action_env=NO_PROXY
+build --action_env=NPM_CONFIG_REGISTRY
+
+# Build with the host system JDK 8 by default
+build --javabase=@local_jdk//:jdk
+build --host_javabase=@local_jdk//:jdk
+build --java_toolchain=@bazel_tools//tools/jdk:toolchain_hostjdk8
+build --host_java_toolchain=@bazel_tools//tools/jdk:toolchain_hostjdk8
+
+test --test_env=http_proxy
+test --test_env=https_proxy
+test --test_env=no_proxy
+test --test_env=HTTP_PROXY
+test --test_env=HTTPS_PROXY
+test --test_env=NO_PROXY
+
+try-import %workspace%/.bazelrc.local
