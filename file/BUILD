@@ -35,16 +35,11 @@ java_library(
     ],
 )
 
-filegroup(
-    name = "file_java_test_resources",
-    srcs = glob(["src/test/resources/**"]),
-)
-
 java_library(
     name = "file_java_tests",
     testonly = True,
     srcs = glob(["src/test/java/**/*.java"]),
-    data = [":file_java_test_resources"],
+    data = glob(["src/test/resources/**"]),
     deps = [
         ":file",
         "@com_google_guava_guava",

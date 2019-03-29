@@ -14,9 +14,21 @@ load("//third_party/java:java_repositories.bzl", "java_repositories")
 java_repositories(
     fetch_sources = True,
     omit_com_google_guava_listenablefuture = True,
-	replacements = {
+    omit_com_google_protobuf_protobuf_java = True,
+    omit_io_grpc_grpc_context = True,
+    omit_io_grpc_grpc_core = True,
+    replacements = {
+        "@com_google_protobuf_protobuf_java": ["@com_google_protobuf//:protobuf_java"],
+        "@com_google_protobuf_protobuf_java_util": ["@com_google_protobuf//:protobuf_java_util"],
         "@com_google_guava_listenablefuture": [],
-    }
+        "@io_grpc_grpc_context": ["@io_grpc_grpc_java//context"],
+        "@io_grpc_grpc_core": [
+            # The published jar contains all these targets
+            "@io_grpc_grpc_java//core",
+            "@io_grpc_grpc_java//core:inprocess",
+            "@io_grpc_grpc_java//core:util",
+        ],
+    },
 )
 
 # Protobuf expects an //external:python_headers label which would contain the
@@ -35,9 +47,25 @@ http_archive(
     urls = ["https://zlib.net/zlib-1.2.11.tar.gz"],
 )
 
+# Protobuf and grpc expect these short names
+bind(
+    name = "guava",
+    actual = "@com_google_guava_guava//jar",
+)
+
+bind(
+    name = "gson",
+    actual = "@com_google_code_gson_gson//jar",
+)
+
 bind(
     name = "zlib",
     actual = "@net_zlib//:zlib",
+)
+
+bind(
+    name = "error_prone_annotations",
+    actual = "@com_google_errorprone_error_prone_annotations//jar",
 )
 
 http_archive(
@@ -45,4 +73,13 @@ http_archive(
     sha256 = "f976a4cd3f1699b6d20c1e944ca1de6754777918320c719742e1674fcf247b7e",
     strip_prefix = "protobuf-3.7.1",
     urls = ["https://github.com/google/protobuf/archive/v3.7.1.zip"],
+)
+
+http_archive(
+    name = "io_grpc_grpc_java",
+    patch_args = ["-p1"],
+    patches = ["//third_party/grpc-java:59c86bbf8ed1c7b46dc6826b0d6a99cbf73ad4b8.patch"],
+    sha256 = "f5d0bdebc2a50d0e28f0d228d6c35081d3e973e6159f2695aa5c8c7f93d1e4d6",
+    strip_prefix = "grpc-java-1.19.0",
+    urls = ["https://github.com/grpc/grpc-java/archive/v1.19.0.zip"],
 )

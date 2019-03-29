@@ -10,8 +10,10 @@ def _replace_dependencies(dependencies, replacements):
     return new_dependencies.to_list()
 
 def java_repositories(
+        omit_com_google_api_grpc_proto_google_common_protos = False,
         omit_com_google_auto_value_auto_value_annotations = False,
         omit_com_google_code_findbugs_jsr305 = False,
+        omit_com_google_code_gson_gson = False,
         omit_com_google_errorprone_error_prone_annotations = False,
         omit_com_google_guava_failureaccess = False,
         omit_com_google_guava_guava = False,
@@ -23,17 +25,36 @@ def java_repositories(
         omit_com_google_truth_extensions_truth_proto_extension = False,
         omit_com_google_truth_truth = False,
         omit_com_googlecode_java_diff_utils_diffutils = False,
+        omit_io_grpc_grpc_context = False,
+        omit_io_grpc_grpc_core = False,
+        omit_io_grpc_grpc_stub = False,
+        omit_io_opencensus_opencensus_api = False,
+        omit_io_opencensus_opencensus_contrib_grpc_metrics = False,
+        omit_javax_annotation_javax_annotation_api = False,
         omit_junit_junit = False,
+        omit_net_bytebuddy_byte_buddy = False,
+        omit_net_bytebuddy_byte_buddy_agent = False,
         omit_org_checkerframework_checker_compat_qual = False,
         omit_org_checkerframework_checker_qual = False,
         omit_org_codehaus_mojo_animal_sniffer_annotations = False,
         omit_org_hamcrest_hamcrest_core = False,
+        omit_org_mockito_mockito_core = False,
+        omit_org_objenesis_objenesis = False,
+        omit_org_slf4j_slf4j_api = False,
+        omit_org_springframework_cloud_spring_cloud_commons = False,
+        omit_org_springframework_security_spring_security_crypto = False,
+        omit_org_springframework_spring_core = False,
+        omit_org_springframework_spring_jcl = False,
         fetch_sources = False,
         replacements = {}):
+    if not omit_com_google_api_grpc_proto_google_common_protos:
+        com_google_api_grpc_proto_google_common_protos(fetch_sources, replacements)
     if not omit_com_google_auto_value_auto_value_annotations:
         com_google_auto_value_auto_value_annotations(fetch_sources, replacements)
     if not omit_com_google_code_findbugs_jsr305:
         com_google_code_findbugs_jsr305(fetch_sources, replacements)
+    if not omit_com_google_code_gson_gson:
+        com_google_code_gson_gson(fetch_sources, replacements)
     if not omit_com_google_errorprone_error_prone_annotations:
         com_google_errorprone_error_prone_annotations(fetch_sources, replacements)
     if not omit_com_google_guava_failureaccess:
@@ -56,8 +77,24 @@ def java_repositories(
         com_google_truth_truth(fetch_sources, replacements)
     if not omit_com_googlecode_java_diff_utils_diffutils:
         com_googlecode_java_diff_utils_diffutils(fetch_sources, replacements)
+    if not omit_io_grpc_grpc_context:
+        io_grpc_grpc_context(fetch_sources, replacements)
+    if not omit_io_grpc_grpc_core:
+        io_grpc_grpc_core(fetch_sources, replacements)
+    if not omit_io_grpc_grpc_stub:
+        io_grpc_grpc_stub(fetch_sources, replacements)
+    if not omit_io_opencensus_opencensus_api:
+        io_opencensus_opencensus_api(fetch_sources, replacements)
+    if not omit_io_opencensus_opencensus_contrib_grpc_metrics:
+        io_opencensus_opencensus_contrib_grpc_metrics(fetch_sources, replacements)
+    if not omit_javax_annotation_javax_annotation_api:
+        javax_annotation_javax_annotation_api(fetch_sources, replacements)
     if not omit_junit_junit:
         junit_junit(fetch_sources, replacements)
+    if not omit_net_bytebuddy_byte_buddy:
+        net_bytebuddy_byte_buddy(fetch_sources, replacements)
+    if not omit_net_bytebuddy_byte_buddy_agent:
+        net_bytebuddy_byte_buddy_agent(fetch_sources, replacements)
     if not omit_org_checkerframework_checker_compat_qual:
         org_checkerframework_checker_compat_qual(fetch_sources, replacements)
     if not omit_org_checkerframework_checker_qual:
@@ -66,6 +103,35 @@ def java_repositories(
         org_codehaus_mojo_animal_sniffer_annotations(fetch_sources, replacements)
     if not omit_org_hamcrest_hamcrest_core:
         org_hamcrest_hamcrest_core(fetch_sources, replacements)
+    if not omit_org_mockito_mockito_core:
+        org_mockito_mockito_core(fetch_sources, replacements)
+    if not omit_org_objenesis_objenesis:
+        org_objenesis_objenesis(fetch_sources, replacements)
+    if not omit_org_slf4j_slf4j_api:
+        org_slf4j_slf4j_api(fetch_sources, replacements)
+    if not omit_org_springframework_cloud_spring_cloud_commons:
+        org_springframework_cloud_spring_cloud_commons(fetch_sources, replacements)
+    if not omit_org_springframework_security_spring_security_crypto:
+        org_springframework_security_spring_security_crypto(fetch_sources, replacements)
+    if not omit_org_springframework_spring_core:
+        org_springframework_spring_core(fetch_sources, replacements)
+    if not omit_org_springframework_spring_jcl:
+        org_springframework_spring_jcl(fetch_sources, replacements)
+
+def com_google_api_grpc_proto_google_common_protos(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "com_google_api_grpc_proto_google_common_protos",
+        artifact = "com.google.api.grpc:proto-google-common-protos:1.15.0",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "aa1dc41c8252f94f0818343e7afec13a1559918c8e167f9e1863fe814679c40e",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+            "@com_google_protobuf_protobuf_java",
+        ], replacements),
+    )
 
 def com_google_auto_value_auto_value_annotations(fetch_sources, replacements):
     jvm_maven_import_external(
@@ -89,6 +155,20 @@ def com_google_code_findbugs_jsr305(fetch_sources, replacements):
             "https://jcenter.bintray.com/",
         ],
         artifact_sha256 = "766ad2a0783f2687962c8ad74ceecc38a28b9f72a2d085ee438b7813e928d0c7",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+        ], replacements),
+    )
+
+def com_google_code_gson_gson(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "com_google_code_gson_gson",
+        artifact = "com.google.code.gson:gson:2.8.5",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "233a0149fc365c9f6edbd683cfe266b19bdc773be98eabdaf6b3c924b48e7d81",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
         runtime_deps = _replace_dependencies([
@@ -235,10 +315,10 @@ def com_google_truth_extensions_truth_proto_extension(fetch_sources, replacement
             "@com_google_truth_extensions_truth_liteproto_extension",
             "@com_google_truth_truth",
             "@com_google_guava_guava",
+            "@com_google_protobuf_protobuf_java",
             "@com_google_errorprone_error_prone_annotations",
             "@org_checkerframework_checker_compat_qual",
             "@com_google_auto_value_auto_value_annotations",
-            "@com_google_protobuf_protobuf_java",
         ], replacements),
     )
 
@@ -276,6 +356,100 @@ def com_googlecode_java_diff_utils_diffutils(fetch_sources, replacements):
         ], replacements),
     )
 
+def io_grpc_grpc_context(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_grpc_grpc_context",
+        artifact = "io.grpc:grpc-context:1.19.0",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "8f4df8618c500f3c1fdf88b755caeb14fe2846ea59a9e762f614852178b64318",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+        ], replacements),
+    )
+
+def io_grpc_grpc_core(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_grpc_grpc_core",
+        artifact = "io.grpc:grpc-core:1.19.0",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "3cfaae2db268e4da2609079cecade8434afcb7ab23a126a57d870b722b2b6ab9",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+            "@com_google_guava_guava",
+            "@com_google_code_findbugs_jsr305",
+            "@com_google_errorprone_error_prone_annotations",
+            "@org_codehaus_mojo_animal_sniffer_annotations",
+            "@io_grpc_grpc_context",
+            "@com_google_code_gson_gson",
+            "@io_opencensus_opencensus_contrib_grpc_metrics",
+            "@io_opencensus_opencensus_api",
+        ], replacements),
+    )
+
+def io_grpc_grpc_stub(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_grpc_grpc_stub",
+        artifact = "io.grpc:grpc-stub:1.19.0",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "711dad5734b4e8602a271cb383eda504d6d1bf5385ced045a0ca91176ae73821",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+            "@io_grpc_grpc_core",
+        ], replacements),
+    )
+
+def io_opencensus_opencensus_api(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_opencensus_opencensus_api",
+        artifact = "io.opencensus:opencensus-api:0.19.2",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "0e2e5d3f4f6fd296017a00b1cd8fb8e4261331cc0c3b6818c0533b01bf7945dc",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+        ], replacements),
+    )
+
+def io_opencensus_opencensus_contrib_grpc_metrics(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_opencensus_opencensus_contrib_grpc_metrics",
+        artifact = "io.opencensus:opencensus-contrib-grpc-metrics:0.19.2",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "0e23c03414612c7fbef1fdb347076eb69368e596de768cd4b98e081d92206f15",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+            "@io_opencensus_opencensus_api",
+        ], replacements),
+    )
+
+def javax_annotation_javax_annotation_api(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "javax_annotation_javax_annotation_api",
+        artifact = "javax.annotation:javax.annotation-api:1.3.2",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "e04ba5195bcd555dc95650f7cc614d151e4bcd52d29a10b8aa2197f3ab89ab9b",
+        licenses = ["restricted"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+        ], replacements),
+    )
+
 def junit_junit(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "junit_junit",
@@ -288,6 +462,34 @@ def junit_junit(fetch_sources, replacements):
         fetch_sources = fetch_sources,
         runtime_deps = _replace_dependencies([
             "@org_hamcrest_hamcrest_core",
+        ], replacements),
+    )
+
+def net_bytebuddy_byte_buddy(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "net_bytebuddy_byte_buddy",
+        artifact = "net.bytebuddy:byte-buddy:1.9.10",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "2936debc4d7b6c534848d361412e2d0f8bd06f7f27a6f4e728a20e97648d2bf3",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+        ], replacements),
+    )
+
+def net_bytebuddy_byte_buddy_agent(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "net_bytebuddy_byte_buddy_agent",
+        artifact = "net.bytebuddy:byte-buddy-agent:1.9.10",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "8ed739d29132103250d307d2e8e3c95f07588ef0543ab11d2881d00768a5e182",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
         ], replacements),
     )
 
@@ -341,6 +543,109 @@ def org_hamcrest_hamcrest_core(fetch_sources, replacements):
             "https://jcenter.bintray.com/",
         ],
         artifact_sha256 = "66fdef91e9739348df7a096aa384a5685f4e875584cce89386a7a47251c4d8e9",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+        ], replacements),
+    )
+
+def org_mockito_mockito_core(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "org_mockito_mockito_core",
+        artifact = "org.mockito:mockito-core:2.23.4",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "d77e018b6bc211d78ddcec54bc508732c4677b9a9eb9103793be85441b20bc5d",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+            "@net_bytebuddy_byte_buddy",
+            "@net_bytebuddy_byte_buddy_agent",
+            "@org_objenesis_objenesis",
+        ], replacements),
+    )
+
+def org_objenesis_objenesis(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "org_objenesis_objenesis",
+        artifact = "org.objenesis:objenesis:2.6",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "5e168368fbc250af3c79aa5fef0c3467a2d64e5a7bd74005f25d8399aeb0708d",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+        ], replacements),
+    )
+
+def org_slf4j_slf4j_api(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "org_slf4j_slf4j_api",
+        artifact = "org.slf4j:slf4j-api:1.7.25",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "18c4a0095d5c1da6b817592e767bb23d29dd2f560ad74df75ff3961dbde25b79",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+        ], replacements),
+    )
+
+def org_springframework_cloud_spring_cloud_commons(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "org_springframework_cloud_spring_cloud_commons",
+        artifact = "org.springframework.cloud:spring-cloud-commons:2.1.1.RELEASE",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "2ff496d899534f9f00ba83f2c385c9e8bf7c7b78af88475e5abe7e39fe5bebc4",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+            "@org_springframework_security_spring_security_crypto",
+        ], replacements),
+    )
+
+def org_springframework_security_spring_security_crypto(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "org_springframework_security_spring_security_crypto",
+        artifact = "org.springframework.security:spring-security-crypto:5.1.4.RELEASE",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "27090c26af3da57b3c49332044b971f4b458d4aedb3536b6333df44d97eb5576",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+        ], replacements),
+    )
+
+def org_springframework_spring_core(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "org_springframework_spring_core",
+        artifact = "org.springframework:spring-core:5.1.5.RELEASE",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "f771b605019eb9d2cf8f60c25c050233e39487ff54d74c93d687ea8de8b7285a",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        runtime_deps = _replace_dependencies([
+            "@org_springframework_spring_jcl",
+        ], replacements),
+    )
+
+def org_springframework_spring_jcl(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "org_springframework_spring_jcl",
+        artifact = "org.springframework:spring-jcl:5.1.5.RELEASE",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "194423c7c485e40706d74c01a36b1f0aad436f0b55958f06ac95bcbac65bf4e6",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
         runtime_deps = _replace_dependencies([
