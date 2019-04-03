@@ -44,10 +44,10 @@ public final class FileMetas {
      *
      * @param file The file to determine FileMeta from.
      * @return A complete FileMeta with the filename, size, checksum, executable and properties attributes set.
-     * @see #get(Path, HashFunction, Map)
+     * @see #get(Path, HashFunction, Map, boolean)
      */
     public static FileMeta get(Path file) {
-        return get(file, DEFAULT_HASH_FUNCTION, Collections.emptyMap());
+        return get(file, DEFAULT_HASH_FUNCTION, Collections.emptyMap(), false);
     }
 
     /**
@@ -58,10 +58,10 @@ public final class FileMetas {
      * @param file             The file to determine FileMeta from.
      * @param checksumFunction The HashFunction with which to calculate the file checksum.
      * @return A complete FileMeta with the filename, size, checksum, executable and properties attributes set.
-     * @see #get(Path, HashFunction, Map)
+     * @see #get(Path, HashFunction, Map, boolean)
      */
     public static FileMeta get(Path file, HashFunction checksumFunction) {
-        return get(file, checksumFunction, Collections.emptyMap());
+        return get(file, checksumFunction, Collections.emptyMap(), false);
     }
 
     /**
@@ -72,10 +72,10 @@ public final class FileMetas {
      * @param file       The file to determine FileMeta from.
      * @param properties Any additional FileMeta properties for use by receivers of the Message.
      * @return A complete FileMeta with the filename, size, checksum, executable and properties attributes set.
-     * @see #get(Path, HashFunction, Map)
+     * @see #get(Path, HashFunction, Map, boolean)
      */
     public static FileMeta get(Path file, Map<String, Any> properties) {
-        return get(file, DEFAULT_HASH_FUNCTION, properties);
+        return get(file, DEFAULT_HASH_FUNCTION, properties, false);
     }
 
     /**
@@ -86,15 +86,16 @@ public final class FileMetas {
      * @param file             The file to determine FileMeta from.
      * @param checksumFunction The HashFunction with which to calculate the file checksum.
      * @param properties       Any additional FileMeta properties for use by receivers of the Message.
+     * @param executable       Whether the file should be considered executable.
      * @return A complete FileMeta with the filename, size, checksum, executable and properties attributes set.
      */
-    public static FileMeta get(Path file, HashFunction checksumFunction, Map<String, Any> properties) {
+    public static FileMeta get(Path file, HashFunction checksumFunction, Map<String, Any> properties, boolean executable) {
         try {
             return FileMeta.newBuilder()
                     .setFilename(file.getFileName().toString())
                     .setSize(Files.size(file))
                     .setChecksum(HASH_FUNCTIONS.get(checksumFunction) + ":" + MoreFiles.asByteSource(file).hash(checksumFunction).toString())
-                    .setExecutable(Files.isExecutable(file))
+                    .setExecutable(executable)
                     .putAllProperties(properties)
                     .build();
         } catch (IOException e) {

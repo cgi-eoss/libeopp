@@ -46,6 +46,19 @@ public class FileMetasTest {
     }
 
     @Test
+    public void testGetWithPropertiesAndExecutable() throws IOException {
+        Path testfile = Paths.get("file/src/test/resources/testfile");
+        FileMeta fileMeta = FileMetas.get(testfile, FileMetas.DEFAULT_HASH_FUNCTION, ImmutableMap.of("foo", Any.pack(StringValue.of("bar"))), true);
+        assertThat(fileMeta).isEqualTo(FileMeta.newBuilder()
+                .setFilename("testfile")
+                .setSize(19L)
+                .setChecksum("murmur3_128:82e72d37fbdc9b9109778d40f07aa303")
+                .setExecutable(true)
+                .putProperties("foo", Any.pack(StringValue.of("bar")))
+                .build());
+    }
+
+    @Test
     public void testGetSha256() throws IOException {
         Path testfile = Paths.get("file/src/test/resources/testfile");
         FileMeta fileMeta = FileMetas.get(testfile, Hashing.sha256());
