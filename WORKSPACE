@@ -3,11 +3,22 @@ workspace(name = "com_cgi_eoss_eopp")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
+    name = "google_bazel_common",
+    sha256 = "3a709502864ee6a93c845f25ea901b248a720a1f0e45795e06b443cc729fbf97",
+    strip_prefix = "bazel-common-29d6ca04ea34e4facd599f36e97135212a16e570",
+    urls = ["https://github.com/google/bazel-common/archive/29d6ca04ea34e4facd599f36e97135212a16e570.zip"],
+)
+
+http_archive(
     name = "bazel_skylib",
     sha256 = "2e351c3b4861b0c5de8db86fdd100869b544c759161008cd93949dddcbfaba53",
     strip_prefix = "bazel-skylib-0.8.0",
     urls = ["https://github.com/bazelbuild/bazel-skylib/archive/0.8.0.zip"],
 )
+
+load("//third_party/java:jarjar_repositories.bzl", "jarjar_repositories")
+
+jarjar_repositories()
 
 load("//third_party/java:java_repositories.bzl", "java_repositories")
 
@@ -17,17 +28,19 @@ java_repositories(
     omit_com_google_protobuf_protobuf_java = True,
     omit_io_grpc_grpc_context = True,
     omit_io_grpc_grpc_core = True,
+    omit_io_grpc_grpc_stub = True,
     replacements = {
-        "@com_google_protobuf_protobuf_java": ["@com_google_protobuf//:protobuf_java"],
-        "@com_google_protobuf_protobuf_java_util": ["@com_google_protobuf//:protobuf_java_util"],
+        "@com_google_protobuf_protobuf_java": ["@//third_party/protobuf:protobuf_java"],
+        "@com_google_protobuf_protobuf_java_util": ["@//third_party/protobuf:protobuf_java_util"],
         "@com_google_guava_listenablefuture": [],
-        "@io_grpc_grpc_context": ["@io_grpc_grpc_java//context"],
+        "@io_grpc_grpc_context": ["@//third_party/grpc-java:context"],
         "@io_grpc_grpc_core": [
             # The published jar contains all these targets
-            "@io_grpc_grpc_java//core",
-            "@io_grpc_grpc_java//core:inprocess",
-            "@io_grpc_grpc_java//core:util",
+            "@//third_party//grpc-java:core",
+            "@//third_party//grpc-java:core_inprocess",
+            "@//third_party//grpc-java:core_util",
         ],
+        "@io_grpc_grpc_stub": ["@//third_party/grpc-java:stub"],
     },
 )
 

@@ -1,6 +1,6 @@
 plugins {
     base
-    id("com.github.zetten.bazel-dependencies-plugin") version "1.1.0"
+    id("com.github.zetten.bazel-dependencies-plugin") version "1.4.0"
     id("com.github.ben-manes.versions") version "0.21.0"
     id("io.spring.dependency-management") version "1.0.7.RELEASE"
 }
@@ -11,6 +11,8 @@ bazelDependencies {
     configuration = generate
     outputFile = project.rootDir.resolve("java_repositories.bzl")
     strictLicenses = true
+    safeSources = true
+    sourcesChecksums = true
     licenseOverrides = mapOf()
 }
 
@@ -21,9 +23,9 @@ repositories {
 extra.set("google-common-protos.version", "1.15.0")
 extra.set("grpc.version", "1.19.0")
 extra.set("guava.version", "27.1-jre")
-extra.set("truth.version", "0.43")
-extra.set("spring-boot.version", "2.1.3.RELEASE")
+extra.set("spring-boot.version", "2.1.4.RELEASE")
 extra.set("spring-cloud.version", "Greenwich.SR1")
+extra.set("truth.version", "0.44")
 
 dependencyManagement {
     imports {

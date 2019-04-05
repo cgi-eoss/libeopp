@@ -8,15 +8,19 @@ filegroup(
     srcs = glob(["src/main/resources/**"]),
 )
 
-java_library(
+load("//tools:maven.bzl", "maven_library")
+
+maven_library(
     name = "rpc",
     srcs = [":rpc_java_srcs"],
+    artifact_name = "libeopp :: rpc",
+    root_packages = ["com.cgi.eoss.eopp"],
     visibility = ["//visibility:public"],
     deps = [
+        "//third_party/grpc-java:core",
+        "//third_party/grpc-java:core_inprocess",
         "//util",
         "@com_google_code_findbugs_jsr305",
-        "@io_grpc_grpc_java//core",
-        "@io_grpc_grpc_java//core:inprocess",
         "@org_slf4j_slf4j_api",
         "@org_springframework_cloud_spring_cloud_commons",
         "@org_springframework_spring_core",

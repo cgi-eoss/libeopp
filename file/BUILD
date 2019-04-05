@@ -3,6 +3,11 @@ filegroup(
     srcs = glob(["src/main/proto/**/*.proto"]),
 )
 
+filegroup(
+    name = "file_java_srcs",
+    srcs = glob(["src/main/java/**/*.java"]),
+)
+
 proto_library(
     name = "file_proto",
     srcs = [":file_proto_srcs"],
@@ -13,26 +18,40 @@ proto_library(
 )
 
 java_proto_library(
-    name = "file_proto_java",
+    name = "file_java_proto",
     visibility = ["//visibility:public"],
     deps = [":file_proto"],
 )
 
-filegroup(
-    name = "file_java_srcs",
-    srcs = glob(["src/main/java/**/*.java"]),
-)
+load("//tools:maven.bzl", "maven_library")
 
-java_library(
+maven_library(
     name = "file",
     srcs = [":file_java_srcs"],
+    artifact_name = "libeopp :: file",
+    root_packages = ["com.cgi.eoss.eopp"],
     visibility = ["//visibility:public"],
-    exports = [":file_proto_java"],
+    exports = [":file_java_proto"],
     deps = [
-        ":file_proto_java",
+        ":file_java_proto",
+        "//third_party/protobuf:protobuf_java",
         "@com_google_guava_guava",
-        "@com_google_protobuf//:protobuf_java",
     ],
+)
+
+load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
+
+# Bundle the proto-derived classes for the Maven artifact
+jarjar_library(
+    name = "libfile_deploy",
+    jars = [
+        ":file",
+        ":file_java_proto",
+    ],
+    rules = [
+        "zap com.google.protobuf.**",
+    ],
+    visibility = ["//:__pkg__"],
 )
 
 java_library(
