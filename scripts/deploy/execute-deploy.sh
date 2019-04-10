@@ -70,6 +70,6 @@ deploy_library \
 
 deploy_library \
     pom.xml \
-    libeopp-full.jar \
+    libeopp.jar \
     "" \
     ""

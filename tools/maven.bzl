@@ -22,6 +22,7 @@ def maven_library(
         srcs = srcs,
         root_packages = root_packages,
         deps = [":" + name],
+		tags = ["manual"],
     )
 
     pom_file(
@@ -30,6 +31,7 @@ def maven_library(
         artifact_name = artifact_name,
         artifact_id = artifact_id or name,
         packaging = packaging,
+		tags = ["manual"],
     )
 
 def pom_file(
