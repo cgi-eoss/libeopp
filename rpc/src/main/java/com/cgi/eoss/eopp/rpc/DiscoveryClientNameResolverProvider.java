@@ -7,6 +7,9 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import javax.annotation.Nullable;
 import java.net.URI;
 
+/**
+ * <p>Provider for {@link DiscoveryClientNameResolver} instances.</p>
+ */
 public class DiscoveryClientNameResolverProvider extends NameResolverProvider {
 
     private static final String SCHEME = "discovery";

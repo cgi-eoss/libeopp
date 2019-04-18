@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
-abstract class GrpcClient {
+public abstract class GrpcClient {
     private static final Logger log = LoggerFactory.getLogger(GrpcClient.class);
 
     private final String serviceUri;
@@ -26,14 +26,25 @@ abstract class GrpcClient {
     private final Supplier<Supplier<ManagedChannel>> channelSupplierSupplier = Lazy.lazily(this::buildChannelSupplier);
     private ManagedChannel channel;
 
-    GrpcClient(String serviceUri) {
-        this.serviceUri = serviceUri;
-        this.nameResolverFactory = NameResolverProvider.asFactory();
+    protected GrpcClient(String serviceUri) {
+        this(serviceUri, NameResolverProvider.asFactory());
     }
 
-    GrpcClient(String serviceUri, DiscoveryClientNameResolverProvider discoveryClientNameResolverProvider) {
+    protected GrpcClient(String serviceUri, NameResolver.Factory nameResolverFactory) {
         this.serviceUri = serviceUri;
-        this.nameResolverFactory = discoveryClientNameResolverProvider;
+        this.nameResolverFactory = nameResolverFactory;
+    }
+
+    protected ManagedChannel getChannel() {
+        // if necessary, update the local reference and return it, otherwise re-establish the channel
+        channelLock.lock();
+        try {
+            return channel = Optional.ofNullable(channel)
+                    .filter(c -> !EnumSet.of(ConnectivityState.TRANSIENT_FAILURE, ConnectivityState.SHUTDOWN).contains(c.getState(true))) // if the channel is not in a 'bad' state, return it...
+                    .orElseGet(this::establishNewChannel); // ... otherwise create a new channel
+        } finally {
+            channelLock.unlock();
+        }
     }
 
     private Supplier<ManagedChannel> buildChannelSupplier() {
@@ -44,18 +55,6 @@ abstract class GrpcClient {
                     .nameResolverFactory(nameResolverFactory)
                     .usePlaintext() // TODO TLS
                     .build();
-        }
-    }
-
-    ManagedChannel getChannel() {
-        // if necessary, update the local reference and return it, otherwise re-establish the channel
-        channelLock.lock();
-        try {
-            return channel = Optional.ofNullable(channel)
-                    .filter(c -> !EnumSet.of(ConnectivityState.TRANSIENT_FAILURE, ConnectivityState.SHUTDOWN).contains(c.getState(true))) // if the channel is not in a 'bad' state, return it...
-                    .orElseGet(this::establishNewChannel); // ... otherwise create a new channel
-        } finally {
-            channelLock.unlock();
         }
     }
 
