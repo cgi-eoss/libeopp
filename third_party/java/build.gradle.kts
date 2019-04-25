@@ -20,9 +20,10 @@ repositories {
     jcenter()
 }
 
-extra.set("google-common-protos.version", "1.15.0")
-extra.set("grpc.version", "1.19.0")
+extra.set("google-common-protos.version", "1.16.0")
+extra.set("grpc.version", "1.20.0")
 extra.set("guava.version", "27.1-jre")
+extra.set("j2objc-annotations.version", "1.3")
 extra.set("spring-boot.version", "2.1.4.RELEASE")
 extra.set("spring-cloud.version", "Greenwich.SR1")
 extra.set("truth.version", "0.44")
@@ -35,6 +36,7 @@ dependencyManagement {
     dependencies {
         dependency("com.google.api.grpc:proto-google-common-protos:${extra.get("google-common-protos.version")}")
         dependency("com.google.guava:guava:${extra.get("guava.version")}")
+        dependency("com.google.j2objc:j2objc-annotations:${extra.get("j2objc-annotations.version")}")
         dependency("com.google.truth.extensions:truth-java8-extension:${extra.get("truth.version")}")
         dependency("com.google.truth.extensions:truth-proto-extension:${extra.get("truth.version")}")
         dependency("com.google.truth:truth:${extra.get("truth.version")}")

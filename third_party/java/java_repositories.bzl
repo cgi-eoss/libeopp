@@ -10,6 +10,7 @@ def _replace_dependencies(dependencies, replacements):
     return new_dependencies.to_list()
 
 def java_repositories(
+        omit_com_google_android_annotations = False,
         omit_com_google_api_grpc_proto_google_common_protos = False,
         omit_com_google_auto_value_auto_value_annotations = False,
         omit_com_google_code_findbugs_jsr305 = False,
@@ -47,6 +48,8 @@ def java_repositories(
         omit_org_springframework_spring_jcl = False,
         fetch_sources = False,
         replacements = {}):
+    if not omit_com_google_android_annotations:
+        com_google_android_annotations(fetch_sources, replacements)
     if not omit_com_google_api_grpc_proto_google_common_protos:
         com_google_api_grpc_proto_google_common_protos(fetch_sources, replacements)
     if not omit_com_google_auto_value_auto_value_annotations:
@@ -118,22 +121,40 @@ def java_repositories(
     if not omit_org_springframework_spring_jcl:
         org_springframework_spring_jcl(fetch_sources, replacements)
 
-def com_google_api_grpc_proto_google_common_protos(fetch_sources, replacements):
+def com_google_android_annotations(fetch_sources, replacements):
     jvm_maven_import_external(
-        name = "com_google_api_grpc_proto_google_common_protos",
-        artifact = "com.google.api.grpc:proto-google-common-protos:1.15.0",
+        name = "com_google_android_annotations",
+        artifact = "com.google.android:annotations:4.1.1.4",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "aa1dc41c8252f94f0818343e7afec13a1559918c8e167f9e1863fe814679c40e",
+        artifact_sha256 = "ba734e1e84c09d615af6a09d33034b4f0442f8772dec120efb376d86a565ae15",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "2da68578223f863edd7e28ec3566998e748ac6a02db64ae3367da51269c03682",
+        srcjar_sha256 = "e9b667aa958df78ea1ad115f7bbac18a5869c3128b1d5043feb360b0cfce9d40",
+        exports = _replace_dependencies([
+        ], replacements),
+        tags = [
+            "maven_coordinates=com.google.android:annotations:4.1.1.4",
+        ],
+    )
+
+def com_google_api_grpc_proto_google_common_protos(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "com_google_api_grpc_proto_google_common_protos",
+        artifact = "com.google.api.grpc:proto-google-common-protos:1.16.0",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "e6eff21b0a5cc049b0bf2c571fac23abe8dd9d5f9143189f501c04164dc37da2",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "c98eed7be961594b248d5b99c0cfe8e52f8c383239964c0365bdf23c16db6e7d",
         exports = _replace_dependencies([
             "@com_google_protobuf_protobuf_java",
         ], replacements),
         tags = [
-            "maven_coordinates=com.google.api.grpc:proto-google-common-protos:1.15.0",
+            "maven_coordinates=com.google.api.grpc:proto-google-common-protos:1.16.0",
         ],
     )
 
@@ -194,18 +215,18 @@ def com_google_code_gson_gson(fetch_sources, replacements):
 def com_google_errorprone_error_prone_annotations(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "com_google_errorprone_error_prone_annotations",
-        artifact = "com.google.errorprone:error_prone_annotations:2.3.1",
+        artifact = "com.google.errorprone:error_prone_annotations:2.3.2",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "10a5949aa0f95c8de4fd47edfe20534d2acefd8c224f8afea1f607e112816120",
+        artifact_sha256 = "357cd6cfb067c969226c442451502aee13800a24e950fdfde77bcdb4565a668d",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "0fe3db0b12e624afd1dbeba85421fa58c362f9caf55f1869d7683b8744c53616",
+        srcjar_sha256 = "7ce688ed1582a67097228c050192b7cfd00479a81d2b921f7cd5116994f1402d",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=com.google.errorprone:error_prone_annotations:2.3.1",
+            "maven_coordinates=com.google.errorprone:error_prone_annotations:2.3.2",
         ],
     )
 
@@ -273,36 +294,36 @@ def com_google_guava_listenablefuture(fetch_sources, replacements):
 def com_google_j2objc_j2objc_annotations(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "com_google_j2objc_j2objc_annotations",
-        artifact = "com.google.j2objc:j2objc-annotations:1.1",
+        artifact = "com.google.j2objc:j2objc-annotations:1.3",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "40ceb7157feb263949e0f503fe5f71689333a621021aa20ce0d0acee3badaa0f",
+        artifact_sha256 = "21af30c92267bd6122c0e0b4d20cccb6641a37eaf956c6540ec471d584e64a7b",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "4858405565875ccbc050af3ad95809b32994796917c5b55ee59e186c82fc2502",
+        srcjar_sha256 = "ba4df669fec153fa4cd0ef8d02c6d3ef0702b7ac4cabe080facf3b6e490bb972",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=com.google.j2objc:j2objc-annotations:1.1",
+            "maven_coordinates=com.google.j2objc:j2objc-annotations:1.3",
         ],
     )
 
 def com_google_protobuf_protobuf_java(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "com_google_protobuf_protobuf_java",
-        artifact = "com.google.protobuf:protobuf-java:3.6.1",
+        artifact = "com.google.protobuf:protobuf-java:3.7.1",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "fb66d913ff0578553b2e28a3338cbbbe2657e6cfe0e98d939f23aea219daf508",
+        artifact_sha256 = "22779eacfe0f33b9e8ceffa3cdef5935cae4e53f736e027d912b707522fea645",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "9e8996b159b1b676adfe58bce785a73ded6e4a21c25a69251ef25e585ebfaeee",
+        srcjar_sha256 = "4401d00d4774fadb66a5a122b33b412c1bb790fcb5fc6f2ba81eca4eac76294a",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=com.google.protobuf:protobuf-java:3.6.1",
+            "maven_coordinates=com.google.protobuf:protobuf-java:3.7.1",
         ],
     )
 
@@ -419,32 +440,32 @@ def com_googlecode_java_diff_utils_diffutils(fetch_sources, replacements):
 def io_grpc_grpc_context(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_grpc_grpc_context",
-        artifact = "io.grpc:grpc-context:1.19.0",
+        artifact = "io.grpc:grpc-context:1.20.0",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "8f4df8618c500f3c1fdf88b755caeb14fe2846ea59a9e762f614852178b64318",
+        artifact_sha256 = "fe1294d0705433a3f5b64b568307609018ecc0840bbdbaa0f4db49fa1f933f05",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "942250a9c1d3b22eaf0660a0312bcb88fed36ecfb11118ea4770050130d901b3",
+        srcjar_sha256 = "0af7e53f01c3d5cabe6226dc63ac5d789bd7e301c4dc235edb7847e38429573c",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=io.grpc:grpc-context:1.19.0",
+            "maven_coordinates=io.grpc:grpc-context:1.20.0",
         ],
     )
 
 def io_grpc_grpc_core(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_grpc_grpc_core",
-        artifact = "io.grpc:grpc-core:1.19.0",
+        artifact = "io.grpc:grpc-core:1.20.0",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "3cfaae2db268e4da2609079cecade8434afcb7ab23a126a57d870b722b2b6ab9",
+        artifact_sha256 = "a8dfda813f7152255a4e252193f8d8e5979e099bf8b3d9ef9f66c8032a236255",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "892db98cabe4dab16c70a2e42c50146579247ac3ec3295e34e7d9032bad85921",
+        srcjar_sha256 = "223a1f990cc2aeaf4b8986c4c99afbc77b43b6ea7c920a0c513503b5d5cdd801",
         exports = _replace_dependencies([
             "@com_google_guava_guava",
             "@com_google_code_findbugs_jsr305",
@@ -452,30 +473,31 @@ def io_grpc_grpc_core(fetch_sources, replacements):
             "@org_codehaus_mojo_animal_sniffer_annotations",
             "@io_grpc_grpc_context",
             "@com_google_code_gson_gson",
+            "@com_google_android_annotations",
             "@io_opencensus_opencensus_contrib_grpc_metrics",
             "@io_opencensus_opencensus_api",
         ], replacements),
         tags = [
-            "maven_coordinates=io.grpc:grpc-core:1.19.0",
+            "maven_coordinates=io.grpc:grpc-core:1.20.0",
         ],
     )
 
 def io_grpc_grpc_stub(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_grpc_grpc_stub",
-        artifact = "io.grpc:grpc-stub:1.19.0",
+        artifact = "io.grpc:grpc-stub:1.20.0",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "711dad5734b4e8602a271cb383eda504d6d1bf5385ced045a0ca91176ae73821",
+        artifact_sha256 = "3b5d3e58684d336a6297c58efe396fb7ee87e0d706a34efa44c83c1bc7999950",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "728921c167cd39cf1c6a8db2b68ebf5628f3217584e88a531dcd763b6be07404",
+        srcjar_sha256 = "ee9c49f28b90b3135c7e87df792f1e2815023205ca913d25770bad8af6c700ce",
         exports = _replace_dependencies([
             "@io_grpc_grpc_core",
         ], replacements),
         tags = [
-            "maven_coordinates=io.grpc:grpc-stub:1.19.0",
+            "maven_coordinates=io.grpc:grpc-stub:1.20.0",
         ],
     )
 

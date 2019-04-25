@@ -90,9 +90,8 @@ http_archive(
 
 http_archive(
     name = "io_grpc_grpc_java",
-    patch_args = ["-p1"],
-    patches = ["//third_party/grpc-java:59c86bbf8ed1c7b46dc6826b0d6a99cbf73ad4b8.patch"],
-    sha256 = "f5d0bdebc2a50d0e28f0d228d6c35081d3e973e6159f2695aa5c8c7f93d1e4d6",
-    strip_prefix = "grpc-java-1.19.0",
-    urls = ["https://github.com/grpc/grpc-java/archive/v1.19.0.zip"],
+    repo_mapping = {"@com_google_re2j": "@com_google_re2j_re2j"},
+    sha256 = "9d23d9fec84e24bd3962f5ef9d1fd61ce939d3f649a22bcab0f19e8167fae8ef",
+    strip_prefix = "grpc-java-1.20.0",
+    urls = ["https://github.com/grpc/grpc-java/archive/v1.20.0.zip"],
 )
