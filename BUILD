@@ -12,6 +12,8 @@ java_library(
     tags = ["maven_coordinates=com.cgi.eoss.eopp:libeopp:" + POM_VERSION],
     exports = [
         "//file",
+        "//resolver",
+        "//resource",
         "//rpc",
         "//util",
     ],

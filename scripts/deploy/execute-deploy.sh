@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eux
+set -eu
 
 readonly MVN_GOAL="$1"
 readonly VERSION_NAME="$2"
@@ -67,6 +67,17 @@ deploy_library \
     rpc/librpc-src.jar \
     rpc/librpc-javadoc.jar
 
+deploy_library \
+    resource/pom.xml \
+    resource/libresource.jar \
+    resource/libresource-src.jar \
+    resource/libresource-javadoc.jar
+
+deploy_library \
+    resolver/pom.xml \
+    resolver/libresolver.jar \
+    resolver/libresolver-src.jar \
+    resolver/libresolver-javadoc.jar
 
 deploy_library \
     pom.xml \
