@@ -18,7 +18,7 @@ spec:
     runAsUser: 10000
   containers:
   - name: libeopp-build
-    image: cgici/eopp-build-container:1.0.0
+    image: cgici/eopp-build-container:1.2.0
     imagePullPolicy: IfNotPresent
     command:
     - cat
@@ -43,7 +43,7 @@ spec:
 
     stage('Test') {
       environment {
-        EXTRA_TEST_FLAGS = "${CHANGE_ID ? '' : '--nocache_test_results'}"
+        EXTRA_TEST_FLAGS = "${CHANGE_ID ? '' : '--nocache_test_results --collect_code_coverage --coverage_report_generator=@bazel_sonarqube//:sonarqube_coverage_generator --combined_report=lcov'}"
       }
       steps {
         container('libeopp-build') {

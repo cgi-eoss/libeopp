@@ -95,3 +95,10 @@ http_archive(
     strip_prefix = "grpc-java-1.20.0",
     urls = ["https://github.com/grpc/grpc-java/archive/v1.20.0.zip"],
 )
+
+http_archive(
+    name = "bazel_sonarqube",
+    sha256 = "a6dfa3ead0b4bd3781a844e7be63976aac91343cfe4bfd15c603be1c1a961f46",
+    strip_prefix = "bazel-sonarqube-38d7e3822f95907d075e3c5252412e4d8068492e",
+    urls = ["https://github.com/Zetten/bazel-sonarqube/archive/38d7e3822f95907d075e3c5252412e4d8068492e.zip"],
+)
