@@ -56,6 +56,17 @@ spec:
         }
       }
     }
+
+    stage('Deploy') {
+      when { tag '' }
+      steps {
+        container('libeopp-build') {
+          configFileProvider([configFile(fileId: 'b756e5e9-d77e-4627-ac35-2cbd08efac8b', variable: 'MAVEN_SETTINGS')]) {
+            sh "./scripts/deploy/deploy-nexus.sh ${TAG_NAME} -s ${MAVEN_SETTINGS}"
+          }
+        }
+      }
+    }
   }
 
   post {
