@@ -19,4 +19,8 @@ test --test_env=HTTP_PROXY
 test --test_env=HTTPS_PROXY
 test --test_env=NO_PROXY
 
+coverage --collect_code_coverage
+coverage --combined_report=lcov
+coverage --coverage_report_generator=@bazel_sonarqube//:sonarqube_coverage_generator
+
 try-import %workspace%/.bazelrc.local

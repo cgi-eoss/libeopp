@@ -1,3 +1,5 @@
+def baseBranch = 'master'
+
 pipeline {
   options {
     buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '1', daysToKeepStr: '30', numToKeepStr: ''))
@@ -43,11 +45,11 @@ spec:
 
     stage('Test') {
       environment {
-        EXTRA_TEST_FLAGS = "${CHANGE_ID ? '' : '--nocache_test_results --collect_code_coverage --coverage_report_generator=@bazel_sonarqube//:sonarqube_coverage_generator --combined_report=lcov'}"
+        EXTRA_TEST_FLAGS = "${CHANGE_ID ? '' : '--nocache_test_results'}"
       }
       steps {
         container('libeopp-build') {
-          sh "bazel test //... --test_output=errors --keep_going \${EXTRA_TEST_FLAGS}"
+          sh "bazel coverage //... --test_output=errors --keep_going --noremote_accept_cached \${EXTRA_TEST_FLAGS}"
         }
       }
       post {
@@ -64,6 +66,26 @@ spec:
           configFileProvider([configFile(fileId: 'b756e5e9-d77e-4627-ac35-2cbd08efac8b', variable: 'MAVEN_SETTINGS')]) {
             sh "./scripts/deploy/deploy-nexus.sh ${TAG_NAME} -s ${MAVEN_SETTINGS}"
           }
+        }
+      }
+    }
+
+    stage('SQ Analysis') {
+      when {
+        branch 'master' // TODO Remove when the project exists in SQ and per-branch analysis is enabled
+      }
+      environment {
+        BRANCH_ARGS = "${CHANGE_ID ? "-Dsonar.branch.name=${BRANCH_NAME} -Dsonar.branch.target=${baseBranch}" : "-Dsonar.branch.name=${BRANCH_NAME}"}"
+      }
+      steps {
+        container('libeopp-build') {
+          withSonarQubeEnv('CGI CI SonarQube') {
+            sh "bazel run //:sq_libeopp -- -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_AUTH_TOKEN} \${BRANCH_ARGS}"
+          }
+        }
+        script {
+          def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+          gerritReview message: "SonarQube Quality Gate status: ${qg.status}"
         }
       }
     }

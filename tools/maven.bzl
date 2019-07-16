@@ -1,5 +1,6 @@
 load("@google_bazel_common//tools/javadoc:javadoc.bzl", "javadoc_library")
 load("@google_bazel_common//tools/maven:pom_file.bzl", default_pom_file = "pom_file")
+load("@bazel_sonarqube//:defs.bzl", "sq_project")
 
 def maven_library(
         name,
@@ -13,25 +14,35 @@ def maven_library(
     native.java_library(
         name = name,
         srcs = srcs,
-        tags = ["maven_coordinates=" + group_id + ":" + (artifact_id or name) + ":" + POM_VERSION],
+        tags = ["maven_coordinates=%s:%s:%s" % (group_id, (artifact_id or name), POM_VERSION)],
         **kwargs
     )
 
     javadoc_library(
-        name = "lib" + name + "-javadoc",
+        name = "lib%s-javadoc" % name,
         srcs = srcs,
         root_packages = root_packages,
-        deps = [":" + name],
-		tags = ["manual"],
+        deps = [":%s" % name],
+        tags = ["manual"],
     )
 
     pom_file(
         name = "pom",
-        targets = [":" + name],
+        targets = [":%s" % name],
         artifact_name = artifact_name,
         artifact_id = artifact_id or name,
         packaging = packaging,
-		tags = ["manual"],
+        tags = ["manual"],
+    )
+
+    sq_project(
+        name = "sq_%s" % name,
+        srcs = srcs,
+        project_key = "%s:%s" % (group_id, (artifact_id or name)),
+        project_name = artifact_name,
+        tags = ["manual"],
+        targets = [":%s" % name],
+        visibility = ["//visibility:public"],
     )
 
 def pom_file(
