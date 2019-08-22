@@ -4,7 +4,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import com.google.common.io.BaseEncoding;
 import com.google.common.io.MoreFiles;
 import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -12,6 +11,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
 
@@ -110,7 +110,7 @@ public final class FileMetas {
      * @see FileMeta#parseFrom(byte[])
      */
     public static FileMeta fromBase64(String string) throws InvalidProtocolBufferException {
-        return FileMeta.parseFrom(BaseEncoding.base64().decode(string));
+        return FileMeta.parseFrom(Base64.getDecoder().decode(string));
     }
 
     /**
@@ -122,7 +122,7 @@ public final class FileMetas {
      * @see FileMeta#toByteArray()
      */
     public static String toBase64(FileMeta fileMeta) {
-        return BaseEncoding.base64().encode(fileMeta.toByteArray());
+        return Base64.getEncoder().encodeToString(fileMeta.toByteArray());
     }
 
 }

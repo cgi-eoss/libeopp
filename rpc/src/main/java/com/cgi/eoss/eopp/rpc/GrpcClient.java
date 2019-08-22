@@ -39,9 +39,10 @@ public abstract class GrpcClient {
         // if necessary, update the local reference and return it, otherwise re-establish the channel
         channelLock.lock();
         try {
-            return channel = Optional.ofNullable(channel)
+            channel = Optional.ofNullable(channel)
                     .filter(c -> !EnumSet.of(ConnectivityState.TRANSIENT_FAILURE, ConnectivityState.SHUTDOWN).contains(c.getState(true))) // if the channel is not in a 'bad' state, return it...
                     .orElseGet(this::establishNewChannel); // ... otherwise create a new channel
+            return channel;
         } finally {
             channelLock.unlock();
         }

@@ -54,7 +54,10 @@ spec:
       }
       post {
         always {
-          junit allowEmptyResults: true, testResults: 'bazel-testlogs/**/test.xml'
+          container('libeopp-build') {
+            sh "find bazel-testlogs -follow -name test.xml -exec bash -c 'path={}; d=tmp/testlogs/\$(dirname \$path); mkdir -p \$d ; cp \$path \$d' \\;"
+          }
+          junit allowEmptyResults: true, testResults: 'tmp/testlogs/**/test.xml'
         }
       }
     }
@@ -71,9 +74,6 @@ spec:
     }
 
     stage('SQ Analysis') {
-      when {
-        branch 'master' // TODO Remove when the project exists in SQ and per-branch analysis is enabled
-      }
       environment {
         BRANCH_ARGS = "${CHANGE_ID ? "-Dsonar.branch.name=${BRANCH_NAME} -Dsonar.branch.target=${baseBranch}" : "-Dsonar.branch.name=${BRANCH_NAME}"}"
       }
@@ -81,12 +81,10 @@ spec:
         container('libeopp-build') {
           withSonarQubeEnv('CGI CI SonarQube') {
             sh "bazel run //:sq_libeopp -- -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_AUTH_TOKEN} \${BRANCH_ARGS}"
+            sh "mkdir -p tmp/ && cp --target-directory=tmp/ --dereference bazel-bin/sq_libeopp.runfiles/com_cgi_eoss_eopp/.scannerwork/report-task.txt" // Jenkins can't find things outside the workspace, so copy the SQ marker locally
           }
         }
-        script {
-          def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
-          gerritReview message: "SonarQube Quality Gate status: ${qg.status}"
-        }
+        waitForQualityGate abortPipeline: CHANGE_ID != null
       }
     }
   }

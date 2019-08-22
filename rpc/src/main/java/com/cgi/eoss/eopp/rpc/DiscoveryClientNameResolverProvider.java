@@ -25,7 +25,7 @@ public class DiscoveryClientNameResolverProvider extends NameResolverProvider {
     public NameResolver newNameResolver(URI targetUri, NameResolver.Helper helper) {
         // We're not quite doing gRPC URIs conventionally, but we expect the URI to be constructed like "discovery://<service-id>"
         String serviceId = targetUri.getHost();
-        return new DiscoveryClientNameResolver(discoveryClient, serviceId, helper);
+        return new DiscoveryClientNameResolver(discoveryClient, serviceId);
     }
 
     @Override

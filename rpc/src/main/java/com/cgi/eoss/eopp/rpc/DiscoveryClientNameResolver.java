@@ -23,7 +23,7 @@ public class DiscoveryClientNameResolver extends NameResolver {
 
     private Listener listener;
 
-    public DiscoveryClientNameResolver(DiscoveryClient discoveryClient, String serviceId, Helper helper) {
+    public DiscoveryClientNameResolver(DiscoveryClient discoveryClient, String serviceId) {
         this.discoveryClient = discoveryClient;
         this.serviceId = serviceId;
     }
@@ -52,6 +52,7 @@ public class DiscoveryClientNameResolver extends NameResolver {
 
     @Override
     public void shutdown() {
+        // nothing to do
     }
 
     private int getGrpcPort(ServiceInstance serviceInstance) {
