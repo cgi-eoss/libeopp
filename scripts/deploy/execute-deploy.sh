@@ -50,37 +50,28 @@ deploy_library() {
 }
 
 deploy_library \
-    file/pom.xml \
-    file/libfile_deploy.jar \
-    file/libfile-src.jar \
-    file/libfile-javadoc.jar
-
-deploy_library \
-    util/pom.xml \
-    util/libutil.jar \
-    util/libutil-src.jar \
-    util/libutil-javadoc.jar
-
-deploy_library \
-    rpc/pom.xml \
-    rpc/librpc.jar \
-    rpc/librpc-src.jar \
-    rpc/librpc-javadoc.jar
-
-deploy_library \
-    resource/pom.xml \
-    resource/libresource.jar \
-    resource/libresource-src.jar \
-    resource/libresource-javadoc.jar
-
-deploy_library \
-    resolver/pom.xml \
-    resolver/libresolver.jar \
-    resolver/libresolver-src.jar \
-    resolver/libresolver-javadoc.jar
-
-deploy_library \
     pom.xml \
     libeopp.jar \
     "" \
     ""
+
+deploy_library \
+    file/file_pom.xml \
+    file/libfile_deploy.jar \
+    file/libfile-src.jar \
+    file/libfile-javadoc.jar
+
+OLDIFS=$IFS
+IFS=','
+
+for target in util,util rpc,rpc resource,resource resource,path_resource resolver,resolver resolver,path_resolver
+do
+    set -- $target
+    deploy_library \
+        $1/$2_pom.xml \
+        $1/lib$2.jar \
+        $1/lib$2-src.jar \
+        $1/lib$2-javadoc.jar
+done
+
+IFS=$OLDIFS

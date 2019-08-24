@@ -29,8 +29,6 @@ maven_library(
     name = "file",
     srcs = [":file_java_srcs"],
     artifact_name = "libeopp :: file",
-    root_packages = ["com.cgi.eoss.eopp"],
-    visibility = ["//visibility:public"],
     exports = [":file_java_proto"],
     deps = [
         ":file_java_proto",

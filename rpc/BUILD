@@ -14,8 +14,6 @@ maven_library(
     name = "rpc",
     srcs = [":rpc_java_srcs"],
     artifact_name = "libeopp :: rpc",
-    root_packages = ["com.cgi.eoss.eopp"],
-    visibility = ["//visibility:public"],
     deps = [
         "//third_party/grpc-java:core",
         "//third_party/grpc-java:core_inprocess",

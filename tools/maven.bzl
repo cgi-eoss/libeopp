@@ -9,12 +9,15 @@ def maven_library(
         artifact_id = None,
         group_id = "com.cgi.eoss.eopp",
         packaging = None,
-        root_packages = [],
+        root_packages = ["com.cgi.eoss.eopp"],
+        generate_sonarqube_project = True,
+        visibility = ["//visibility:public"],
         **kwargs):
     native.java_library(
         name = name,
         srcs = srcs,
         tags = ["maven_coordinates=%s:%s:%s" % (group_id, (artifact_id or name), POM_VERSION)],
+        visibility = visibility,
         **kwargs
     )
 
@@ -27,7 +30,7 @@ def maven_library(
     )
 
     pom_file(
-        name = "pom",
+        name = "%s_pom" % name,
         targets = [":%s" % name],
         artifact_name = artifact_name,
         artifact_id = artifact_id or name,
@@ -35,6 +38,21 @@ def maven_library(
         tags = ["manual"],
     )
 
+    if generate_sonarqube_project:
+        sonarqube_project(
+            name,
+            srcs,
+            artifact_name,
+            artifact_id,
+            group_id,
+        )
+
+def sonarqube_project(
+        name,
+        srcs,
+        artifact_name,
+        artifact_id = None,
+        group_id = "com.cgi.eoss.eopp"):
     sq_project(
         name = "sq_%s" % name,
         srcs = srcs,

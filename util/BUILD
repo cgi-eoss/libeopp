@@ -9,8 +9,6 @@ maven_library(
     name = "util",
     srcs = [":util_java_srcs"],
     artifact_name = "libeopp :: util",
-    root_packages = ["com.cgi.eoss.eopp"],
-    visibility = ["//visibility:public"],
 )
 
 java_library(
