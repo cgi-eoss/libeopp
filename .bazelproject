@@ -11,3 +11,5 @@ java_language_level: 8
 
 workspace_type: java
 
+additional_languages:
+  kotlin

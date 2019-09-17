@@ -2,7 +2,7 @@ licenses(["notice"])
 
 # Re-exports with Maven coordinates for POM generation
 
-VERSION = "3.7.1"
+VERSION = "3.9.1"
 
 java_library(
     name = "protobuf_java",

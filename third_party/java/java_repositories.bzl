@@ -21,16 +21,34 @@ def java_repositories(
         omit_com_google_guava_listenablefuture = False,
         omit_com_google_j2objc_j2objc_annotations = False,
         omit_com_google_protobuf_protobuf_java = False,
+        omit_com_google_protobuf_protobuf_java_util = False,
+        omit_com_google_protobuf_protobuf_lite = False,
         omit_com_google_truth_extensions_truth_java8_extension = False,
         omit_com_google_truth_extensions_truth_liteproto_extension = False,
         omit_com_google_truth_extensions_truth_proto_extension = False,
         omit_com_google_truth_truth = False,
         omit_com_googlecode_java_diff_utils_diffutils = False,
+        omit_io_grpc_grpc_api = False,
         omit_io_grpc_grpc_context = False,
         omit_io_grpc_grpc_core = False,
+        omit_io_grpc_grpc_netty = False,
+        omit_io_grpc_grpc_protobuf = False,
+        omit_io_grpc_grpc_protobuf_lite = False,
+        omit_io_grpc_grpc_services = False,
         omit_io_grpc_grpc_stub = False,
+        omit_io_netty_netty_buffer = False,
+        omit_io_netty_netty_codec = False,
+        omit_io_netty_netty_codec_http = False,
+        omit_io_netty_netty_codec_http2 = False,
+        omit_io_netty_netty_codec_socks = False,
+        omit_io_netty_netty_common = False,
+        omit_io_netty_netty_handler = False,
+        omit_io_netty_netty_handler_proxy = False,
+        omit_io_netty_netty_resolver = False,
+        omit_io_netty_netty_transport = False,
         omit_io_opencensus_opencensus_api = False,
         omit_io_opencensus_opencensus_contrib_grpc_metrics = False,
+        omit_io_perfmark_perfmark_api = False,
         omit_javax_annotation_javax_annotation_api = False,
         omit_junit_junit = False,
         omit_net_bytebuddy_byte_buddy = False,
@@ -70,6 +88,10 @@ def java_repositories(
         com_google_j2objc_j2objc_annotations(fetch_sources, replacements)
     if not omit_com_google_protobuf_protobuf_java:
         com_google_protobuf_protobuf_java(fetch_sources, replacements)
+    if not omit_com_google_protobuf_protobuf_java_util:
+        com_google_protobuf_protobuf_java_util(fetch_sources, replacements)
+    if not omit_com_google_protobuf_protobuf_lite:
+        com_google_protobuf_protobuf_lite(fetch_sources, replacements)
     if not omit_com_google_truth_extensions_truth_java8_extension:
         com_google_truth_extensions_truth_java8_extension(fetch_sources, replacements)
     if not omit_com_google_truth_extensions_truth_liteproto_extension:
@@ -80,16 +102,48 @@ def java_repositories(
         com_google_truth_truth(fetch_sources, replacements)
     if not omit_com_googlecode_java_diff_utils_diffutils:
         com_googlecode_java_diff_utils_diffutils(fetch_sources, replacements)
+    if not omit_io_grpc_grpc_api:
+        io_grpc_grpc_api(fetch_sources, replacements)
     if not omit_io_grpc_grpc_context:
         io_grpc_grpc_context(fetch_sources, replacements)
     if not omit_io_grpc_grpc_core:
         io_grpc_grpc_core(fetch_sources, replacements)
+    if not omit_io_grpc_grpc_netty:
+        io_grpc_grpc_netty(fetch_sources, replacements)
+    if not omit_io_grpc_grpc_protobuf:
+        io_grpc_grpc_protobuf(fetch_sources, replacements)
+    if not omit_io_grpc_grpc_protobuf_lite:
+        io_grpc_grpc_protobuf_lite(fetch_sources, replacements)
+    if not omit_io_grpc_grpc_services:
+        io_grpc_grpc_services(fetch_sources, replacements)
     if not omit_io_grpc_grpc_stub:
         io_grpc_grpc_stub(fetch_sources, replacements)
+    if not omit_io_netty_netty_buffer:
+        io_netty_netty_buffer(fetch_sources, replacements)
+    if not omit_io_netty_netty_codec:
+        io_netty_netty_codec(fetch_sources, replacements)
+    if not omit_io_netty_netty_codec_http:
+        io_netty_netty_codec_http(fetch_sources, replacements)
+    if not omit_io_netty_netty_codec_http2:
+        io_netty_netty_codec_http2(fetch_sources, replacements)
+    if not omit_io_netty_netty_codec_socks:
+        io_netty_netty_codec_socks(fetch_sources, replacements)
+    if not omit_io_netty_netty_common:
+        io_netty_netty_common(fetch_sources, replacements)
+    if not omit_io_netty_netty_handler:
+        io_netty_netty_handler(fetch_sources, replacements)
+    if not omit_io_netty_netty_handler_proxy:
+        io_netty_netty_handler_proxy(fetch_sources, replacements)
+    if not omit_io_netty_netty_resolver:
+        io_netty_netty_resolver(fetch_sources, replacements)
+    if not omit_io_netty_netty_transport:
+        io_netty_netty_transport(fetch_sources, replacements)
     if not omit_io_opencensus_opencensus_api:
         io_opencensus_opencensus_api(fetch_sources, replacements)
     if not omit_io_opencensus_opencensus_contrib_grpc_metrics:
         io_opencensus_opencensus_contrib_grpc_metrics(fetch_sources, replacements)
+    if not omit_io_perfmark_perfmark_api:
+        io_perfmark_perfmark_api(fetch_sources, replacements)
     if not omit_javax_annotation_javax_annotation_api:
         javax_annotation_javax_annotation_api(fetch_sources, replacements)
     if not omit_junit_junit:
@@ -251,14 +305,14 @@ def com_google_guava_failureaccess(fetch_sources, replacements):
 def com_google_guava_guava(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "com_google_guava_guava",
-        artifact = "com.google.guava:guava:27.1-jre",
+        artifact = "com.google.guava:guava:28.1-jre",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "4a5aa70cc968a4d137e599ad37553e5cfeed2265e8c193476d7119036c536fe7",
+        artifact_sha256 = "30beb8b8527bd07c6e747e77f1a92122c2f29d57ce347461a4a55eb26e382da4",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "9de05c573971cedfcd53fb85fc7a58a5f453053026a9bf18594cffc79a1d6874",
+        srcjar_sha256 = "914b703ff2b0ebe442732bc8ae3b5c269182f6291843a4cad3d18b20cac6c21f",
         exports = _replace_dependencies([
             "@com_google_guava_failureaccess",
             "@com_google_guava_listenablefuture",
@@ -269,7 +323,7 @@ def com_google_guava_guava(fetch_sources, replacements):
             "@org_codehaus_mojo_animal_sniffer_annotations",
         ], replacements),
         tags = [
-            "maven_coordinates=com.google.guava:guava:27.1-jre",
+            "maven_coordinates=com.google.guava:guava:28.1-jre",
         ],
     )
 
@@ -312,52 +366,91 @@ def com_google_j2objc_j2objc_annotations(fetch_sources, replacements):
 def com_google_protobuf_protobuf_java(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "com_google_protobuf_protobuf_java",
-        artifact = "com.google.protobuf:protobuf-java:3.7.1",
+        artifact = "com.google.protobuf:protobuf-java:3.9.1",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "22779eacfe0f33b9e8ceffa3cdef5935cae4e53f736e027d912b707522fea645",
+        artifact_sha256 = "5a1e5c225791eccd3d67a598922e637406190c90155fb97f38e4eab29719324d",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "4401d00d4774fadb66a5a122b33b412c1bb790fcb5fc6f2ba81eca4eac76294a",
+        srcjar_sha256 = "33c67619c1554bc668b98e81d7ffadb6380becf03d9a86749de07cf88c21f558",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=com.google.protobuf:protobuf-java:3.7.1",
+            "maven_coordinates=com.google.protobuf:protobuf-java:3.9.1",
+        ],
+    )
+
+def com_google_protobuf_protobuf_java_util(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "com_google_protobuf_protobuf_java_util",
+        artifact = "com.google.protobuf:protobuf-java-util:3.9.0",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "3ecb6a7643191770fee5ebb236f1a36d0ead2d35c85ed50ba78de5fd94a662d6",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "c6237a53e69fd1bf6a791a5dba657d4151e4943537bcb8959e07b3b88d2c743e",
+        exports = _replace_dependencies([
+            "@com_google_protobuf_protobuf_java",
+            "@com_google_errorprone_error_prone_annotations",
+            "@com_google_code_gson_gson",
+        ], replacements),
+        tags = [
+            "maven_coordinates=com.google.protobuf:protobuf-java-util:3.9.0",
+        ],
+    )
+
+def com_google_protobuf_protobuf_lite(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "com_google_protobuf_protobuf_lite",
+        artifact = "com.google.protobuf:protobuf-lite:3.0.1",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "1413393db84e4adef79b2997d9dfeb4793d8f93d196f8347808d15711f0bc69c",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "b3331d42ffeb8089878e769074e30a2468bd84a85f13ca5044c5a731c35d3997",
+        exports = _replace_dependencies([
+        ], replacements),
+        tags = [
+            "maven_coordinates=com.google.protobuf:protobuf-lite:3.0.1",
         ],
     )
 
 def com_google_truth_extensions_truth_java8_extension(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "com_google_truth_extensions_truth_java8_extension",
-        artifact = "com.google.truth.extensions:truth-java8-extension:0.44",
+        artifact = "com.google.truth.extensions:truth-java8-extension:1.0",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "da4d94dc952c65914bf9e3c0b4f4a05f5aea536aa5de9a4660b859409dda4bad",
+        artifact_sha256 = "fd270fc302cf40703df5068f95a1f784754a855c762646e7d76bf66a2b789d7f",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "5ec7e2db5dabc9bfc2fe53e84b0d7e51146abd6fde69cab659f93e34d5ebf4b4",
+        srcjar_sha256 = "b406a148a251089034bdd662917e1764a35096e1a9283ff88b2f2f7aa05fef1f",
         exports = _replace_dependencies([
             "@com_google_truth_truth",
             "@org_checkerframework_checker_compat_qual",
         ], replacements),
         tags = [
-            "maven_coordinates=com.google.truth.extensions:truth-java8-extension:0.44",
+            "maven_coordinates=com.google.truth.extensions:truth-java8-extension:1.0",
         ],
     )
 
 def com_google_truth_extensions_truth_liteproto_extension(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "com_google_truth_extensions_truth_liteproto_extension",
-        artifact = "com.google.truth.extensions:truth-liteproto-extension:0.44",
+        artifact = "com.google.truth.extensions:truth-liteproto-extension:1.0",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "49aa51bb8a356a618c9a2fa982a67e4efadc4e266033e20cd984ce72c2f7f01a",
+        artifact_sha256 = "906d22963e9cca387fbca990d1c7254a3aa1c87124f590b67c49395be687c888",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "25855a71a50dc9b35b9520f969d6cd3c47d62c4aa7f17e39063e15833e9100e6",
+        srcjar_sha256 = "f63a4fb769379bb8bebfe3b27c8742f922165cfc64c23603231965f29269e8e7",
         exports = _replace_dependencies([
             "@com_google_truth_truth",
             "@com_google_guava_guava",
@@ -366,21 +459,21 @@ def com_google_truth_extensions_truth_liteproto_extension(fetch_sources, replace
             "@com_google_auto_value_auto_value_annotations",
         ], replacements),
         tags = [
-            "maven_coordinates=com.google.truth.extensions:truth-liteproto-extension:0.44",
+            "maven_coordinates=com.google.truth.extensions:truth-liteproto-extension:1.0",
         ],
     )
 
 def com_google_truth_extensions_truth_proto_extension(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "com_google_truth_extensions_truth_proto_extension",
-        artifact = "com.google.truth.extensions:truth-proto-extension:0.44",
+        artifact = "com.google.truth.extensions:truth-proto-extension:1.0",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "d964495cee74d6933512c7b414c8723285a6413a4e3f46f558fbaf624dfd7c9f",
+        artifact_sha256 = "325f042dd30508a244da526c35f5ac55cb4b9d00d782295c25421dfd5aec86a9",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "82075e50fe1f4246aac1bbdaa9f36bda9a40cab1376e78e235d1032b335f4268",
+        srcjar_sha256 = "b159faddaf4bbdbb9687490e087c74f5b0e05cffbd201cd9c829f244cce8c9df",
         exports = _replace_dependencies([
             "@com_google_truth_extensions_truth_liteproto_extension",
             "@com_google_truth_truth",
@@ -391,21 +484,21 @@ def com_google_truth_extensions_truth_proto_extension(fetch_sources, replacement
             "@com_google_auto_value_auto_value_annotations",
         ], replacements),
         tags = [
-            "maven_coordinates=com.google.truth.extensions:truth-proto-extension:0.44",
+            "maven_coordinates=com.google.truth.extensions:truth-proto-extension:1.0",
         ],
     )
 
 def com_google_truth_truth(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "com_google_truth_truth",
-        artifact = "com.google.truth:truth:0.44",
+        artifact = "com.google.truth:truth:1.0",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "a9e6796786c9c77a5fe19b08e72fe0a620d53166df423d8861af9ebef4dc4247",
+        artifact_sha256 = "edaa12f3b581fcf1c07311e94af8766919c4f3d904b00d3503147b99bf5b4004",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "427b1ea595dbdb4483e4ba10b095026cd243776a648b3bb78362dc8ddb542411",
+        srcjar_sha256 = "ba985ea463d2f2ba00fb058b0e2ebe22c00d21184517ff913afc85edb7a05a8a",
         exports = _replace_dependencies([
             "@com_google_guava_guava",
             "@junit_junit",
@@ -415,7 +508,7 @@ def com_google_truth_truth(fetch_sources, replacements):
             "@com_googlecode_java_diff_utils_diffutils",
         ], replacements),
         tags = [
-            "maven_coordinates=com.google.truth:truth:0.44",
+            "maven_coordinates=com.google.truth:truth:1.0",
         ],
     )
 
@@ -437,104 +530,444 @@ def com_googlecode_java_diff_utils_diffutils(fetch_sources, replacements):
         ],
     )
 
-def io_grpc_grpc_context(fetch_sources, replacements):
+def io_grpc_grpc_api(fetch_sources, replacements):
     jvm_maven_import_external(
-        name = "io_grpc_grpc_context",
-        artifact = "io.grpc:grpc-context:1.20.0",
+        name = "io_grpc_grpc_api",
+        artifact = "io.grpc:grpc-api:1.23.0",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "fe1294d0705433a3f5b64b568307609018ecc0840bbdbaa0f4db49fa1f933f05",
+        artifact_sha256 = "ff4486cdd89b6e4568af13f71e0480bad6a06391a3d636996ce1d4a353516373",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "0af7e53f01c3d5cabe6226dc63ac5d789bd7e301c4dc235edb7847e38429573c",
+        srcjar_sha256 = "6106fd12f2a676c778a1d63dc84abe1b8882e421fd5cbd169063bd7cdb53bc15",
+        exports = _replace_dependencies([
+            "@com_google_guava_guava",
+            "@io_grpc_grpc_context",
+            "@com_google_code_findbugs_jsr305",
+            "@com_google_errorprone_error_prone_annotations",
+            "@org_codehaus_mojo_animal_sniffer_annotations",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.grpc:grpc-api:1.23.0",
+        ],
+    )
+
+def io_grpc_grpc_context(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_grpc_grpc_context",
+        artifact = "io.grpc:grpc-context:1.23.0",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "702bec48910c159fa21a56d93130ee822f2632ce92c06fcb9eb5ba310ddc7bc3",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "2fcfb20019d99269762d1690122e9548fb044e36daba4fe39a6d383b9c73c2e0",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=io.grpc:grpc-context:1.20.0",
+            "maven_coordinates=io.grpc:grpc-context:1.23.0",
         ],
     )
 
 def io_grpc_grpc_core(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_grpc_grpc_core",
-        artifact = "io.grpc:grpc-core:1.20.0",
+        artifact = "io.grpc:grpc-core:1.23.0",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "a8dfda813f7152255a4e252193f8d8e5979e099bf8b3d9ef9f66c8032a236255",
+        artifact_sha256 = "ccb52503d051fca980ac7853fb9d8aaf3f00a6fadf16fffd574296b26b3d440b",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "223a1f990cc2aeaf4b8986c4c99afbc77b43b6ea7c920a0c513503b5d5cdd801",
+        srcjar_sha256 = "587ba527521dfb1a58eafa387e88987f4709f9ba3d33056e698da49d99e06731",
         exports = _replace_dependencies([
-            "@com_google_guava_guava",
-            "@com_google_code_findbugs_jsr305",
-            "@com_google_errorprone_error_prone_annotations",
-            "@org_codehaus_mojo_animal_sniffer_annotations",
-            "@io_grpc_grpc_context",
+            "@io_grpc_grpc_api",
+            "@io_perfmark_perfmark_api",
             "@com_google_code_gson_gson",
             "@com_google_android_annotations",
             "@io_opencensus_opencensus_contrib_grpc_metrics",
             "@io_opencensus_opencensus_api",
         ], replacements),
         tags = [
-            "maven_coordinates=io.grpc:grpc-core:1.20.0",
+            "maven_coordinates=io.grpc:grpc-core:1.23.0",
+        ],
+    )
+
+def io_grpc_grpc_netty(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_grpc_grpc_netty",
+        artifact = "io.grpc:grpc-netty:1.23.0",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "0e9bb0cbbb2d76767157bb00a3b18e55fd86ae7e4a756db79ca06f2e7dc54ece",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "51aa2530e8cfb20b2771a0a81cceab4a40a70a794544dcf4442e7f1df68ac163",
+        exports = _replace_dependencies([
+            "@io_grpc_grpc_core",
+            "@io_netty_netty_codec_http2",
+            "@io_netty_netty_handler_proxy",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.grpc:grpc-netty:1.23.0",
+        ],
+    )
+
+def io_grpc_grpc_protobuf(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_grpc_grpc_protobuf",
+        artifact = "io.grpc:grpc-protobuf:1.23.0",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "3d009822afa7b898c15a53e9d5d037a7dde9011eb3d523e59717391b5f5ae417",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "b00341b27d3f6e4f938a0a3ae69b7396a555cddbdfbc1e3a0ed5a849efb3e335",
+        exports = _replace_dependencies([
+            "@com_google_api_grpc_proto_google_common_protos",
+            "@io_grpc_grpc_protobuf_lite",
+            "@io_grpc_grpc_api",
+            "@com_google_guava_guava",
+            "@com_google_protobuf_protobuf_java",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.grpc:grpc-protobuf:1.23.0",
+        ],
+    )
+
+def io_grpc_grpc_protobuf_lite(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_grpc_grpc_protobuf_lite",
+        artifact = "io.grpc:grpc-protobuf-lite:1.23.0",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "97d3a160b0c1a753307181b518e072baec2018d2e7a13e64071ab2be76c3b962",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "eb764f5edcf66fce0b515aa4c17ccc1b6a6e983a358f5c8f97650168375add9d",
+        exports = _replace_dependencies([
+            "@io_grpc_grpc_api",
+            "@com_google_guava_guava",
+            "@com_google_protobuf_protobuf_lite",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.grpc:grpc-protobuf-lite:1.23.0",
+        ],
+    )
+
+def io_grpc_grpc_services(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_grpc_grpc_services",
+        artifact = "io.grpc:grpc-services:1.23.0",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "a6f06c65d3566d82a29c924081b365cd6aa3af187726d8069fa23da756f98a39",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "5ddae177688988fde7577fed9981f34802b64050189df7b5d872083d507c7147",
+        exports = _replace_dependencies([
+            "@io_grpc_grpc_protobuf",
+            "@io_grpc_grpc_core",
+            "@io_grpc_grpc_stub",
+            "@com_google_protobuf_protobuf_java_util",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.grpc:grpc-services:1.23.0",
         ],
     )
 
 def io_grpc_grpc_stub(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_grpc_grpc_stub",
-        artifact = "io.grpc:grpc-stub:1.20.0",
+        artifact = "io.grpc:grpc-stub:1.23.0",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "3b5d3e58684d336a6297c58efe396fb7ee87e0d706a34efa44c83c1bc7999950",
+        artifact_sha256 = "2c4120cf61461de4da76e85edd81e1437696bb2689fb78acce1f76930321d7fe",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "ee9c49f28b90b3135c7e87df792f1e2815023205ca913d25770bad8af6c700ce",
+        srcjar_sha256 = "d47e1487a4cc75bb8ce508b8145332e1a1b86ff924113cb800ae70b1f2b296d8",
         exports = _replace_dependencies([
-            "@io_grpc_grpc_core",
+            "@io_grpc_grpc_api",
         ], replacements),
         tags = [
-            "maven_coordinates=io.grpc:grpc-stub:1.20.0",
+            "maven_coordinates=io.grpc:grpc-stub:1.23.0",
+        ],
+    )
+
+def io_netty_netty_buffer(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_netty_netty_buffer",
+        artifact = "io.netty:netty-buffer:4.1.39.Final",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "a1544547c275cffe8b3efeb11c3ff2e79dcda675bcd1750968e1d1e1d60ea760",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "4ef45fd1baf33206906fc64f9597c244b5729bd9848e6bb0f59a05431b4b4578",
+        exports = _replace_dependencies([
+            "@io_netty_netty_common",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.netty:netty-buffer:4.1.39.Final",
+        ],
+    )
+
+def io_netty_netty_codec(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_netty_netty_codec",
+        artifact = "io.netty:netty-codec:4.1.39.Final",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "61c787409a19117a27521ae778480870b04cf6e4962924430dabb95e90a9bcda",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "c60179f7f139949fb3bc04e388b4c44806084598fda10b153dab6802f85c30da",
+        exports = _replace_dependencies([
+            "@io_netty_netty_transport",
+            "@io_netty_netty_buffer",
+            "@io_netty_netty_common",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.netty:netty-codec:4.1.39.Final",
+        ],
+    )
+
+def io_netty_netty_codec_http(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_netty_netty_codec_http",
+        artifact = "io.netty:netty-codec-http:4.1.39.Final",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "e92eccbf379f98be01e185d142754505c17cf95c1aa44d383ff7a9e8c4211063",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "d2cc14f101fd14542a3ed01dc7fcacefe1addc446644970db5abd13b4f21d6f5",
+        exports = _replace_dependencies([
+            "@io_netty_netty_handler",
+            "@io_netty_netty_codec",
+            "@io_netty_netty_transport",
+            "@io_netty_netty_buffer",
+            "@io_netty_netty_common",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.netty:netty-codec-http:4.1.39.Final",
+        ],
+    )
+
+def io_netty_netty_codec_http2(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_netty_netty_codec_http2",
+        artifact = "io.netty:netty-codec-http2:4.1.39.Final",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "dc6f3eadea065ebad7234b5e3e267a73da88da6d5c505ddfbbb93722196d339e",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "d945addb09297720d170b8154ed01e7626f77025c413153b829ae3ab987eb1a9",
+        exports = _replace_dependencies([
+            "@io_netty_netty_codec_http",
+            "@io_netty_netty_handler",
+            "@io_netty_netty_codec",
+            "@io_netty_netty_transport",
+            "@io_netty_netty_buffer",
+            "@io_netty_netty_common",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.netty:netty-codec-http2:4.1.39.Final",
+        ],
+    )
+
+def io_netty_netty_codec_socks(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_netty_netty_codec_socks",
+        artifact = "io.netty:netty-codec-socks:4.1.39.Final",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "b934724962f3377e2bf2ac2f0ab894595aac7f4b28be80f2f294d21e96c91526",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "14d7abf5e970b3961e39869f2562ec81709a17525bc189d82dbc835c76584353",
+        exports = _replace_dependencies([
+            "@io_netty_netty_codec",
+            "@io_netty_netty_transport",
+            "@io_netty_netty_buffer",
+            "@io_netty_netty_common",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.netty:netty-codec-socks:4.1.39.Final",
+        ],
+    )
+
+def io_netty_netty_common(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_netty_netty_common",
+        artifact = "io.netty:netty-common:4.1.39.Final",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "67a000d99a71e4fda26391ad4dfa98571e34cda773aec007a5f45242e8bef66f",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "3900ed0250bb43f9003f0567a8ff384d162cb3f980c114a403cdd3ef92faa056",
+        exports = _replace_dependencies([
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.netty:netty-common:4.1.39.Final",
+        ],
+    )
+
+def io_netty_netty_handler(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_netty_netty_handler",
+        artifact = "io.netty:netty-handler:4.1.39.Final",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "b0311957f28b284739b982fdcdf1d500b0d99f047b195fb74cf1d877d045fc5d",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "768f2ccd64825c7abbf0e4779a24daa76ad26926d82b2420ba5f52725f047f1e",
+        exports = _replace_dependencies([
+            "@io_netty_netty_codec",
+            "@io_netty_netty_transport",
+            "@io_netty_netty_buffer",
+            "@io_netty_netty_common",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.netty:netty-handler:4.1.39.Final",
+        ],
+    )
+
+def io_netty_netty_handler_proxy(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_netty_netty_handler_proxy",
+        artifact = "io.netty:netty-handler-proxy:4.1.39.Final",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "115702178befe500dac6edbc0f7324dd84f93ec1e4e0943c8083d39a913e4a22",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "cf30ee8e6828fbb565a06d854f3682209be7187dd0a0fcfc387bcc82be2af485",
+        exports = _replace_dependencies([
+            "@io_netty_netty_codec_http",
+            "@io_netty_netty_codec_socks",
+            "@io_netty_netty_codec",
+            "@io_netty_netty_transport",
+            "@io_netty_netty_buffer",
+            "@io_netty_netty_common",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.netty:netty-handler-proxy:4.1.39.Final",
+        ],
+    )
+
+def io_netty_netty_resolver(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_netty_netty_resolver",
+        artifact = "io.netty:netty-resolver:4.1.39.Final",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "61b80dcec8c95ccf6c8a134143e37d6f26251b8070e5f7a6886ffd5dd69e4a72",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "e81a2eaa9da373b1ada5b4f590258a9a2d41c12491c8388069aa6c5c5b898572",
+        exports = _replace_dependencies([
+            "@io_netty_netty_common",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.netty:netty-resolver:4.1.39.Final",
+        ],
+    )
+
+def io_netty_netty_transport(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_netty_netty_transport",
+        artifact = "io.netty:netty-transport:4.1.39.Final",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "cf018b7e5f0739ff5f972761dcca3d62825a5426bd04f556d242400934b245f5",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "04d3953e9fb9e6b3d9f94bccba71fbce0c530ffd2fdba7a2ac5ebaf8f3565a7c",
+        exports = _replace_dependencies([
+            "@io_netty_netty_buffer",
+            "@io_netty_netty_resolver",
+            "@io_netty_netty_common",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.netty:netty-transport:4.1.39.Final",
         ],
     )
 
 def io_opencensus_opencensus_api(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_opencensus_opencensus_api",
-        artifact = "io.opencensus:opencensus-api:0.19.2",
+        artifact = "io.opencensus:opencensus-api:0.21.0",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "0e2e5d3f4f6fd296017a00b1cd8fb8e4261331cc0c3b6818c0533b01bf7945dc",
+        artifact_sha256 = "8e2cb0f6391d8eb0a1bcd01e7748883f0033b1941754f4ed3f19d2c3e4276fc8",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "a8cde5809e483d357bd08661bb5279403fca006a6a97db91b7681e82a5f6a7d0",
+        srcjar_sha256 = "a185e02627df9dd25ac982f8f1e81f6ac059550d82b0e8c149f9954bd750ad7f",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=io.opencensus:opencensus-api:0.19.2",
+            "maven_coordinates=io.opencensus:opencensus-api:0.21.0",
         ],
     )
 
 def io_opencensus_opencensus_contrib_grpc_metrics(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_opencensus_opencensus_contrib_grpc_metrics",
-        artifact = "io.opencensus:opencensus-contrib-grpc-metrics:0.19.2",
+        artifact = "io.opencensus:opencensus-contrib-grpc-metrics:0.21.0",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "0e23c03414612c7fbef1fdb347076eb69368e596de768cd4b98e081d92206f15",
+        artifact_sha256 = "29fc79401082301542cab89d7054d2f0825f184492654c950020553ef4ff0ef8",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "7004c3dc5f702d6247cc63c702e0de43cc7734d2686749ab37c58311c0464a79",
+        srcjar_sha256 = "6536dcddc505c73c53d8e031f12276dfd345b093a59c1943d050bf55dba4730f",
         exports = _replace_dependencies([
             "@io_opencensus_opencensus_api",
         ], replacements),
         tags = [
-            "maven_coordinates=io.opencensus:opencensus-contrib-grpc-metrics:0.19.2",
+            "maven_coordinates=io.opencensus:opencensus-contrib-grpc-metrics:0.21.0",
+        ],
+    )
+
+def io_perfmark_perfmark_api(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_perfmark_perfmark_api",
+        artifact = "io.perfmark:perfmark-api:0.17.0",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "816c11409b8a0c6c9ce1cda14bed526e7b4da0e772da67c5b7b88eefd41520f9",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "f5997eb93866f30fe2c573cec5ac6a78e1049ee94a196f637fb458c62559ad1f",
+        exports = _replace_dependencies([
+            "@com_google_code_findbugs_jsr305",
+            "@com_google_errorprone_error_prone_annotations",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.perfmark:perfmark-api:0.17.0",
         ],
     )
 
@@ -578,36 +1011,36 @@ def junit_junit(fetch_sources, replacements):
 def net_bytebuddy_byte_buddy(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "net_bytebuddy_byte_buddy",
-        artifact = "net.bytebuddy:byte-buddy:1.9.12",
+        artifact = "net.bytebuddy:byte-buddy:1.9.16",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "3688c3d434bebc3edc5516296a2ed0f47b65e451071b4afecad84f902f0efc11",
+        artifact_sha256 = "6b71e4f70c96b67d420f592148aa4fd1966aba458b35d11f491ff13de97dc862",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "048ea8b9e6c177033e0ff06157471c50b625a03a2a838a393dfeb61314abf034",
+        srcjar_sha256 = "9f239c1599715faeff23676d2ccb64d3365ea9ee651c5b3ed0d4011a886db419",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=net.bytebuddy:byte-buddy:1.9.12",
+            "maven_coordinates=net.bytebuddy:byte-buddy:1.9.16",
         ],
     )
 
 def net_bytebuddy_byte_buddy_agent(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "net_bytebuddy_byte_buddy_agent",
-        artifact = "net.bytebuddy:byte-buddy-agent:1.9.12",
+        artifact = "net.bytebuddy:byte-buddy-agent:1.9.16",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "a9c89697162c0a28f97f60b507458deefe6fb65f0b74c5d49358000dd6afacd0",
+        artifact_sha256 = "c315f9c2eba3eee41b57b7b78c787011953145a8118e3a732dd56b42329bcff5",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "d81b86afbbdb41ef14d0062517b7acb8b804ae1f48b1c69127581f044cdc1391",
+        srcjar_sha256 = "0a7b5643bd2de08a0579ff4368ec14ad42886620e3463dde4f7afc21fa3f03b2",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=net.bytebuddy:byte-buddy-agent:1.9.12",
+            "maven_coordinates=net.bytebuddy:byte-buddy-agent:1.9.16",
         ],
     )
 
@@ -632,36 +1065,36 @@ def org_checkerframework_checker_compat_qual(fetch_sources, replacements):
 def org_checkerframework_checker_qual(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_checkerframework_checker_qual",
-        artifact = "org.checkerframework:checker-qual:2.5.2",
+        artifact = "org.checkerframework:checker-qual:2.8.1",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "64b02691c8b9d4e7700f8ee2e742dce7ea2c6e81e662b7522c9ee3bf568c040a",
+        artifact_sha256 = "9103499008bcecd4e948da29b17864abb64304e15706444ae209d17ebe0575df",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "821c5c63a6f156a3bb498c5bbb613580d9d8f4134131a5627d330fc4018669d2",
+        srcjar_sha256 = "abff0b3dfbfe94c1c6f00eb03a964ef57747008ee95e911a318387df565bd0b2",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=org.checkerframework:checker-qual:2.5.2",
+            "maven_coordinates=org.checkerframework:checker-qual:2.8.1",
         ],
     )
 
 def org_codehaus_mojo_animal_sniffer_annotations(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_codehaus_mojo_animal_sniffer_annotations",
-        artifact = "org.codehaus.mojo:animal-sniffer-annotations:1.17",
+        artifact = "org.codehaus.mojo:animal-sniffer-annotations:1.18",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "92654f493ecfec52082e76354f0ebf87648dc3d5cec2e3c3cdb947c016747a53",
+        artifact_sha256 = "47f05852b48ee9baefef80fa3d8cea60efa4753c0013121dd7fe5eef2e5c729d",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "2571474a676f775a8cdd15fb9b1da20c4c121ed7f42a5d93fca0e7b6e2015b40",
+        srcjar_sha256 = "ee078a91bf7136ee1961abd612b54d1cd9877352b960a7e1e7e3e4c17ceafcf1",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=org.codehaus.mojo:animal-sniffer-annotations:1.17",
+            "maven_coordinates=org.codehaus.mojo:animal-sniffer-annotations:1.18",
         ],
     )
 
@@ -725,91 +1158,91 @@ def org_objenesis_objenesis(fetch_sources, replacements):
 def org_slf4j_slf4j_api(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_slf4j_slf4j_api",
-        artifact = "org.slf4j:slf4j-api:1.7.26",
+        artifact = "org.slf4j:slf4j-api:1.7.28",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "6d9e5b86cfd1dd44c676899285b5bb4fa0d371cf583e8164f9c8a0366553242b",
+        artifact_sha256 = "fb6e4f67a2a4689e3e713584db17a5d1090c1ebe6eec30e9e0349a6ee118141e",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "9e25ad98a324e6685752fd01fbbd0588ceec5df564e53c49486946a2d19dc482",
+        srcjar_sha256 = "b1b8bfa4f2709684606001685d09ef905adc1b72ec53444ade90f44bfbcebcff",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=org.slf4j:slf4j-api:1.7.26",
+            "maven_coordinates=org.slf4j:slf4j-api:1.7.28",
         ],
     )
 
 def org_springframework_cloud_spring_cloud_commons(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_springframework_cloud_spring_cloud_commons",
-        artifact = "org.springframework.cloud:spring-cloud-commons:2.1.1.RELEASE",
+        artifact = "org.springframework.cloud:spring-cloud-commons:2.1.3.RELEASE",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "2ff496d899534f9f00ba83f2c385c9e8bf7c7b78af88475e5abe7e39fe5bebc4",
+        artifact_sha256 = "4161fcf51d8e8fe69c1e0613cc86dd9bcba77a79e58f021621f9c26e0ba87edf",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "53338bc1f4f54a22e24cae2d18e0e9e621547189009dcb73984ff0b2cc0b9e37",
+        srcjar_sha256 = "757476263ccb0b6aaa4ad359d86e30a84ae8eed6faa2ad17f4c12c75a3882f04",
         exports = _replace_dependencies([
             "@org_springframework_security_spring_security_crypto",
         ], replacements),
         tags = [
-            "maven_coordinates=org.springframework.cloud:spring-cloud-commons:2.1.1.RELEASE",
+            "maven_coordinates=org.springframework.cloud:spring-cloud-commons:2.1.3.RELEASE",
         ],
     )
 
 def org_springframework_security_spring_security_crypto(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_springframework_security_spring_security_crypto",
-        artifact = "org.springframework.security:spring-security-crypto:5.1.5.RELEASE",
+        artifact = "org.springframework.security:spring-security-crypto:5.1.6.RELEASE",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "90c18376c1ec4a981f5a155898d64e73664fa136085cbd0b4d760ac27be59c04",
+        artifact_sha256 = "b71bca31cfae853c40c96aef072eb12249927e2122b8e66656e59551692abf8a",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "363ce3f42c8a5984ea5a62022f40a3fad32f71711129274c673429f9e4978fd1",
+        srcjar_sha256 = "ba7e4fcc52183cddcb0bdbf8e79cd8f1de92bf6223926e3b41afbcdb90b1b6d9",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=org.springframework.security:spring-security-crypto:5.1.5.RELEASE",
+            "maven_coordinates=org.springframework.security:spring-security-crypto:5.1.6.RELEASE",
         ],
     )
 
 def org_springframework_spring_core(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_springframework_spring_core",
-        artifact = "org.springframework:spring-core:5.1.6.RELEASE",
+        artifact = "org.springframework:spring-core:5.1.9.RELEASE",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "4d5577bef039ad08955cd34def6d87c21cbb52a9aa7cd8f9d6ecc5dbe4b4258d",
+        artifact_sha256 = "427406f5423e032e08e5d43e5d3eccfbc83350b0d7c6ec22db839755ff1120de",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "e04ac27db15d2dd7e20acc6cf3a7fb1e19e8844e28897d6c57ca53cae6e54855",
+        srcjar_sha256 = "d4c90b76cd68d695234862426234ec33ebed8f1a033bb5952054191b8d91ca88",
         exports = _replace_dependencies([
             "@org_springframework_spring_jcl",
         ], replacements),
         tags = [
-            "maven_coordinates=org.springframework:spring-core:5.1.6.RELEASE",
+            "maven_coordinates=org.springframework:spring-core:5.1.9.RELEASE",
         ],
     )
 
 def org_springframework_spring_jcl(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_springframework_spring_jcl",
-        artifact = "org.springframework:spring-jcl:5.1.6.RELEASE",
+        artifact = "org.springframework:spring-jcl:5.1.9.RELEASE",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "cf9c6a6af363bd67faaa93d3d81d4601a8562870d3ad52d1a55b9990924f1509",
+        artifact_sha256 = "e6f5a8162bc57aec3d9260fec9efc019cee904de2b0c5a6abe02598a17d10456",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "e3b3d3e1314cb71b024461953534d3bb10f243b03614af1df51a43d1e1d75c7e",
+        srcjar_sha256 = "6109feb26549148bfa13986ac713f21d5dcf73c660f4930460818d21b47c0350",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=org.springframework:spring-jcl:5.1.6.RELEASE",
+            "maven_coordinates=org.springframework:spring-jcl:5.1.9.RELEASE",
         ],
     )

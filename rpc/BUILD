@@ -15,8 +15,8 @@ maven_library(
     srcs = [":rpc_java_srcs"],
     artifact_name = "libeopp :: rpc",
     deps = [
-        "//third_party/grpc-java:core",
-        "//third_party/grpc-java:core_inprocess",
+        "//third_party/grpc:core",
+        "//third_party/grpc:core_inprocess",
         "//util",
         "@com_google_code_findbugs_jsr305",
         "@org_slf4j_slf4j_api",

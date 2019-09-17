@@ -18,7 +18,7 @@ public interface Resolver {
     boolean canResolve(URI uri);
 
     /**
-     * <p>Resolve the given URI into a GaiaScope resource</p>
+     * <p>Resolve the given URI into a resource.</p>
      *
      * @param uri The URI to be retrieved
      * @return An object implementing {@link EoppResource}

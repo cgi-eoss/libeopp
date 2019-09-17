@@ -2,7 +2,7 @@ licenses(["notice"])
 
 # Re-exports with Maven coordinates for POM generation
 
-VERSION = "1.20.0"
+VERSION = "1.23.0"
 
 java_library(
     name = "context",

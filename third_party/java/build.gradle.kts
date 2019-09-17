@@ -1,8 +1,8 @@
 plugins {
     base
     id("com.github.zetten.bazel-dependencies-plugin") version "1.4.0"
-    id("com.github.ben-manes.versions") version "0.21.0"
-    id("io.spring.dependency-management") version "1.0.7.RELEASE"
+    id("com.github.ben-manes.versions") version "0.25.0"
+    id("io.spring.dependency-management") version "1.0.8.RELEASE"
 }
 
 val generate by configurations.creating
@@ -21,12 +21,13 @@ repositories {
 }
 
 extra.set("google-common-protos.version", "1.16.0")
-extra.set("grpc.version", "1.20.0")
-extra.set("guava.version", "27.1-jre")
+extra.set("grpc.version", "1.23.0")
+extra.set("guava.version", "28.1-jre")
 extra.set("j2objc-annotations.version", "1.3")
-extra.set("spring-boot.version", "2.1.4.RELEASE")
-extra.set("spring-cloud.version", "Greenwich.SR1")
-extra.set("truth.version", "0.44")
+extra.set("protobuf-java.version", "3.9.1")
+extra.set("spring-boot.version", "2.1.8.RELEASE")
+extra.set("spring-cloud.version", "Greenwich.SR3")
+extra.set("truth.version", "1.0")
 
 dependencyManagement {
     imports {
@@ -37,10 +38,16 @@ dependencyManagement {
         dependency("com.google.api.grpc:proto-google-common-protos:${extra.get("google-common-protos.version")}")
         dependency("com.google.guava:guava:${extra.get("guava.version")}")
         dependency("com.google.j2objc:j2objc-annotations:${extra.get("j2objc-annotations.version")}")
+        dependency("com.google.protobuf:protobuf-java:${extra.get("protobuf-java.version")}")
         dependency("com.google.truth.extensions:truth-java8-extension:${extra.get("truth.version")}")
         dependency("com.google.truth.extensions:truth-proto-extension:${extra.get("truth.version")}")
         dependency("com.google.truth:truth:${extra.get("truth.version")}")
+        dependency("io.grpc:grpc-context:${extra.get("grpc.version")}")
         dependency("io.grpc:grpc-core:${extra.get("grpc.version")}")
+        dependency("io.grpc:grpc-netty:${extra.get("grpc.version")}")
+        dependency("io.grpc:grpc-protobuf:${extra.get("grpc.version")}")
+        dependency("io.grpc:grpc-protobuf-lite:${extra.get("grpc.version")}")
+        dependency("io.grpc:grpc-services:${extra.get("grpc.version")}")
         dependency("io.grpc:grpc-stub:${extra.get("grpc.version")}")
     }
 }
@@ -48,10 +55,16 @@ dependencyManagement {
 dependencies {
     generate("com.google.api.grpc:proto-google-common-protos")
     generate("com.google.guava:guava")
+    generate("com.google.protobuf:protobuf-java")
     generate("com.google.truth.extensions:truth-java8-extension")
     generate("com.google.truth.extensions:truth-proto-extension")
     generate("com.google.truth:truth")
+    generate("io.grpc:grpc-context")
     generate("io.grpc:grpc-core")
+    generate("io.grpc:grpc-netty")
+    generate("io.grpc:grpc-protobuf")
+    generate("io.grpc:grpc-protobuf-lite")
+    generate("io.grpc:grpc-services")
     generate("io.grpc:grpc-stub")
     generate("javax.annotation:javax.annotation-api")
     generate("junit:junit")
