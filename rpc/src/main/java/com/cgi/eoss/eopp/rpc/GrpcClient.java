@@ -5,7 +5,7 @@ import io.grpc.ConnectivityState;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.NameResolver;
-import io.grpc.NameResolverProvider;
+import io.grpc.NameResolverRegistry;
 import io.grpc.inprocess.InProcessChannelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public abstract class GrpcClient {
     private ManagedChannel channel;
 
     protected GrpcClient(String serviceUri) {
-        this(serviceUri, NameResolverProvider.asFactory());
+        this(serviceUri, NameResolverRegistry.getDefaultRegistry().asFactory());
     }
 
     protected GrpcClient(String serviceUri, NameResolver.Factory nameResolverFactory) {

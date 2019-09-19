@@ -1,5 +1,6 @@
 package com.cgi.eoss.eopp.resolver;
 
+import com.cgi.eoss.eopp.file.FileMetas;
 import com.cgi.eoss.eopp.resource.EoppResource;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +41,7 @@ public class PathResolverTest {
         EoppResource resource = resolver.resolveUri(uri);
         assertThat(resource).isNotNull();
         assertThat(resource.getFile()).isEqualTo(testfile.toFile());
+        assertThat(resource.getFileMeta()).isEqualTo(FileMetas.get(testfile));
     }
 
 }

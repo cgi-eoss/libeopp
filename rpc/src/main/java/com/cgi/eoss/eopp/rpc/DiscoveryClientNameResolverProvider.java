@@ -13,6 +13,7 @@ import java.net.URI;
 public class DiscoveryClientNameResolverProvider extends NameResolverProvider {
 
     private static final String SCHEME = "discovery";
+    private static final int PRIORITY = 8;
 
     private final DiscoveryClient discoveryClient;
 
@@ -22,7 +23,7 @@ public class DiscoveryClientNameResolverProvider extends NameResolverProvider {
 
     @Nullable
     @Override
-    public NameResolver newNameResolver(URI targetUri, NameResolver.Helper helper) {
+    public NameResolver newNameResolver(URI targetUri, NameResolver.Args args) {
         // We're not quite doing gRPC URIs conventionally, but we expect the URI to be constructed like "discovery://<service-id>"
         String serviceId = targetUri.getHost();
         return new DiscoveryClientNameResolver(discoveryClient, serviceId);
@@ -35,7 +36,7 @@ public class DiscoveryClientNameResolverProvider extends NameResolverProvider {
 
     @Override
     protected int priority() {
-        return 8;
+        return PRIORITY;
     }
 
     @Override

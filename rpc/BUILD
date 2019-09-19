@@ -36,10 +36,12 @@ java_library(
         "@com_google_truth_truth",
         "@io_grpc_grpc_java//core",
         "@io_grpc_grpc_java//core:inprocess",
+        "@io_grpc_grpc_java//netty",
         "@io_grpc_grpc_java//stub",
         "@io_grpc_grpc_java//testing",
         "@junit_junit",
         "@org_mockito_mockito_core",
+        "@org_springframework_cloud_spring_cloud_commons",
     ],
 )
 
@@ -47,6 +49,13 @@ java_test(
     name = "GrpcClientTest",
     size = "small",
     test_class = "com.cgi.eoss.eopp.rpc.GrpcClientTest",
+    runtime_deps = [":rpc_java_tests"],
+)
+
+java_test(
+    name = "DiscoveryClientNameResolverProviderTest",
+    size = "small",
+    test_class = "com.cgi.eoss.eopp.rpc.DiscoveryClientNameResolverProviderTest",
     runtime_deps = [":rpc_java_tests"],
 )
 

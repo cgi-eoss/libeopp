@@ -31,3 +31,25 @@ sonarqube_project(
     srcs = glob(["src/main/**"]),
     artifact_name = "libeopp :: resource",
 )
+
+java_library(
+    name = "resource_java_tests",
+    testonly = True,
+    srcs = glob(["src/test/java/**/*.java"]),
+    deps = [
+        ":path_resource",
+        ":resource",
+        "//file",
+        "@com_google_guava_guava",
+        "@com_google_truth_truth",
+        "@junit_junit",
+        "@org_mockito_mockito_core",
+    ],
+)
+
+java_test(
+    name = "EoppPathResourceTest",
+    size = "small",
+    test_class = "com.cgi.eoss.eopp.resource.EoppPathResourceTest",
+    runtime_deps = [":resource_java_tests"],
+)
