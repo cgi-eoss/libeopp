@@ -23,7 +23,7 @@ java_proto_library(
     deps = [":file_proto"],
 )
 
-load("//tools:maven.bzl", "maven_library")
+load("//tools:maven.bzl", "maven_library", "maven_coordinates_tag")
 
 maven_library(
     name = "file",
@@ -35,6 +35,7 @@ maven_library(
         "//third_party/protobuf:protobuf_java",
         "@com_google_guava_guava",
     ],
+    deploy_java_library = False,
 )
 
 load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
@@ -48,6 +49,10 @@ jarjar_library(
     ],
     rules = [
         "zap com.google.protobuf.**",
+    ],
+    tags = [
+        "maven_artifact",
+        maven_coordinates_tag("file")
     ],
     visibility = ["//:__pkg__"],
 )

@@ -33,7 +33,7 @@ load("//tools:maven.bzl", "POM_VERSION", "pom_file")
 
 java_library(
     name = "eopp",
-    tags = ["maven_coordinates=com.cgi.eoss.eopp:libeopp:" + POM_VERSION],
+    tags = ["maven_artifact", "maven_coordinates=com.cgi.eoss.eopp:libeopp:" + POM_VERSION],
     exports = ["//%s" % m for m in MODULES],
 )
 
@@ -42,6 +42,7 @@ pom_file(
     artifact_id = "libeopp",
     artifact_name = "libeopp",
     targets = [":eopp"],
+    tags = ["maven_coordinates=com.cgi.eoss.eopp:libeopp:" + POM_VERSION]
 )
 
 load("@bazel_sonarqube//:defs.bzl", "sonarqube")
