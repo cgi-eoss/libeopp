@@ -20,7 +20,7 @@ spec:
     runAsUser: 10000
   containers:
   - name: libeopp-build
-    image: cgici/eopp-build-container:1.8.0
+    image: cgici/eopp-build-container:1.9.0
     imagePullPolicy: IfNotPresent
     command:
     - cat
@@ -76,15 +76,17 @@ spec:
     stage('SQ Analysis') {
       environment {
         BRANCH_ARGS = "${CHANGE_ID ? "-Dsonar.branch.name=${BRANCH_NAME} -Dsonar.branch.target=${baseBranch}" : "-Dsonar.branch.name=${BRANCH_NAME}"}"
+        VERSION_ARGS = "${TAG_NAME ? "-Dsonar.projectVersion=${TAG_NAME}" : ""}"
+        ABORT_ON_QUALITY_GATE = "${CHANGE_ID ? "true" : "false"}"
       }
       steps {
         container('libeopp-build') {
           withSonarQubeEnv('CGI CI SonarQube') {
-            sh "bazel run //:sq_libeopp -- -X -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_AUTH_TOKEN} \${BRANCH_ARGS}"
+            sh "bazel run //:sq_libeopp -- -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_AUTH_TOKEN} \${BRANCH_ARGS} \${VERSION_ARGS}"
             sh "mkdir -p tmp/ && cp --target-directory=tmp/ --dereference bazel-bin/sq_libeopp.runfiles/com_cgi_eoss_eopp/.scannerwork/report-task.txt" // Jenkins can't find things outside the workspace, so copy the SQ marker locally
           }
         }
-        waitForQualityGate abortPipeline: CHANGE_ID != null
+        waitForQualityGate abortPipeline: ABORT_ON_QUALITY_GATE.toBoolean()
       }
     }
   }
