@@ -37,13 +37,14 @@ def maven_library(
         tags = ["manual", "maven_srcjar"] + maven_coordinates,
     )
 
-    javadoc_library(
-        name = "lib%s-javadoc" % name,
-        srcs = srcs,
-        root_packages = root_packages,
-        deps = [":%s" % name],
-        tags = ["manual", "maven_javadoc"] + maven_coordinates,
-    )
+    if srcs:
+        javadoc_library(
+            name = "lib%s-javadoc" % name,
+            srcs = srcs,
+            root_packages = root_packages,
+            deps = [":%s" % name],
+            tags = ["manual", "maven_javadoc"] + maven_coordinates,
+        )
 
     pom_file(
         name = "%s_pom" % name,

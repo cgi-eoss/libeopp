@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package eopp.test.identifier;
+
+option java_package = "com.cgi.eoss.eopp.identifier";
+option java_outer_classname = "IdentifierTestProto";
+option java_multiple_files = true;
+
+message IdentifierTestMessage {
+    string identifier = 1;
+    string version = 2;
+}
+
+message IdentifierTestMissingVersion {
+    string identifier = 1;
+    string not_a_version = 2;
+}
+
+message IdentifierTestMissingIdentifier {
+    string not_an_identifier = 1;
+    string version = 2;
+}
+
+message IdentifierTestMissingBoth {
+    string not_an_identifier = 1;
+    string not_a_version = 2;
+}

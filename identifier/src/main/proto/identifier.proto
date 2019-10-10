@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package eopp.identifier;
+
+option java_package = "com.cgi.eoss.eopp.identifier";
+option java_outer_classname = "IdentifierProto";
+option java_multiple_files = true;
+
+// A name-version tuple, to uniquely identify resources.
+message Identifier {
+    // Creator-defined identifier for the resource.
+    string identifier = 1;
+    // Creator-defined version for the resource.
+    string version = 2;
+}

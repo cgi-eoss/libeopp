@@ -1,0 +1,258 @@
+syntax = "proto3";
+
+package eopp.workflow;
+
+option java_package = "com.cgi.eoss.eopp.workflow";
+option java_outer_classname = "WorkflowProto";
+option java_multiple_files = true;
+
+import "identifier/src/main/proto/identifier.proto";
+
+// Enumerator for literal data types. Derived from XML schema, with the exception of Geometry, which has
+// libeopp-specific meaning.
+enum ParameterDataType {
+    BOOLEAN = 0;
+    DATE = 1;
+    DATETIME = 2;
+    DECIMAL = 3;
+    DOUBLE = 4;
+    FLOAT = 5;
+    GEOMETRY = 6;
+    INTEGER = 7;
+    STRING = 8;
+    TIME = 9;
+    OTHER = 999;
+}
+
+// A processing workflow definition. Describes the interface to a configuration
+// of one or more processing steps, and the connections of their input and
+// output data and parameters.
+message Workflow {
+    // Unique identifier of this workflow in the application.
+    string uuid = 1;
+    // Creator-defined identifier of the workflow.
+    eopp.identifier.Identifier identifier = 2;
+    // Human-readable name.
+    string title = 3;
+    // Detailed, human-readable description of the workflow.
+    string abstract = 4;
+    // List of key words associated with this workflow.
+    repeated string keywords = 5;
+    // Parameter inputs expected by this workflow.
+    repeated Parameter parameters = 6;
+    // Data inputs expected by this workflow.
+    repeated Input inputs = 7;
+    // Data outputs created by this workflow.
+    repeated Output outputs = 8;
+    // The step configurations that make up the workflow itself.
+    repeated StepConfiguration step_configurations = 9;
+}
+
+// A configuration of a process step for a workflow, specifying the sources of
+// its parameters and inputs.
+message StepConfiguration {
+    // Link between the source of a parameter and the parameter itself,
+    // referenced by its identifier.
+    message ParameterLink {
+        // Unique identifier.
+        string identifier = 1;
+        // Hardcoded value list to assign to the parameter.
+        repeated string hardcoded_values = 2;
+        // Reference to a workflow parameter identifier.
+        string workflow_parameter = 3;
+        // If true, multiple values of this parameter should create multiple
+        // instances of the step configuration during
+        // execution.
+        bool parallel = 4;
+        // If true, and the linked parameter value is empty, the step should be
+        // removed from the execution graph.
+        bool skip_step_if_empty = 5;
+    }
+    // Link between the source of a dataset and the dataset itself, referenced
+    // by its identifier.
+    message InputLink {
+        // Unique identifier of the input that is being linked.
+        string identifier = 1;
+        // Sources of the data.
+        DataSources sources = 2;
+        // If true, multiple values of this input should create multiple
+        // instances of the step configuration during execution.
+        bool parallel = 3;
+        // A filename regex to modify parallel grouping. This should take the
+        // form of a perl-compatible regex with a single capturing group.
+        //
+        // If set, the input value filenames are matched against this pattern,
+        // and the step is run once per distinct value of the capturing group.
+        //
+        // If empty, the step is run once per value of this input, i.e.
+        // equivalent to a `group_by` of `(.*)`.
+        //
+        // *NOTE:* The exact implementation of this feature is defined by the
+        // application, and should be documented downstream. Particularly the
+        // application language's level of perl regex compatibility or other
+        // regex quirks may affect interoperability of this flag across
+        // libeopp-based platforms.
+        string group_by = 4;
+        // Filename matching patterns applied to filter the files supplied by
+        // the `sources`. Interaction with `excludes` is defined by the
+        // application.
+        repeated string includes = 5;
+        // Filename matching patterns applied to filter the files supplied by
+        // the `sources`. Interaction with `includes` is defined by the
+        // application.
+        repeated string excludes = 6;
+        // If true, and the linked input source is empty after filters are
+        // applied, the step should be removed from the execution graph.
+        bool skip_step_if_empty = 10;
+    }
+    // Identifier for the step configuration, unique within the workflow.
+    string identifier = 1;
+    // The execution mode: a regular step, or a call to another workflow.
+    oneof execute {
+        // The step to be run by this configuration.
+        Step step = 2;
+        // The nested workflow to be run by this configuration.
+        Workflow nested_workflow = 3;
+    }
+    // List of links between the step configuration's parameters and the
+    // sources of those parameters.
+    repeated ParameterLink parameter_links = 4;
+    // List of links between the step configuration's inputs and the sources of
+    // those inputs.
+    repeated InputLink input_links = 5;
+}
+
+// A processing step definition.
+message Step {
+    // Resources required to execute this step.
+    message Requests {
+        // Minimum CPU requirement for the step.
+        string cpu = 1;
+        // Minimum RAM requirement for the step.
+        string memory = 2;
+        // A temporary storage requirement for the step, e.g. if the processor
+        // produces a large volume of temporary or intermediate data.
+        string scratch_storage = 3;
+    }
+    // Unique identifier of this step in the application.
+    string uuid = 1;
+    // Creator-defined identifier of the step.
+    eopp.identifier.Identifier identifier = 2;
+    // Human-readable name.
+    string title = 3;
+    // Detailed, human-readable description of the step.
+    string abstract = 4;
+    // List of key words associated with this step.
+    repeated string keywords = 5;
+    // Parameter inputs expected by this step.
+    repeated Parameter parameters = 6;
+    // Data inputs expected by this step.
+    repeated Input inputs = 7;
+    // Data outputs created by this step.
+    repeated Output outputs = 8;
+    // The resources that this step will request from the platform.
+    Requests requests = 9;
+}
+
+// A step or workflow parameter input.
+message Parameter {
+    // Specification of constraints on a parameter value.
+    message AllowedValue {
+        enum Type {
+            VALUE = 0;
+            MIN = 1;
+            MAX = 2;
+            BEFORE = 3;
+            AFTER = 4;
+            WITHIN = 5;
+            REGEX = 6;
+            OTHER = 999;
+        }
+        // The type of constraint.
+        Type type = 1;
+        // The value of this constraint.
+        string value = 2;
+    }
+
+    // Identifier of the parameter, unique within the step or workflow.
+    string identifier = 1;
+    // Human-readable name.
+    string title = 2;
+    // Detailed, human-readable description of the parameter.
+    string abstract = 3;
+    // Minimum number of values which can be associated with this parameter.
+    int32 min_occurs = 4;
+    // Maximum number of values which can be associated with this parameter.
+    int32 max_occurs = 5;
+    // Data type of this parameter (e.g. "STRING", "INTEGER", etc.).
+    ParameterDataType data_type = 6;
+    // Unit of measurement used for this parameter (if applicable).
+    string uom = 7;
+    // Default value list for this parameter (if applicable).
+    repeated string default_values = 8;
+    // Constraints on the values that are allowed for this parameter.
+    //
+    // For example, a parameter with type INTEGER and two allowed values, MIN=1
+    // and MAX=10, should be considered invalid if a value of 0 or 11 is
+    // associated.
+    repeated AllowedValue allowed_values = 9;
+}
+
+// A step or workflow data input parameter.
+message Input {
+    // Identifier of the input, unique within the step or workflow.
+    string identifier = 1;
+    // Human-readable name.
+    string title = 2;
+    // Detailed, human-readable description of the input.
+    string abstract = 3;
+    // Minimum number of values which can be associated with this input.
+    int32 min_occurs = 4;
+    // Maximum number of values which can be associated with this input.
+    int32 max_occurs = 5;
+    // Data type of this input.
+    ParameterDataType data_type = 6;
+    // File format of the this input. May be declared as a MIME type, e.g.
+    // "application/octet-stream", "application/json", or a short identifier
+    // well-known in the context of the application, e.g. "SAFE", "GeoTIFF-BigTIFF".
+    string format = 7;
+}
+
+// A step or workflow data output.
+message Output {
+    // Identifier of the output, unique within the step or workflow.
+    string identifier = 1;
+    // Human-readable name.
+    string title = 2;
+    // Detailed, human-readable description of the output.
+    string abstract = 3;
+    // Minimum number of values which can be associated with this output.
+    int32 min_occurs = 4;
+    // Maximum number of values which can be associated with this output.
+    int32 max_occurs = 5;
+    // Data type of this output.
+    ParameterDataType data_type = 6;
+    // File format of the this output. May be declared as a MIME type, e.g.
+    // "application/octet-stream", "application/json", or a short identifier
+    // well-known in the context of the application, e.g. "SAFE",
+    // "GeoTIFF-BigTIFF".
+    string format = 7;
+    // The source of the data. Only set in a workflow context.
+    DataSources sources = 8;
+}
+
+// Collection of the sources of a dataset. May describe both workflow inputs
+// and step outputs.
+message DataSources {
+    // Attributes of a step output to be used as a data source.
+    message StepOutput {
+        // The identifier of the source step configuration
+        string step_identifier = 1;
+        // The output identifier for the data source
+        string output_identifier = 2;
+    }
+    // References to the identifiers of workflow inputs.
+    repeated string workflow_inputs = 1;
+    // References to the outputs of steps.
+    repeated StepOutput step_outputs = 2;
+}

@@ -24,10 +24,12 @@ filegroup(
 MODULES = [
     "file",
     "file-stream",
+    "identifier",
     "resolver",
     "resource",
     "rpc",
     "util",
+    "workflow",
 ]
 
 NON_SQ_TARGETS = [
