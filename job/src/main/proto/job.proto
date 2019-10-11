@@ -1,0 +1,289 @@
+syntax = "proto3";
+
+package eopp.job;
+
+option java_multiple_files = true;
+option java_package = "com.cgi.eoss.eopp.job";
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+import "identifier/src/main/proto/identifier.proto";
+import "workflow/src/main/proto/workflow.proto";
+
+// A set of strategies to define behaviour when encountering step failures in
+// the execution of a workflow.
+enum ExecutionStrategy {
+    // Keep trying to execute the workflow on a best-effort basis
+    // regardless of step failures.
+    BEST_EFFORT = 0;
+    // Terminate execution of the workflow upon any step failure.
+    TERMINATE_ON_FAILURE = 1;
+}
+
+// Configuration for a specific execution of a workflow. Contains elements that
+// may not yet be fully evaluated. Evaluates into a batch of jobs.
+message JobConfiguration {
+    // Unique identifier of this job configuration in the application.
+    string uuid = 1;
+    // A human-readable tag or identifier for the configuration.
+    string title = 2;
+    oneof workflow_id {
+        // The application-wide unique identifier of the workflow to be
+        // executed.
+        string workflow_uuid = 3;
+        // The creator-defined identifier of the workflow to be executed.
+        eopp.identifier.Identifier workflow_identifier = 4;
+    }
+    // The strategy to use when executing this job configuration
+    ExecutionStrategy execution_strategy = 5;
+    // Parameters configuring the workflow.
+    repeated JobConfigurationInput parameters = 6;
+    // Input data to be processed by the workflow.
+    repeated JobConfigurationInput inputs = 7;
+    // Output data from the workflow.
+    repeated JobConfigurationOutput outputs = 8;
+}
+
+// Data or parameter input to a Workflow.
+message JobConfigurationInput {
+    // The workflow input/parameter identifier.
+    string identifier = 1;
+    // Input values. In the case of a workflow.parameters value, will be
+    // literal values. In the case of a workflow.inputs value, will be resource
+    // identifiers to resolve into data, e.g. one or more URLs, or application-
+    // specific URI formats.
+    repeated string values = 2;
+    // True if this input's values should be used in parallel, i.e. one job per
+    // value.
+    bool parallel = 3;
+    // True if this input's values should be treated as search parameters, i.e.
+    // this is a data input to be populated dynamically by an application-level
+    // search function.
+    bool search = 4;
+}
+
+// Data output from a Workflow.
+message JobConfigurationOutput {
+    // String identifier, should match that defined for the output in the
+    // Workflow.
+    string identifier = 1;
+    // Additional application-specific activities to perform when processing
+    // this output data, e.g. notification, ingestion or indexing.
+    repeated google.protobuf.Any post_processors = 2;
+}
+
+// A batch of jobs that have been launched from the same JobConfiguration.
+message Batch {
+    // Unique identifier of this batch in the application.
+    string uuid = 1;
+    // The timestamp at which this batch was created.
+    google.protobuf.Timestamp creation_timestamp = 2;
+    oneof job_config {
+        // The UUID of the JobConfiguration from which this batch was launched.
+        string job_config_uuid = 3;
+        // The JobConfiguration from which this batch was launched.
+        JobConfiguration job_configuration = 4;
+    }
+    // The UUIDs of the jobs launched as a part of this batch.
+    repeated string job_uuid = 5;
+}
+
+// A specific execution of a workflow.
+message Job {
+    // A job's execution status.
+    enum Status {
+        // Status is not known. May be recoverable, or transition to FAILED or
+        // CANCELLED.
+        UNKNOWN = 0;
+        // Job has passed validation and is accepted, but not yet scheduled for
+        // execution.
+        ACCEPTED = 1;
+        // Job is scheduled for execution, but has not yet started.
+        QUEUED = 2;
+        // Job is currently executing.
+        RUNNING = 3;
+        // Job has successfully completed execution, and produced outputs according
+        // to the workflow contract.
+        COMPLETED = 4;
+        // One of the steps in the job failed execution, or a step or the workflow
+        // as a whole did not produce valid outputs per its contract.
+        FAILED = 5;
+        // Job was cancelled by user request.
+        CANCELLED = 6;
+    }
+
+    // Unique identifier of this job in the application.
+    string uuid = 1;
+    // The specification of the job.
+    JobSpecification job_specification = 2;
+    // The configured steps that make up this job's processing graph.
+    repeated StepInstance step = 3;
+}
+
+// The specification for a job, containing all the processed configuration,
+// such that the job could be re-executed.
+message JobSpecification {
+    // Unique identifier of this job specification in the application.
+    string uuid = 1;
+    // A human-readable tag or identifier for the specification. Optional.
+    string title = 2;
+    oneof job_workflow {
+        // The application-wide unique identifier of the workflow to be
+        // executed.
+        string workflow_uuid = 3;
+        // The creator-defined identifier of the workflow to be executed.
+        eopp.identifier.Identifier workflow_identifier = 4;
+        // The Workflow to be executed.
+        eopp.workflow.Workflow workflow = 5;
+    }
+    // The strategy to use when executing this job specification
+    ExecutionStrategy execution_strategy = 6;
+    // Parameters configuring the Workflow.
+    repeated JobSpecificationInput parameters = 7;
+    // Input data to be processed by the Workflow.
+    repeated JobSpecificationInput inputs = 8;
+    // Output data from the Workflow.
+    repeated JobSpecificationOutput outputs = 9;
+}
+
+// Data or parameter input to a workflow.
+message JobSpecificationInput {
+    // Input identifier, matching an entry in the workflow.parameters or
+    // workflow.inputs attributes.
+    string identifier = 1;
+    // Input values. In the case of a workflow.parameters value, will be
+    // literal values. In the case of a workflow.inputs value, will be resource
+    // identifiers to resolve into data, e.g. one or more URLs, or application-
+    // specific URI formats.
+    repeated string values = 2;
+}
+
+// Data output from a workflow.
+message JobSpecificationOutput {
+    // Output identifier matching an entry in the workflow.outputs attribute.
+    string identifier = 1;
+}
+
+// A specific execution configuration of a step in a job.
+message StepInstance {
+    // A step's execution status.
+    enum Status {
+        // Not yet reached in the graph.
+        PENDING = 0;
+        // Scheduled but not currently executing due to e.g. lack of resources.
+        QUEUED = 7;
+        // Currently executing.
+        RUNNING = 1;
+        // Executed successfully and produced outputs.
+        COMPLETED = 2;
+        // Executed unsuccessfully or did not fulfil its step contract.
+        FAILED = 3;
+        // Could not be executed due to insufficient inputs.
+        SKIPPED = 4;
+        // Job entered a terminal state before step was finished.
+        CANCELLED = 5;
+        // Executed successfully but produced no outputs (though still
+        // fulfilled its step contract).
+        EMPTY = 6;
+    }
+    // The type of step.
+    enum Type {
+        // An input edge of the processing graph, i.e. has no other steps
+        // required as inputs. It maps to a workflow input.
+        INPUT = 0;
+        // An output edge of the processing graph, i.e. has no other steps
+        // depending on its outputs. It maps to a workflow output.
+        OUTPUT = 1;
+        // A standard node in the processing graph.
+        PROCESS = 2;
+    }
+    // The identifier of this step instance, unique in the workflow.
+    string identifier = 1;
+    // The type of step.
+    Type type = 2;
+    // The execution mode: a regular step, or a call to another workflow.
+    oneof execute {
+        // The identifier of the Step to be executed.
+        eopp.identifier.Identifier step_identifier = 3;
+        // The identifier of the Workflow to be executed.
+        eopp.identifier.Identifier workflow_identifier = 4;
+    }
+    // The realised parameters injected into this step (only valid for PROCESS
+    // steps).
+    repeated StepParameterValue parameters = 5;
+    // The realised data inputs to be supplied into this step.
+    repeated StepDataSet inputs = 6;
+    // The data outputs produced by this step.
+    repeated StepDataSet outputs = 7;
+    // The workflow step configuration associated with this step (only valid
+    // for PROCESS steps).
+    eopp.workflow.StepConfiguration configuration = 8;
+    // The identifier of the job in which this step is configured.
+    string job_uuid = 9;
+}
+
+// Multi-valued map entry for realised step parameter values.
+message StepParameterValue {
+    // The parameter identifier in the step spec.
+    string identifier = 1;
+    // The values provided to the step for execution.
+    repeated string values = 2;
+}
+
+// A dataset associated with a step. Describes an edge in the processing graph
+// from the perspective of the node at one end.
+//
+// Each edge in the processing graph will have two corresponding StepDataSet
+// values: the outgoing connector from one step, and the incoming connector to
+// another.
+message StepDataSet {
+    // The state of a dataset associated with an input or output, i.e whether
+    // the data should be considered ready for further use.
+    enum Status {
+        // The step(s) producing this data are not yet completed and the state
+        // may still change.
+        NON_FINAL = 0;
+        // The state of this data is final and nominal.
+        FINAL = 1;
+        // The step that is producing this data has failed unexpectedly, and
+        // this dataset cannot be considered usable.
+        IN_ERROR = 2;
+    }
+    // A unique identifier for this connector.
+    string uuid = 1;
+    // The identifier of the step which this dataset is connected to.
+    string step_identifier = 2;
+    // The step input or output identifier this dataset is describing.
+    string identifier = 3;
+    // Current status of this dataset.
+    Status status = 4;
+    oneof connector {
+        // The URIs of associated data inputs (only valid for INPUT steps).
+        StepInputUriList uri_list = 5;
+        // The output file paths produced by this dataset.
+        StepOutput step_output = 6;
+        // The source data for a step input, i.e. StepDataSet instances with
+        // step_output values.
+        StepInput step_input = 7;
+    }
+}
+
+// The connector value of a StepDataSet which describes the inputs to a job
+// graph. Only valid if the step type is INPUT.
+message StepInputUriList {
+    // The URI values to be connected to the identifier.
+    repeated string uris = 1;
+}
+
+// The connector value of a StepDataSet which describes a step's output data.
+message StepOutput {
+    // The output file paths produced by the dataset.
+    repeated string file_paths = 1;
+}
+
+// The connector value of a StepDataSet which describes a step's input data.
+message StepInput {
+    // The source data for a step input.
+    repeated StepDataSet sources = 7;
+}
