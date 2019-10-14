@@ -1,5 +1,7 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+PROTOBUF_VERSION = "3.10.0"
+
 def protobuf_repositories():
     #    # Protobuf expects an //external:python_headers label which would contain the
     #    # Python headers if fast Python protos is enabled. Since we are not using fast
@@ -19,9 +21,9 @@ def protobuf_repositories():
 
     http_archive(
         name = "com_google_protobuf",
-        sha256 = "c90d9e13564c0af85fd2912545ee47b57deded6e5a97de80395b6d2d9be64854",
-        strip_prefix = "protobuf-3.9.1",
-        urls = ["https://github.com/google/protobuf/archive/v3.9.1.zip"],
+        sha256 = "33cba8b89be6c81b1461f1c438424f7a1aa4e31998dbe9ed6f8319583daac8c7",
+        strip_prefix = "protobuf-%s" % PROTOBUF_VERSION,
+        urls = ["https://github.com/google/protobuf/archive/v%s.zip" % PROTOBUF_VERSION],
     )
 
     http_archive(

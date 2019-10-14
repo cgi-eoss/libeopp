@@ -18,6 +18,8 @@ def maven_library(
         generate_sonarqube_project = True,
         visibility = ["//visibility:public"],
         deploy_java_library = True,
+        sq_srcs = None,
+        sq_targets = None,
         **kwargs):
     maven_coordinates = [maven_coordinates_tag(name, group_id, artifact_id)]
 
@@ -32,7 +34,7 @@ def maven_library(
     native.alias(
         name = "%s_srcjar" % name,
         actual = ":lib%s-src.jar" % name,
-        tags = ["manual", "maven_srcjar"] + maven_coordinates
+        tags = ["manual", "maven_srcjar"] + maven_coordinates,
     )
 
     javadoc_library(
@@ -55,10 +57,11 @@ def maven_library(
     if generate_sonarqube_project:
         sonarqube_project(
             name,
-            srcs,
+            sq_srcs if sq_srcs else srcs,
             artifact_name,
             artifact_id,
             group_id,
+            targets = sq_targets if sq_targets else [":%s" % name],
         )
 
 def sonarqube_project(
@@ -66,14 +69,15 @@ def sonarqube_project(
         srcs,
         artifact_name,
         artifact_id = None,
-        group_id = "com.cgi.eoss.eopp"):
+        group_id = "com.cgi.eoss.eopp",
+        targets = []):
     sq_project(
         name = "sq_%s" % name,
         srcs = srcs,
         project_key = "%s:%s" % (group_id, (artifact_id or name)),
         project_name = artifact_name,
         tags = ["manual"],
-        targets = [":%s" % name],
+        targets = targets,
         visibility = ["//visibility:public"],
     )
 

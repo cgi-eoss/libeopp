@@ -2,13 +2,13 @@ licenses(["notice"])
 
 # Re-exports with Maven coordinates for POM generation
 
-VERSION = "1.23.0"
+load(":grpc_repositories.bzl", "GRPC_JAVA_VERSION")
 
 java_library(
     name = "context",
     tags = [
         "manual",
-        "maven_coordinates=io.grpc:grpc-context:" + VERSION,
+        "maven_coordinates=io.grpc:grpc-context:" + GRPC_JAVA_VERSION,
     ],
     visibility = ["//visibility:public"],
     exports = ["@io_grpc_grpc_java//context"],
@@ -20,7 +20,7 @@ java_library(
     name = "core",
     tags = [
         "manual",
-        "maven_coordinates=io.grpc:grpc-core:" + VERSION,
+        "maven_coordinates=io.grpc:grpc-core:" + GRPC_JAVA_VERSION,
     ],
     visibility = ["//visibility:public"],
     exports = ["@io_grpc_grpc_java//core"],
@@ -30,7 +30,7 @@ java_library(
     name = "core_inprocess",
     tags = [
         "manual",
-        "maven_coordinates=io.grpc:grpc-core:" + VERSION,
+        "maven_coordinates=io.grpc:grpc-core:" + GRPC_JAVA_VERSION,
     ],
     visibility = ["//visibility:public"],
     exports = ["@io_grpc_grpc_java//core:inprocess"],
@@ -40,7 +40,7 @@ java_library(
     name = "core_util",
     tags = [
         "manual",
-        "maven_coordinates=io.grpc:grpc-core:" + VERSION,
+        "maven_coordinates=io.grpc:grpc-core:" + GRPC_JAVA_VERSION,
     ],
     visibility = ["//visibility:public"],
     exports = ["@io_grpc_grpc_java//core:util"],
@@ -50,7 +50,7 @@ java_library(
     name = "netty",
     tags = [
         "manual",
-        "maven_coordinates=io.grpc:grpc-netty:" + VERSION,
+        "maven_coordinates=io.grpc:grpc-netty:" + GRPC_JAVA_VERSION,
     ],
     visibility = ["//visibility:public"],
     exports = ["@io_grpc_grpc_java//netty"],
@@ -60,7 +60,7 @@ java_library(
     name = "protobuf",
     tags = [
         "manual",
-        "maven_coordinates=io.grpc:grpc-protobuf:" + VERSION,
+        "maven_coordinates=io.grpc:grpc-protobuf:" + GRPC_JAVA_VERSION,
     ],
     visibility = ["//visibility:public"],
     exports = ["@io_grpc_grpc_java//protobuf"],
@@ -70,7 +70,7 @@ java_library(
     name = "stub",
     tags = [
         "manual",
-        "maven_coordinates=io.grpc:grpc-stub:" + VERSION,
+        "maven_coordinates=io.grpc:grpc-stub:" + GRPC_JAVA_VERSION,
     ],
     visibility = ["//visibility:public"],
     exports = ["@io_grpc_grpc_java//stub"],

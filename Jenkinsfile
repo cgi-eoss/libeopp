@@ -20,7 +20,7 @@ spec:
     runAsUser: 10000
   containers:
   - name: libeopp-build
-    image: cgici/eopp-build-container:1.9.0
+    image: cgici/eopp-build-container:1.13.0
     imagePullPolicy: IfNotPresent
     command:
     - cat

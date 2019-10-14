@@ -7,7 +7,11 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/resource/WritableEoppResource.java",
     ],
     artifact_name = "libeopp :: resource",
-    generate_sonarqube_project = False,
+    sq_srcs = glob(["src/main/java/**"]),
+    sq_targets = [
+        ":resource",
+        ":path-resource",
+    ],
     deps = [
         "//file",
         "@org_springframework_spring_core",
@@ -15,7 +19,7 @@ maven_library(
 )
 
 maven_library(
-    name = "path_resource",
+    name = "path-resource",
     srcs = ["src/main/java/com/cgi/eoss/eopp/resource/EoppPathResource.java"],
     artifact_name = "libeopp :: resource :: path",
     generate_sonarqube_project = False,
@@ -26,18 +30,12 @@ maven_library(
     ],
 )
 
-sonarqube_project(
-    name = "resource",
-    srcs = glob(["src/main/**"]),
-    artifact_name = "libeopp :: resource",
-)
-
 java_library(
     name = "resource_java_tests",
     testonly = True,
     srcs = glob(["src/test/java/**/*.java"]),
     deps = [
-        ":path_resource",
+        ":path-resource",
         ":resource",
         "//file",
         "@com_google_guava_guava",
