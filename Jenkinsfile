@@ -37,7 +37,7 @@ spec:
     stage('Build') {
       steps {
         container('libeopp-build') {
-          gerritReview message: "Starting build: ${BUILD_URL}"
+          gerritReview message: "Starting build: ${env.BUILD_URL}"
           sh "bazel build //..."
         }
       }
@@ -76,7 +76,7 @@ spec:
     stage('SQ Analysis') {
       environment {
         BRANCH_ARGS = "${CHANGE_ID ? "-Dsonar.branch.name=${BRANCH_NAME} -Dsonar.branch.target=${baseBranch}" : "-Dsonar.branch.name=${BRANCH_NAME}"}"
-        VERSION_ARGS = "${TAG_NAME ? "-Dsonar.projectVersion=${TAG_NAME}" : ""}"
+        VERSION_ARGS = "${TAG_NAME ? "-Dsonar.projectVersion=${TAG_NAME}" : "-Dsonar.projectVersion=${baseBranch}"}"
         ABORT_ON_QUALITY_GATE = "${CHANGE_ID ? "true" : "false"}"
       }
       steps {
@@ -92,9 +92,9 @@ spec:
   }
 
   post {
-    success { gerritReview labels: [Verified: 1], message: "Build successful: ${BUILD_URL}" }
-    unstable { gerritReview labels: [Verified: -1], message: "Build is unstable: ${BUILD_URL}" }
-    failure { gerritReview labels: [Verified: -1], message: "Build failure: ${BUILD_URL}" }
-    aborted { gerritReview labels: [Verified: -1], message: "Build was aborted or timed out: ${BUILD_URL}" }
+    success { gerritReview labels: [Verified: 1], message: "Build successful: ${env.BUILD_URL}" }
+    unstable { gerritReview labels: [Verified: -1], message: "Build is unstable: ${env.BUILD_URL}" }
+    failure { gerritReview labels: [Verified: -1], message: "Build failure: ${env.BUILD_URL}" }
+    aborted { gerritReview labels: [Verified: -1], message: "Build was aborted or timed out: ${env.BUILD_URL}" }
   }
 }
