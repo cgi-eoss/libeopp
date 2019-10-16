@@ -90,27 +90,21 @@ java_repositories(
     },
 )
 
+rules_kotlin_version = "legacy-1.3.0-rc3"
+
+rules_kotlin_sha = "54678552125753d9fc0a37736d140f1d2e69778d3e52cf454df41a913b964ede"
+
 http_archive(
     name = "io_bazel_rules_kotlin",
-    sha256 = "901db101944f0b10c655046e364adfa6eee86aec998651be6df50c77f5517ea1",
-    strip_prefix = "rules_kotlin-2d822a3aef80f4934fe95d6ceadc6fa7cffff5eb",
-    urls = ["https://github.com/cgruber/rules_kotlin/archive/2d822a3aef80f4934fe95d6ceadc6fa7cffff5eb.zip"],
+    sha256 = rules_kotlin_sha,
+    strip_prefix = "rules_kotlin-%s" % rules_kotlin_version,
+    type = "zip",
+    urls = ["https://github.com/bazelbuild/rules_kotlin/archive/%s.zip" % rules_kotlin_version],
 )
 
-load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kotlin_repositories", "kt_register_toolchains")
+load("//third_party/kotlin:kotlin_repositories.bzl", "kotlin_repositories", "kt_register_toolchains")
 
-KOTLIN_VERSION = "1.3.50"
-
-KOTLINC_RELEASE_SHA = "69424091a6b7f52d93eed8bba2ace921b02b113dbb71388d704f8180a6bdc6ec"
-
-KOTLINC_RELEASE = {
-    "urls": [
-        "https://github.com/JetBrains/kotlin/releases/download/v{v}/kotlin-compiler-{v}.zip".format(v = KOTLIN_VERSION),
-    ],
-    "sha256": KOTLINC_RELEASE_SHA,
-}
-
-kotlin_repositories(compiler_release = KOTLINC_RELEASE)
+kotlin_repositories()
 
 kt_register_toolchains()
 

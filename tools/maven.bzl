@@ -1,5 +1,6 @@
 load("@google_bazel_common//tools/javadoc:javadoc.bzl", "javadoc_library")
 load("@google_bazel_common//tools/maven:pom_file.bzl", default_pom_file = "pom_file")
+load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kt_jvm_library")
 load("@bazel_sonarqube//:defs.bzl", "sq_project")
 
 POM_VERSION = "${project.version}"
@@ -18,26 +19,43 @@ def maven_library(
         generate_sonarqube_project = True,
         visibility = ["//visibility:public"],
         deploy_java_library = True,
+        build_kt_jvm_library = False,
+        build_javadoc_library = True,
         sq_srcs = None,
         sq_targets = None,
         **kwargs):
     maven_coordinates = [maven_coordinates_tag(name, group_id, artifact_id)]
 
-    native.java_library(
-        name = name,
-        srcs = srcs,
-        tags = (["maven_artifact"] if deploy_java_library else []) + maven_coordinates,
-        visibility = visibility,
-        **kwargs
-    )
+    if build_kt_jvm_library:
+        kt_jvm_library(
+            name = name,
+            srcs = srcs,
+            tags = (["maven_artifact"] if deploy_java_library else []) + maven_coordinates,
+            visibility = visibility,
+            **kwargs
+        )
 
-    native.alias(
-        name = "%s_srcjar" % name,
-        actual = ":lib%s-src.jar" % name,
-        tags = ["manual", "maven_srcjar"] + maven_coordinates,
-    )
+        native.java_library(
+            name = "%s_srcjar" % name,
+            resources = srcs,
+            tags = ["manual", "maven_srcjar"] + maven_coordinates,
+        )
+    else:
+        native.java_library(
+            name = name,
+            srcs = srcs,
+            tags = (["maven_artifact"] if deploy_java_library else []) + maven_coordinates,
+            visibility = visibility,
+            **kwargs
+        )
 
-    if srcs:
+        native.alias(
+            name = "%s_srcjar" % name,
+            actual = ":lib%s-src.jar" % name,
+            tags = ["manual", "maven_srcjar"] + maven_coordinates,
+        )
+
+    if build_javadoc_library and srcs:
         javadoc_library(
             name = "lib%s-javadoc" % name,
             srcs = srcs,

@@ -26,6 +26,7 @@ MODULES = [
     "file-stream",
     "identifier",
     "job",
+    "job-graph",
     "resolver",
     "resource",
     "rpc",

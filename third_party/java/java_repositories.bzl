@@ -10,6 +10,8 @@ def _replace_dependencies(dependencies, replacements):
     return new_dependencies.to_list()
 
 def java_repositories(
+        omit_ch_qos_logback_logback_classic = False,
+        omit_ch_qos_logback_logback_core = False,
         omit_com_google_android_annotations = False,
         omit_com_google_api_grpc_proto_google_common_protos = False,
         omit_com_google_auto_value_auto_value_annotations = False,
@@ -64,6 +66,7 @@ def java_repositories(
         omit_org_hamcrest_hamcrest = False,
         omit_org_hamcrest_hamcrest_core = False,
         omit_org_jetbrains_annotations = False,
+        omit_org_jetbrains_kotlin_kotlin_reflect = False,
         omit_org_jetbrains_kotlin_kotlin_stdlib = False,
         omit_org_jetbrains_kotlin_kotlin_stdlib_common = False,
         omit_org_mockito_mockito_core = False,
@@ -76,6 +79,10 @@ def java_repositories(
         omit_org_springframework_spring_jcl = False,
         fetch_sources = False,
         replacements = {}):
+    if not omit_ch_qos_logback_logback_classic:
+        ch_qos_logback_logback_classic(fetch_sources, replacements)
+    if not omit_ch_qos_logback_logback_core:
+        ch_qos_logback_logback_core(fetch_sources, replacements)
     if not omit_com_google_android_annotations:
         com_google_android_annotations(fetch_sources, replacements)
     if not omit_com_google_api_grpc_proto_google_common_protos:
@@ -184,6 +191,8 @@ def java_repositories(
         org_hamcrest_hamcrest_core(fetch_sources, replacements)
     if not omit_org_jetbrains_annotations:
         org_jetbrains_annotations(fetch_sources, replacements)
+    if not omit_org_jetbrains_kotlin_kotlin_reflect:
+        org_jetbrains_kotlin_kotlin_reflect(fetch_sources, replacements)
     if not omit_org_jetbrains_kotlin_kotlin_stdlib:
         org_jetbrains_kotlin_kotlin_stdlib(fetch_sources, replacements)
     if not omit_org_jetbrains_kotlin_kotlin_stdlib_common:
@@ -204,6 +213,44 @@ def java_repositories(
         org_springframework_spring_core(fetch_sources, replacements)
     if not omit_org_springframework_spring_jcl:
         org_springframework_spring_jcl(fetch_sources, replacements)
+
+def ch_qos_logback_logback_classic(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "ch_qos_logback_logback_classic",
+        artifact = "ch.qos.logback:logback-classic:1.2.3",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "fb53f8539e7fcb8f093a56e138112056ec1dc809ebb020b59d8a36a5ebac37e0",
+        licenses = ["restricted"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "480cb5e99519271c9256716d4be1a27054047435ff72078d9deae5c6a19f63eb",
+        exports = _replace_dependencies([
+            "@org_slf4j_slf4j_api",
+            "@ch_qos_logback_logback_core",
+        ], replacements),
+        tags = [
+            "maven_coordinates=ch.qos.logback:logback-classic:1.2.3",
+        ],
+    )
+
+def ch_qos_logback_logback_core(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "ch_qos_logback_logback_core",
+        artifact = "ch.qos.logback:logback-core:1.2.3",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "5946d837fe6f960c02a53eda7a6926ecc3c758bbdd69aa453ee429f858217f22",
+        licenses = ["restricted"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "1f69b6b638ec551d26b10feeade5a2b77abe347f9759da95022f0da9a63a9971",
+        exports = _replace_dependencies([
+        ], replacements),
+        tags = [
+            "maven_coordinates=ch.qos.logback:logback-core:1.2.3",
+        ],
+    )
 
 def com_google_android_annotations(fetch_sources, replacements):
     jvm_maven_import_external(
@@ -1276,6 +1323,25 @@ def org_jetbrains_annotations(fetch_sources, replacements):
         ], replacements),
         tags = [
             "maven_coordinates=org.jetbrains:annotations:13.0",
+        ],
+    )
+
+def org_jetbrains_kotlin_kotlin_reflect(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "org_jetbrains_kotlin_kotlin_reflect",
+        artifact = "org.jetbrains.kotlin:kotlin-reflect:1.3.61",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "143e715c10ff6d65eb5a7695be7b696c6e013702dff103d23ba54760bf93867b",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "59280624892885b5029b2c0d64003612c60df39891d55ef624562fae07ff5b5e",
+        exports = _replace_dependencies([
+            "@org_jetbrains_kotlin_kotlin_stdlib",
+        ], replacements),
+        tags = [
+            "maven_coordinates=org.jetbrains.kotlin:kotlin-reflect:1.3.61",
         ],
     )
 

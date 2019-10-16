@@ -24,6 +24,7 @@ extra.set("google-common-protos.version", "1.17.0")
 extra.set("grpc-java.version", "1.25.0")
 extra.set("guava.version", "28.1-jre")
 extra.set("j2objc-annotations.version", "1.3")
+extra.set("kotlin.version", "1.3.61")
 extra.set("okhttp.version", "4.2.2")
 extra.set("protobuf-java.version", "3.11.1")
 extra.set("spring-boot.version", "2.2.2.RELEASE")
@@ -36,6 +37,7 @@ dependencyManagement {
         mavenBom("org.springframework.boot:spring-boot-dependencies:${extra.get("spring-boot.version")}")
         mavenBom("com.google.protobuf:protobuf-bom:${extra.get("protobuf-java.version")}")
         mavenBom("io.grpc:grpc-bom:${extra.get("grpc-java.version")}")
+        mavenBom("org.jetbrains.kotlin:kotlin-bom:${extra.get("kotlin.version")}")
     }
     dependencies {
         dependency("com.google.api.grpc:proto-google-common-protos:${extra.get("google-common-protos.version")}")
@@ -51,6 +53,7 @@ dependencyManagement {
 }
 
 dependencies {
+    generate("ch.qos.logback:logback-classic")
     generate("com.google.api.grpc:proto-google-common-protos")
     generate("com.google.guava:guava")
     generate("com.google.protobuf:protobuf-java")
@@ -70,6 +73,8 @@ dependencies {
     generate("io.projectreactor:reactor-core")
     generate("javax.annotation:javax.annotation-api")
     generate("junit:junit")
+    generate("org.jetbrains.kotlin:kotlin-reflect")
+    generate("org.jetbrains.kotlin:kotlin-stdlib")
     generate("org.mockito:mockito-core")
     generate("org.slf4j:slf4j-api")
     generate("org.springframework.cloud:spring-cloud-commons")
