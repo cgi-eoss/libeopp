@@ -14,6 +14,7 @@ proto_library(
     visibility = ["//visibility:public"],
     deps = [
         "@com_google_protobuf//:any_proto",
+        "@com_google_protobuf//:timestamp_proto",
     ],
 )
 
@@ -23,19 +24,20 @@ java_proto_library(
     deps = [":file_proto"],
 )
 
-load("//tools:maven.bzl", "maven_library", "maven_coordinates_tag")
+load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
 
 maven_library(
     name = "file",
     srcs = [":file_java_srcs"],
     artifact_name = "libeopp :: file",
+    deploy_java_library = False,
     exports = [":file_java_proto"],
     deps = [
         ":file_java_proto",
         "//third_party/protobuf:protobuf_java",
+        "//util:timestamps",
         "@com_google_guava_guava",
     ],
-    deploy_java_library = False,
 )
 
 load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
@@ -52,7 +54,7 @@ jarjar_library(
     ],
     tags = [
         "maven_artifact",
-        maven_coordinates_tag("file")
+        maven_coordinates_tag("file"),
     ],
     visibility = ["//:__pkg__"],
 )
@@ -64,10 +66,10 @@ java_library(
     data = glob(["src/test/resources/**"]),
     deps = [
         ":file",
+        "//util:timestamps",
         "@com_google_guava_guava",
         "@com_google_protobuf//:any_proto",
         "@com_google_protobuf//:protobuf_java",
-        "@com_google_truth_extensions_truth_liteproto_extension",
         "@com_google_truth_extensions_truth_proto_extension",
         "@com_google_truth_truth",
         "@junit_junit",

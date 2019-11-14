@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package eopp.test.filestream;
+
+option java_package = "com.cgi.eoss.eopp.filestream";
+option java_outer_classname = "FileStreamTestServerProto";
+option java_multiple_files = true;
+
+import "file/src/main/proto/file.proto";
+
+service FileStreamTestServer {
+    rpc GetFile (GetFileParam) returns (stream eopp.file.FileChunk);
+}
+
+message GetFileParam {
+    string uri = 1;
+}

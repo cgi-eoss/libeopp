@@ -49,6 +49,7 @@ def java_repositories(
         omit_io_opencensus_opencensus_api = False,
         omit_io_opencensus_opencensus_contrib_grpc_metrics = False,
         omit_io_perfmark_perfmark_api = False,
+        omit_io_projectreactor_reactor_core = False,
         omit_javax_annotation_javax_annotation_api = False,
         omit_junit_junit = False,
         omit_net_bytebuddy_byte_buddy = False,
@@ -59,6 +60,7 @@ def java_repositories(
         omit_org_hamcrest_hamcrest_core = False,
         omit_org_mockito_mockito_core = False,
         omit_org_objenesis_objenesis = False,
+        omit_org_reactivestreams_reactive_streams = False,
         omit_org_slf4j_slf4j_api = False,
         omit_org_springframework_cloud_spring_cloud_commons = False,
         omit_org_springframework_security_spring_security_crypto = False,
@@ -144,6 +146,8 @@ def java_repositories(
         io_opencensus_opencensus_contrib_grpc_metrics(fetch_sources, replacements)
     if not omit_io_perfmark_perfmark_api:
         io_perfmark_perfmark_api(fetch_sources, replacements)
+    if not omit_io_projectreactor_reactor_core:
+        io_projectreactor_reactor_core(fetch_sources, replacements)
     if not omit_javax_annotation_javax_annotation_api:
         javax_annotation_javax_annotation_api(fetch_sources, replacements)
     if not omit_junit_junit:
@@ -164,6 +168,8 @@ def java_repositories(
         org_mockito_mockito_core(fetch_sources, replacements)
     if not omit_org_objenesis_objenesis:
         org_objenesis_objenesis(fetch_sources, replacements)
+    if not omit_org_reactivestreams_reactive_streams:
+        org_reactivestreams_reactive_streams(fetch_sources, replacements)
     if not omit_org_slf4j_slf4j_api:
         org_slf4j_slf4j_api(fetch_sources, replacements)
     if not omit_org_springframework_cloud_spring_cloud_commons:
@@ -970,6 +976,25 @@ def io_perfmark_perfmark_api(fetch_sources, replacements):
         ],
     )
 
+def io_projectreactor_reactor_core(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "io_projectreactor_reactor_core",
+        artifact = "io.projectreactor:reactor-core:3.2.12.RELEASE",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "ebe51c191cf96dab36e175b810daf3e4348e3fb99b63ea56d8b5b92c131c5fc9",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "148acf973d80a1769b750086d189ef125eb54c87394e30a7fb4e79fb253783cf",
+        exports = _replace_dependencies([
+            "@org_reactivestreams_reactive_streams",
+        ], replacements),
+        tags = [
+            "maven_coordinates=io.projectreactor:reactor-core:3.2.12.RELEASE",
+        ],
+    )
+
 def javax_annotation_javax_annotation_api(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "javax_annotation_javax_annotation_api",
@@ -1151,6 +1176,24 @@ def org_objenesis_objenesis(fetch_sources, replacements):
         ], replacements),
         tags = [
             "maven_coordinates=org.objenesis:objenesis:2.6",
+        ],
+    )
+
+def org_reactivestreams_reactive_streams(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "org_reactivestreams_reactive_streams",
+        artifact = "org.reactivestreams:reactive-streams:1.0.3",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "1dee0481072d19c929b623e155e14d2f6085dc011529a0a0dbefc84cf571d865",
+        licenses = ["unencumbered"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "d5b4070a22c9b1ca5b9b5aa668466bcca391dbe5d5fe8311c300765c1621feba",
+        exports = _replace_dependencies([
+        ], replacements),
+        tags = [
+            "maven_coordinates=org.reactivestreams:reactive-streams:1.0.3",
         ],
     )
 

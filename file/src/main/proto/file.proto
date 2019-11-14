@@ -1,28 +1,50 @@
 syntax = "proto3";
 
-package com.cgi.eoss.eopp;
+package eopp.file;
 
-option java_package = "com.cgi.eoss.eopp.file";
-option java_outer_classname = "FileProto";
 option java_multiple_files = true;
+option java_package = "com.cgi.eoss.eopp.file";
 
 import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
 
+// Key attributes associated with a file-like object.
 message FileMeta {
+    // A relative path describing the location of the file. May include
+    // subdirectories if the referenced file is part of a directory structure.
     string filename = 1;
+    // File size in bytes.
     int64 size = 2;
+    // File data checksum, including a hashing algorithm prefix, e.g.
+    // "murmur3_128:82e72d37fbdc9b9109778d40f07aa303" or
+    // "sha256:5881707e54b0112f901bc83a1ffbacac8fab74ea46a6f706a3efc5f7d4c1c625".
     string checksum = 3;
+    // Whether the file should be treated as executable. Not necessarily mapped
+    // to real filesystem attributes, depending on how the file-like object is
+    // being used.
     bool executable = 4;
+    // Any arbitrary extension properties. May be used to add application-
+    // specific data to interfaces dealing with files.
     map<string, google.protobuf.Any> properties = 5;
+    // The last modified date and time of the file data referenced by this
+    // metadata.
+    google.protobuf.Timestamp last_modified = 6;
 }
 
+// A specific chunk of binary data from a file-like object.
 message FileChunk {
+    // The offset or start position of this chunk in a stream.
     int64 position = 1;
+    // The raw data of this chunk.
     bytes data = 2;
 }
 
+// A reference to a file-like object.
 message FileReference {
-    string identifier = 1;
+    // Unique identifier of this file reference in the application.
+    string uuid = 1;
+    // Uniform Resource Identifier describing the file referenced.
     string uri = 2;
+    // Associated attributes of the file being referenced.
     FileMeta metadata = 3;
 }

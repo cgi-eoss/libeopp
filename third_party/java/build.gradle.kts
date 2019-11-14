@@ -60,6 +60,7 @@ dependencies {
     generate("io.grpc:grpc-protobuf-lite")
     generate("io.grpc:grpc-services")
     generate("io.grpc:grpc-stub")
+    generate("io.projectreactor:reactor-core")
     generate("javax.annotation:javax.annotation-api")
     generate("junit:junit")
     generate("org.mockito:mockito-core")

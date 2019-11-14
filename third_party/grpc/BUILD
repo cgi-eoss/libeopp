@@ -75,3 +75,14 @@ java_library(
     visibility = ["//visibility:public"],
     exports = ["@io_grpc_grpc_java//stub"],
 )
+
+java_library(
+    name = "testing",
+    testonly = True,
+    tags = [
+        "manual",
+        "maven_coordinates=io.grpc:grpc-testing:" + GRPC_JAVA_VERSION,
+    ],
+    visibility = ["//visibility:public"],
+    exports = ["@io_grpc_grpc_java//testing"],
+)

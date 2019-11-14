@@ -17,8 +17,11 @@ maven_library(
     deps = [
         "//third_party/grpc:core",
         "//third_party/grpc:core_inprocess",
+        "//third_party/grpc:stub",
+        "//third_party/protobuf:protobuf_java",
         "//util",
         "@com_google_code_findbugs_jsr305",
+        "@com_google_guava_guava",
         "@org_slf4j_slf4j_api",
         "@org_springframework_cloud_spring_cloud_commons",
         "@org_springframework_spring_core",

@@ -23,6 +23,7 @@ filegroup(
 
 MODULES = [
     "file",
+    "file-stream",
     "resolver",
     "resource",
     "rpc",
@@ -32,6 +33,7 @@ MODULES = [
 NON_SQ_TARGETS = [
     "//resolver:path-resolver",
     "//resource:path-resource",
+    "//util:timestamps",
 ]
 
 load("//tools:maven.bzl", "POM_VERSION", "pom_file")

@@ -1,5 +1,6 @@
 package com.cgi.eoss.eopp.file;
 
+import com.cgi.eoss.eopp.util.Timestamps;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.hash.Hashing;
 import com.google.protobuf.Any;
@@ -9,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,6 +31,7 @@ public class FileMetasTest {
                 .setSize(19L)
                 .setChecksum("murmur3_128:82e72d37fbdc9b9109778d40f07aa303")
                 .setExecutable(false)
+                .setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(testfile).toInstant()))
                 .build());
     }
 
@@ -42,6 +45,7 @@ public class FileMetasTest {
                 .setChecksum("murmur3_128:82e72d37fbdc9b9109778d40f07aa303")
                 .setExecutable(false)
                 .putProperties("foo", Any.pack(StringValue.of("bar")))
+                .setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(testfile).toInstant()))
                 .build());
     }
 
@@ -55,6 +59,7 @@ public class FileMetasTest {
                 .setChecksum("murmur3_128:82e72d37fbdc9b9109778d40f07aa303")
                 .setExecutable(true)
                 .putProperties("foo", Any.pack(StringValue.of("bar")))
+                .setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(testfile).toInstant()))
                 .build());
     }
 
@@ -67,6 +72,7 @@ public class FileMetasTest {
                 .setSize(19L)
                 .setChecksum("sha256:5881707e54b0112f901bc83a1ffbacac8fab74ea46a6f706a3efc5f7d4c1c625")
                 .setExecutable(false)
+                .setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(testfile).toInstant()))
                 .build());
     }
 
@@ -94,6 +100,7 @@ public class FileMetasTest {
                 .setSize(19L)
                 .setChecksum("murmur3_128:82e72d37fbdc9b9109778d40f07aa303")
                 .setExecutable(false)
+                .setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(testfile).toInstant()))
                 .build();
         assertThat(base64).isEqualTo(FileMetas.toBase64(expected));
         assertThat(FileMetas.fromBase64(base64)).isEqualTo(expected);

@@ -1,9 +1,12 @@
 package com.cgi.eoss.eopp.file;
 
+import com.cgi.eoss.eopp.util.Timestamps;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
+import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
 import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -94,9 +97,10 @@ public final class FileMetas {
             return FileMeta.newBuilder()
                     .setFilename(file.getFileName().toString())
                     .setSize(Files.size(file))
-                    .setChecksum(HASH_FUNCTIONS.get(checksumFunction) + ":" + MoreFiles.asByteSource(file).hash(checksumFunction).toString())
+                    .setChecksum(checksum(MoreFiles.asByteSource(file), checksumFunction))
                     .setExecutable(executable)
                     .putAllProperties(properties)
+                    .setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(file).toInstant()))
                     .build();
         } catch (IOException e) {
             throw new EoppFileException(e);
@@ -123,6 +127,32 @@ public final class FileMetas {
      */
     public static String toBase64(FileMeta fileMeta) {
         return Base64.getEncoder().encodeToString(fileMeta.toByteArray());
+    }
+
+    /**
+     * @param byteSource The data to hash.
+     * @return A checksum string of the given ByteSource, including the hashing algorithm as a prefix.
+     */
+    public static String checksum(ByteSource byteSource) throws IOException {
+        return checksum(byteSource, DEFAULT_HASH_FUNCTION);
+    }
+
+    /**
+     * @param byteSource       The data to hash.
+     * @param checksumFunction The HashFunction with which to calculate the data checksum.
+     * @return A checksum string of the given ByteSource, including the hashing algorithm as a prefix.
+     */
+    public static String checksum(ByteSource byteSource, HashFunction checksumFunction) throws IOException {
+        return checksum(byteSource.hash(checksumFunction), checksumFunction);
+    }
+
+    /**
+     * @param hashCode         A calculated hash of data.
+     * @param checksumFunction The HashFunction with which the data checksum was calculated.
+     * @return A checksum string of the given hash code, including the hashing algorithm as a prefix.
+     */
+    public static String checksum(HashCode hashCode, HashFunction checksumFunction) {
+        return HASH_FUNCTIONS.get(checksumFunction) + ":" + hashCode.toString();
     }
 
 }
