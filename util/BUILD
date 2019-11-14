@@ -1,4 +1,4 @@
-load("//tools:maven.bzl", "maven_library")
+load("//tools:maven.bzl", "maven_library", "sonarqube_project")
 
 maven_library(
     name = "util",
@@ -8,6 +8,7 @@ maven_library(
     sq_targets = [
         ":util",
         ":timestamps",
+        ":eopp-headers",
     ],
 )
 
@@ -17,6 +18,13 @@ maven_library(
     artifact_name = "libeopp :: util :: timestamps",
     generate_sonarqube_project = False,
     deps = ["//third_party/protobuf:timestamp_java_proto"],
+)
+
+maven_library(
+    name = "eopp-headers",
+    srcs = ["src/main/java/com/cgi/eoss/eopp/util/EoppHeaders.java"],
+    artifact_name = "libeopp :: util :: eopp-headers",
+    generate_sonarqube_project = False,
 )
 
 java_library(

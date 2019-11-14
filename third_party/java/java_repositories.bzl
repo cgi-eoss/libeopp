@@ -28,6 +28,10 @@ def java_repositories(
         omit_com_google_truth_extensions_truth_proto_extension = False,
         omit_com_google_truth_truth = False,
         omit_com_googlecode_java_diff_utils_diffutils = False,
+        omit_com_squareup_okhttp3_logging_interceptor = False,
+        omit_com_squareup_okhttp3_mockwebserver = False,
+        omit_com_squareup_okhttp3_okhttp = False,
+        omit_com_squareup_okio_okio = False,
         omit_io_grpc_grpc_api = False,
         omit_io_grpc_grpc_context = False,
         omit_io_grpc_grpc_core = False,
@@ -58,6 +62,9 @@ def java_repositories(
         omit_org_checkerframework_checker_qual = False,
         omit_org_codehaus_mojo_animal_sniffer_annotations = False,
         omit_org_hamcrest_hamcrest_core = False,
+        omit_org_jetbrains_annotations = False,
+        omit_org_jetbrains_kotlin_kotlin_stdlib = False,
+        omit_org_jetbrains_kotlin_kotlin_stdlib_common = False,
         omit_org_mockito_mockito_core = False,
         omit_org_objenesis_objenesis = False,
         omit_org_reactivestreams_reactive_streams = False,
@@ -104,6 +111,14 @@ def java_repositories(
         com_google_truth_truth(fetch_sources, replacements)
     if not omit_com_googlecode_java_diff_utils_diffutils:
         com_googlecode_java_diff_utils_diffutils(fetch_sources, replacements)
+    if not omit_com_squareup_okhttp3_logging_interceptor:
+        com_squareup_okhttp3_logging_interceptor(fetch_sources, replacements)
+    if not omit_com_squareup_okhttp3_mockwebserver:
+        com_squareup_okhttp3_mockwebserver(fetch_sources, replacements)
+    if not omit_com_squareup_okhttp3_okhttp:
+        com_squareup_okhttp3_okhttp(fetch_sources, replacements)
+    if not omit_com_squareup_okio_okio:
+        com_squareup_okio_okio(fetch_sources, replacements)
     if not omit_io_grpc_grpc_api:
         io_grpc_grpc_api(fetch_sources, replacements)
     if not omit_io_grpc_grpc_context:
@@ -164,6 +179,12 @@ def java_repositories(
         org_codehaus_mojo_animal_sniffer_annotations(fetch_sources, replacements)
     if not omit_org_hamcrest_hamcrest_core:
         org_hamcrest_hamcrest_core(fetch_sources, replacements)
+    if not omit_org_jetbrains_annotations:
+        org_jetbrains_annotations(fetch_sources, replacements)
+    if not omit_org_jetbrains_kotlin_kotlin_stdlib:
+        org_jetbrains_kotlin_kotlin_stdlib(fetch_sources, replacements)
+    if not omit_org_jetbrains_kotlin_kotlin_stdlib_common:
+        org_jetbrains_kotlin_kotlin_stdlib_common(fetch_sources, replacements)
     if not omit_org_mockito_mockito_core:
         org_mockito_mockito_core(fetch_sources, replacements)
     if not omit_org_objenesis_objenesis:
@@ -532,6 +553,84 @@ def com_googlecode_java_diff_utils_diffutils(fetch_sources, replacements):
         ], replacements),
         tags = [
             "maven_coordinates=com.googlecode.java-diff-utils:diffutils:1.3.0",
+        ],
+    )
+
+def com_squareup_okhttp3_logging_interceptor(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "com_squareup_okhttp3_logging_interceptor",
+        artifact = "com.squareup.okhttp3:logging-interceptor:4.2.2",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "d87e656976b00097c6ffb93930b149409a00b2dcbebcb4b730f0af57e23e5035",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "c51b4d71243a0f9aeb9ad28e7208456bce1295e268361a9f119f44e57c16d595",
+        exports = _replace_dependencies([
+            "@com_squareup_okhttp3_okhttp",
+        ], replacements),
+        tags = [
+            "maven_coordinates=com.squareup.okhttp3:logging-interceptor:4.2.2",
+        ],
+    )
+
+def com_squareup_okhttp3_mockwebserver(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "com_squareup_okhttp3_mockwebserver",
+        artifact = "com.squareup.okhttp3:mockwebserver:4.2.2",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "7ca50cb2b5a78d3fcff16249d063041f77c3e578a4aaa398ee3abfad3ecdef23",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "41780981887f61deb4c7c0000a4e22a073e8bddbc0ff32476a02d422681a66c8",
+        exports = _replace_dependencies([
+            "@com_squareup_okhttp3_okhttp",
+            "@junit_junit",
+        ], replacements),
+        tags = [
+            "maven_coordinates=com.squareup.okhttp3:mockwebserver:4.2.2",
+        ],
+    )
+
+def com_squareup_okhttp3_okhttp(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "com_squareup_okhttp3_okhttp",
+        artifact = "com.squareup.okhttp3:okhttp:4.2.2",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "5064182cff40b100ce57fbf3ce985e12e38cf4433724e81b175c1843eaecbb75",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "7c93b7255e61963df942722515af2b06c8e9de259c68098fd166ece3d0c1c081",
+        exports = _replace_dependencies([
+            "@com_squareup_okio_okio",
+            "@org_jetbrains_kotlin_kotlin_stdlib",
+        ], replacements),
+        tags = [
+            "maven_coordinates=com.squareup.okhttp3:okhttp:4.2.2",
+        ],
+    )
+
+def com_squareup_okio_okio(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "com_squareup_okio_okio",
+        artifact = "com.squareup.okio:okio:2.2.2",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "e58c97406a6bb1138893750299ac63c6aa04b38b6b49eae1bfcad1a63ef9ba1b",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "ecf3a2b274a5c5d6f808b80c39feb6d52011c3885200070471232de64bfbcf2c",
+        exports = _replace_dependencies([
+            "@org_jetbrains_kotlin_kotlin_stdlib",
+        ], replacements),
+        tags = [
+            "maven_coordinates=com.squareup.okio:okio:2.2.2",
         ],
     )
 
@@ -1137,6 +1236,62 @@ def org_hamcrest_hamcrest_core(fetch_sources, replacements):
         ], replacements),
         tags = [
             "maven_coordinates=org.hamcrest:hamcrest-core:1.3",
+        ],
+    )
+
+def org_jetbrains_annotations(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "org_jetbrains_annotations",
+        artifact = "org.jetbrains:annotations:13.0",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "ace2a10dc8e2d5fd34925ecac03e4988b2c0f851650c94b8cef49ba1bd111478",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "42a5e144b8e81d50d6913d1007b695e62e614705268d8cf9f13dbdc478c2c68e",
+        exports = _replace_dependencies([
+        ], replacements),
+        tags = [
+            "maven_coordinates=org.jetbrains:annotations:13.0",
+        ],
+    )
+
+def org_jetbrains_kotlin_kotlin_stdlib(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "org_jetbrains_kotlin_kotlin_stdlib",
+        artifact = "org.jetbrains.kotlin:kotlin-stdlib:1.2.71",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "4c895c270b87f5fec2a2796e1d89c15407ee821de961527c28588bb46afbc68b",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "ceec17e12221482e55037be68e142f5f628f98755a275edc08a647646a62676a",
+        exports = _replace_dependencies([
+            "@org_jetbrains_kotlin_kotlin_stdlib_common",
+            "@org_jetbrains_annotations",
+        ], replacements),
+        tags = [
+            "maven_coordinates=org.jetbrains.kotlin:kotlin-stdlib:1.2.71",
+        ],
+    )
+
+def org_jetbrains_kotlin_kotlin_stdlib_common(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "org_jetbrains_kotlin_kotlin_stdlib_common",
+        artifact = "org.jetbrains.kotlin:kotlin-stdlib-common:1.2.71",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "63999687ff2fce8a592dd180ffbbf8f1d21c26b4044c55cdc74ff3cf3b3cf328",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "e947bbdd1f6d3afd69ce01598327a9923b11b725f1bfc140340aca0fcfcf173a",
+        exports = _replace_dependencies([
+        ], replacements),
+        tags = [
+            "maven_coordinates=org.jetbrains.kotlin:kotlin-stdlib-common:1.2.71",
         ],
     )
 

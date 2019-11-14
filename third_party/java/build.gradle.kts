@@ -24,6 +24,7 @@ extra.set("google-common-protos.version", "1.17.0")
 extra.set("grpc-java.version", "1.25.0")
 extra.set("guava.version", "28.1-jre")
 extra.set("j2objc-annotations.version", "1.3")
+extra.set("okhttp.version", "4.2.2")
 extra.set("protobuf-java.version", "3.10.0")
 extra.set("spring-boot.version", "2.1.8.RELEASE")
 extra.set("spring-cloud.version", "Greenwich.SR3")
@@ -43,6 +44,9 @@ dependencyManagement {
         dependency("com.google.truth.extensions:truth-java8-extension:${extra.get("truth.version")}")
         dependency("com.google.truth.extensions:truth-proto-extension:${extra.get("truth.version")}")
         dependency("com.google.truth:truth:${extra.get("truth.version")}")
+        dependency("com.squareup.okhttp3:logging-interceptor:${extra.get("okhttp.version")}")
+        dependency("com.squareup.okhttp3:mockwebserver:${extra.get("okhttp.version")}")
+        dependency("com.squareup.okhttp3:okhttp:${extra.get("okhttp.version")}")
     }
 }
 
@@ -53,6 +57,9 @@ dependencies {
     generate("com.google.truth.extensions:truth-java8-extension")
     generate("com.google.truth.extensions:truth-proto-extension")
     generate("com.google.truth:truth")
+    generate("com.squareup.okhttp3:logging-interceptor")
+    generate("com.squareup.okhttp3:mockwebserver")
+    generate("com.squareup.okhttp3:okhttp")
     generate("io.grpc:grpc-context")
     generate("io.grpc:grpc-core")
     generate("io.grpc:grpc-netty")

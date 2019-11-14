@@ -31,8 +31,11 @@ MODULES = [
 ]
 
 NON_SQ_TARGETS = [
+    "//resolver:okhttp-resolver",
     "//resolver:path-resolver",
+    "//resource:okhttp-resource",
     "//resource:path-resource",
+    "//util:eopp-headers",
     "//util:timestamps",
 ]
 
