@@ -1,7 +1,7 @@
 plugins {
     base
     id("com.github.zetten.bazel-dependencies-plugin") version "1.4.0"
-    id("com.github.ben-manes.versions") version "0.26.0"
+    id("com.github.ben-manes.versions") version "0.27.0"
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
 }
 
@@ -25,9 +25,9 @@ extra.set("grpc-java.version", "1.25.0")
 extra.set("guava.version", "28.1-jre")
 extra.set("j2objc-annotations.version", "1.3")
 extra.set("okhttp.version", "4.2.2")
-extra.set("protobuf-java.version", "3.10.0")
-extra.set("spring-boot.version", "2.1.8.RELEASE")
-extra.set("spring-cloud.version", "Greenwich.SR3")
+extra.set("protobuf-java.version", "3.11.1")
+extra.set("spring-boot.version", "2.2.2.RELEASE")
+extra.set("spring-cloud.version", "Hoxton.SR1")
 extra.set("truth.version", "1.0")
 
 dependencyManagement {

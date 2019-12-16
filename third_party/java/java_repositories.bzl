@@ -61,6 +61,7 @@ def java_repositories(
         omit_org_checkerframework_checker_compat_qual = False,
         omit_org_checkerframework_checker_qual = False,
         omit_org_codehaus_mojo_animal_sniffer_annotations = False,
+        omit_org_hamcrest_hamcrest = False,
         omit_org_hamcrest_hamcrest_core = False,
         omit_org_jetbrains_annotations = False,
         omit_org_jetbrains_kotlin_kotlin_stdlib = False,
@@ -177,6 +178,8 @@ def java_repositories(
         org_checkerframework_checker_qual(fetch_sources, replacements)
     if not omit_org_codehaus_mojo_animal_sniffer_annotations:
         org_codehaus_mojo_animal_sniffer_annotations(fetch_sources, replacements)
+    if not omit_org_hamcrest_hamcrest:
+        org_hamcrest_hamcrest(fetch_sources, replacements)
     if not omit_org_hamcrest_hamcrest_core:
         org_hamcrest_hamcrest_core(fetch_sources, replacements)
     if not omit_org_jetbrains_annotations:
@@ -278,18 +281,18 @@ def com_google_code_findbugs_jsr305(fetch_sources, replacements):
 def com_google_code_gson_gson(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "com_google_code_gson_gson",
-        artifact = "com.google.code.gson:gson:2.8.5",
+        artifact = "com.google.code.gson:gson:2.8.6",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "233a0149fc365c9f6edbd683cfe266b19bdc773be98eabdaf6b3c924b48e7d81",
+        artifact_sha256 = "c8fb4839054d280b3033f800d1f5a97de2f028eb8ba2eb458ad287e536f3f25f",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "512b4bf6927f4864acc419b8c5109c23361c30ed1f5798170248d33040de068e",
+        srcjar_sha256 = "da4d787939dc8de214724a20d88614b70ef8c3a4931d9c694300b5d9098ed9bc",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=com.google.code.gson:gson:2.8.5",
+            "maven_coordinates=com.google.code.gson:gson:2.8.6",
         ],
     )
 
@@ -393,38 +396,38 @@ def com_google_j2objc_j2objc_annotations(fetch_sources, replacements):
 def com_google_protobuf_protobuf_java(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "com_google_protobuf_protobuf_java",
-        artifact = "com.google.protobuf:protobuf-java:3.10.0",
+        artifact = "com.google.protobuf:protobuf-java:3.11.1",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "161d7d61a8cb3970891c299578702fd079646e032329d6c2cabf998d191437c9",
+        artifact_sha256 = "4a01db8277b79eaf84151013f3348a4d24720c8c9e1b33e5ed292caca5567cf1",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "47012b36fcd7c4325e07a3a3b43c72e1b2d7a7d79d8e2605f2327b1e81348133",
+        srcjar_sha256 = "86eb14060c4744db0fb373db680f5cbfc386375921194cff1e2cff43a4704f89",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=com.google.protobuf:protobuf-java:3.10.0",
+            "maven_coordinates=com.google.protobuf:protobuf-java:3.11.1",
         ],
     )
 
 def com_google_protobuf_protobuf_java_util(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "com_google_protobuf_protobuf_java_util",
-        artifact = "com.google.protobuf:protobuf-java-util:3.10.0",
+        artifact = "com.google.protobuf:protobuf-java-util:3.11.1",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "619b0b0dc344cb141e493cbedc5687c8fb7c985e609a1b035e621bfab2f89021",
+        artifact_sha256 = "dc7d8c502199c1309b284f9a8d0afff82356f0477d9a155ba4e50abb06e15313",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "9e875b10c3f4bc5b46b8e29b87f64debca47aa81e86fed9f3b4e68eccd5f67f8",
+        srcjar_sha256 = "236b015889438e77ba203700675090753bdbf251e561984ebb94bc95f080590b",
         exports = _replace_dependencies([
             "@com_google_protobuf_protobuf_java",
             "@com_google_code_gson_gson",
         ], replacements),
         tags = [
-            "maven_coordinates=com.google.protobuf:protobuf-java-util:3.10.0",
+            "maven_coordinates=com.google.protobuf:protobuf-java-util:3.11.1",
         ],
     )
 
@@ -808,54 +811,54 @@ def io_grpc_grpc_stub(fetch_sources, replacements):
 def io_netty_netty_buffer(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_netty_netty_buffer",
-        artifact = "io.netty:netty-buffer:4.1.39.Final",
+        artifact = "io.netty:netty-buffer:4.1.43.Final",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "a1544547c275cffe8b3efeb11c3ff2e79dcda675bcd1750968e1d1e1d60ea760",
+        artifact_sha256 = "03f4cc9bf6ec527ed271e60948a51817c98e3cdd1dfc504beb6b9e1653767626",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "4ef45fd1baf33206906fc64f9597c244b5729bd9848e6bb0f59a05431b4b4578",
+        srcjar_sha256 = "2c17514b4e4fe7264917881e34252143f60ae121d6590beb82a0ee55713bbd86",
         exports = _replace_dependencies([
             "@io_netty_netty_common",
         ], replacements),
         tags = [
-            "maven_coordinates=io.netty:netty-buffer:4.1.39.Final",
+            "maven_coordinates=io.netty:netty-buffer:4.1.43.Final",
         ],
     )
 
 def io_netty_netty_codec(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_netty_netty_codec",
-        artifact = "io.netty:netty-codec:4.1.39.Final",
+        artifact = "io.netty:netty-codec:4.1.43.Final",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "61c787409a19117a27521ae778480870b04cf6e4962924430dabb95e90a9bcda",
+        artifact_sha256 = "94533866033c4c9d7d297497b5fa8a1660b947e179d71112245c7c05a96f909b",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "c60179f7f139949fb3bc04e388b4c44806084598fda10b153dab6802f85c30da",
+        srcjar_sha256 = "00cb509baf23b73f5eeca6f8fc8b729629b3d4730258be18b954430664d4dc37",
         exports = _replace_dependencies([
             "@io_netty_netty_transport",
             "@io_netty_netty_buffer",
             "@io_netty_netty_common",
         ], replacements),
         tags = [
-            "maven_coordinates=io.netty:netty-codec:4.1.39.Final",
+            "maven_coordinates=io.netty:netty-codec:4.1.43.Final",
         ],
     )
 
 def io_netty_netty_codec_http(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_netty_netty_codec_http",
-        artifact = "io.netty:netty-codec-http:4.1.39.Final",
+        artifact = "io.netty:netty-codec-http:4.1.43.Final",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "e92eccbf379f98be01e185d142754505c17cf95c1aa44d383ff7a9e8c4211063",
+        artifact_sha256 = "cd28128d1d7ad1e7c070c94e0c15d33e01534a5fefe187833808c4c4d7222be5",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "d2cc14f101fd14542a3ed01dc7fcacefe1addc446644970db5abd13b4f21d6f5",
+        srcjar_sha256 = "3f3a3c3ecec22816ca3233e4db5d4b012f10feee2df96deb049339de415734bf",
         exports = _replace_dependencies([
             "@io_netty_netty_handler",
             "@io_netty_netty_codec",
@@ -864,21 +867,21 @@ def io_netty_netty_codec_http(fetch_sources, replacements):
             "@io_netty_netty_common",
         ], replacements),
         tags = [
-            "maven_coordinates=io.netty:netty-codec-http:4.1.39.Final",
+            "maven_coordinates=io.netty:netty-codec-http:4.1.43.Final",
         ],
     )
 
 def io_netty_netty_codec_http2(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_netty_netty_codec_http2",
-        artifact = "io.netty:netty-codec-http2:4.1.39.Final",
+        artifact = "io.netty:netty-codec-http2:4.1.43.Final",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "dc6f3eadea065ebad7234b5e3e267a73da88da6d5c505ddfbbb93722196d339e",
+        artifact_sha256 = "86818adea1018d7a7a3788188eeac4f5e7fa03c3a10001745e18821d30bce493",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "d945addb09297720d170b8154ed01e7626f77025c413153b829ae3ab987eb1a9",
+        srcjar_sha256 = "9c48a1a641a020893c292f7be5083c018da97b9de2387e930397e6f805105efa",
         exports = _replace_dependencies([
             "@io_netty_netty_codec_http",
             "@io_netty_netty_handler",
@@ -888,21 +891,21 @@ def io_netty_netty_codec_http2(fetch_sources, replacements):
             "@io_netty_netty_common",
         ], replacements),
         tags = [
-            "maven_coordinates=io.netty:netty-codec-http2:4.1.39.Final",
+            "maven_coordinates=io.netty:netty-codec-http2:4.1.43.Final",
         ],
     )
 
 def io_netty_netty_codec_socks(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_netty_netty_codec_socks",
-        artifact = "io.netty:netty-codec-socks:4.1.39.Final",
+        artifact = "io.netty:netty-codec-socks:4.1.43.Final",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "b934724962f3377e2bf2ac2f0ab894595aac7f4b28be80f2f294d21e96c91526",
+        artifact_sha256 = "29c0d934d7d678b2c55ffe399a74d6c5c12ac5b74b7701fb53c48764a059f71a",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "14d7abf5e970b3961e39869f2562ec81709a17525bc189d82dbc835c76584353",
+        srcjar_sha256 = "9ecaf2ffbce0e431e7c2d58ec1f0fc07831e4468f748760ffe19a535ab3f4eb9",
         exports = _replace_dependencies([
             "@io_netty_netty_codec",
             "@io_netty_netty_transport",
@@ -910,39 +913,39 @@ def io_netty_netty_codec_socks(fetch_sources, replacements):
             "@io_netty_netty_common",
         ], replacements),
         tags = [
-            "maven_coordinates=io.netty:netty-codec-socks:4.1.39.Final",
+            "maven_coordinates=io.netty:netty-codec-socks:4.1.43.Final",
         ],
     )
 
 def io_netty_netty_common(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_netty_netty_common",
-        artifact = "io.netty:netty-common:4.1.39.Final",
+        artifact = "io.netty:netty-common:4.1.43.Final",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "67a000d99a71e4fda26391ad4dfa98571e34cda773aec007a5f45242e8bef66f",
+        artifact_sha256 = "729737a2a57c460d3543aa309cbf971ad2f0ffec431751d48409f5e865bae88e",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "3900ed0250bb43f9003f0567a8ff384d162cb3f980c114a403cdd3ef92faa056",
+        srcjar_sha256 = "d240501384b5b5927832f7624ba484dc87454a5adf8754eda993c0c2f9a3f993",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=io.netty:netty-common:4.1.39.Final",
+            "maven_coordinates=io.netty:netty-common:4.1.43.Final",
         ],
     )
 
 def io_netty_netty_handler(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_netty_netty_handler",
-        artifact = "io.netty:netty-handler:4.1.39.Final",
+        artifact = "io.netty:netty-handler:4.1.43.Final",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "b0311957f28b284739b982fdcdf1d500b0d99f047b195fb74cf1d877d045fc5d",
+        artifact_sha256 = "f16169d25565edc402b872d8f0b17f32338a9d395602eff8a69e99bbdcc53558",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "768f2ccd64825c7abbf0e4779a24daa76ad26926d82b2420ba5f52725f047f1e",
+        srcjar_sha256 = "902dfe13febe6247a98698930410a780a121c328424f064f7544352e85874595",
         exports = _replace_dependencies([
             "@io_netty_netty_codec",
             "@io_netty_netty_transport",
@@ -950,21 +953,21 @@ def io_netty_netty_handler(fetch_sources, replacements):
             "@io_netty_netty_common",
         ], replacements),
         tags = [
-            "maven_coordinates=io.netty:netty-handler:4.1.39.Final",
+            "maven_coordinates=io.netty:netty-handler:4.1.43.Final",
         ],
     )
 
 def io_netty_netty_handler_proxy(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_netty_netty_handler_proxy",
-        artifact = "io.netty:netty-handler-proxy:4.1.39.Final",
+        artifact = "io.netty:netty-handler-proxy:4.1.43.Final",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "115702178befe500dac6edbc0f7324dd84f93ec1e4e0943c8083d39a913e4a22",
+        artifact_sha256 = "714de68f915cd4853a9ff3aef09b9eb9faed1e169756a9c04f9172e51e2c25bc",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "cf30ee8e6828fbb565a06d854f3682209be7187dd0a0fcfc387bcc82be2af485",
+        srcjar_sha256 = "b6b57b8ab9fa328306083daf73c12d8d3bdd628dabc7eee86e2c38d563b52575",
         exports = _replace_dependencies([
             "@io_netty_netty_codec_http",
             "@io_netty_netty_codec_socks",
@@ -974,47 +977,47 @@ def io_netty_netty_handler_proxy(fetch_sources, replacements):
             "@io_netty_netty_common",
         ], replacements),
         tags = [
-            "maven_coordinates=io.netty:netty-handler-proxy:4.1.39.Final",
+            "maven_coordinates=io.netty:netty-handler-proxy:4.1.43.Final",
         ],
     )
 
 def io_netty_netty_resolver(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_netty_netty_resolver",
-        artifact = "io.netty:netty-resolver:4.1.39.Final",
+        artifact = "io.netty:netty-resolver:4.1.43.Final",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "61b80dcec8c95ccf6c8a134143e37d6f26251b8070e5f7a6886ffd5dd69e4a72",
+        artifact_sha256 = "f39b887d6fcc56de1b144ef2e58d9232d78e9c0e5994a90fa4e6645074bea17e",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "e81a2eaa9da373b1ada5b4f590258a9a2d41c12491c8388069aa6c5c5b898572",
+        srcjar_sha256 = "dc9c4210c7acba3953b4d31bc35913d1e3d206003e0ac3b8e9eeb6f32149cc84",
         exports = _replace_dependencies([
             "@io_netty_netty_common",
         ], replacements),
         tags = [
-            "maven_coordinates=io.netty:netty-resolver:4.1.39.Final",
+            "maven_coordinates=io.netty:netty-resolver:4.1.43.Final",
         ],
     )
 
 def io_netty_netty_transport(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_netty_netty_transport",
-        artifact = "io.netty:netty-transport:4.1.39.Final",
+        artifact = "io.netty:netty-transport:4.1.43.Final",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "cf018b7e5f0739ff5f972761dcca3d62825a5426bd04f556d242400934b245f5",
+        artifact_sha256 = "94f2b881f1c8d62afe9f349bf6c0ea0c8e58811715c74282872c735069b78503",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "04d3953e9fb9e6b3d9f94bccba71fbce0c530ffd2fdba7a2ac5ebaf8f3565a7c",
+        srcjar_sha256 = "e064da58f75210e21c0bf7066d8d9a6fcd377feb20cfd86bc5d14db09d7409ea",
         exports = _replace_dependencies([
             "@io_netty_netty_buffer",
             "@io_netty_netty_resolver",
             "@io_netty_netty_common",
         ], replacements),
         tags = [
-            "maven_coordinates=io.netty:netty-transport:4.1.39.Final",
+            "maven_coordinates=io.netty:netty-transport:4.1.43.Final",
         ],
     )
 
@@ -1078,19 +1081,19 @@ def io_perfmark_perfmark_api(fetch_sources, replacements):
 def io_projectreactor_reactor_core(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "io_projectreactor_reactor_core",
-        artifact = "io.projectreactor:reactor-core:3.2.12.RELEASE",
+        artifact = "io.projectreactor:reactor-core:3.3.1.RELEASE",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "ebe51c191cf96dab36e175b810daf3e4348e3fb99b63ea56d8b5b92c131c5fc9",
+        artifact_sha256 = "40280e627e5cdcdc71633ce39171c15006f4fae0fe51d2d7e585d41b385726ee",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "148acf973d80a1769b750086d189ef125eb54c87394e30a7fb4e79fb253783cf",
+        srcjar_sha256 = "ff0a8b583f0135416045c3b9c5e9fffbb707c85645678c39c2b5585b768737d4",
         exports = _replace_dependencies([
             "@org_reactivestreams_reactive_streams",
         ], replacements),
         tags = [
-            "maven_coordinates=io.projectreactor:reactor-core:3.2.12.RELEASE",
+            "maven_coordinates=io.projectreactor:reactor-core:3.3.1.RELEASE",
         ],
     )
 
@@ -1134,36 +1137,36 @@ def junit_junit(fetch_sources, replacements):
 def net_bytebuddy_byte_buddy(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "net_bytebuddy_byte_buddy",
-        artifact = "net.bytebuddy:byte-buddy:1.9.16",
+        artifact = "net.bytebuddy:byte-buddy:1.10.4",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "6b71e4f70c96b67d420f592148aa4fd1966aba458b35d11f491ff13de97dc862",
+        artifact_sha256 = "1bbad1cfb8100bf0f70a115653c7250dbf8d1df838058f21a651dd20d0bf4741",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "9f239c1599715faeff23676d2ccb64d3365ea9ee651c5b3ed0d4011a886db419",
+        srcjar_sha256 = "509b5c20a6a5c48778a9328f282f9c6e3d22faf9bb79e0ee56d6a0623932d804",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=net.bytebuddy:byte-buddy:1.9.16",
+            "maven_coordinates=net.bytebuddy:byte-buddy:1.10.4",
         ],
     )
 
 def net_bytebuddy_byte_buddy_agent(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "net_bytebuddy_byte_buddy_agent",
-        artifact = "net.bytebuddy:byte-buddy-agent:1.9.16",
+        artifact = "net.bytebuddy:byte-buddy-agent:1.10.4",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "c315f9c2eba3eee41b57b7b78c787011953145a8118e3a732dd56b42329bcff5",
+        artifact_sha256 = "a0cee1bba5626730e98e2777338fc4c5e22d47947906fdf63d43f271de07a170",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "0a7b5643bd2de08a0579ff4368ec14ad42886620e3463dde4f7afc21fa3f03b2",
+        srcjar_sha256 = "b5b5aac7e050c0d6f63c624b2ffee14a2878a6f50f2e5a48c36f277fbb98574b",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=net.bytebuddy:byte-buddy-agent:1.9.16",
+            "maven_coordinates=net.bytebuddy:byte-buddy-agent:1.10.4",
         ],
     )
 
@@ -1221,21 +1224,40 @@ def org_codehaus_mojo_animal_sniffer_annotations(fetch_sources, replacements):
         ],
     )
 
-def org_hamcrest_hamcrest_core(fetch_sources, replacements):
+def org_hamcrest_hamcrest(fetch_sources, replacements):
     jvm_maven_import_external(
-        name = "org_hamcrest_hamcrest_core",
-        artifact = "org.hamcrest:hamcrest-core:1.3",
+        name = "org_hamcrest_hamcrest",
+        artifact = "org.hamcrest:hamcrest:2.1",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "66fdef91e9739348df7a096aa384a5685f4e875584cce89386a7a47251c4d8e9",
+        artifact_sha256 = "ba93b2e3a562322ba432f0a1b53addcc55cb188253319a020ed77f824e692050",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "e223d2d8fbafd66057a8848cc94222d63c3cedd652cc48eddc0ab5c39c0f84df",
+        srcjar_sha256 = "70ddd82a79f885022cae5320082cf3219055d1bd0f74406f814c67da29a74d31",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=org.hamcrest:hamcrest-core:1.3",
+            "maven_coordinates=org.hamcrest:hamcrest:2.1",
+        ],
+    )
+
+def org_hamcrest_hamcrest_core(fetch_sources, replacements):
+    jvm_maven_import_external(
+        name = "org_hamcrest_hamcrest_core",
+        artifact = "org.hamcrest:hamcrest-core:2.1",
+        server_urls = [
+            "https://jcenter.bintray.com/",
+        ],
+        artifact_sha256 = "e09109e54a289d88506b9bfec987ddd199f4217c9464132668351b9a4f00bee9",
+        licenses = ["notice"],
+        fetch_sources = fetch_sources,
+        srcjar_sha256 = "7da51da1e717c08c9cdc3d5c1d3d80d7ce1f98afb1c20585d35d388c7daa1604",
+        exports = _replace_dependencies([
+            "@org_hamcrest_hamcrest",
+        ], replacements),
+        tags = [
+            "maven_coordinates=org.hamcrest:hamcrest-core:2.1",
         ],
     )
 
@@ -1260,59 +1282,59 @@ def org_jetbrains_annotations(fetch_sources, replacements):
 def org_jetbrains_kotlin_kotlin_stdlib(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_jetbrains_kotlin_kotlin_stdlib",
-        artifact = "org.jetbrains.kotlin:kotlin-stdlib:1.2.71",
+        artifact = "org.jetbrains.kotlin:kotlin-stdlib:1.3.61",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "4c895c270b87f5fec2a2796e1d89c15407ee821de961527c28588bb46afbc68b",
+        artifact_sha256 = "e51e512619a7e7650a30eb4eb3e9c03e6909c7b5e3c026404e076254c098b932",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "ceec17e12221482e55037be68e142f5f628f98755a275edc08a647646a62676a",
+        srcjar_sha256 = "7c25d24976908a6c1731e3b2eba02978b1a8b62f16554eab1dfaa41758b720ac",
         exports = _replace_dependencies([
             "@org_jetbrains_kotlin_kotlin_stdlib_common",
             "@org_jetbrains_annotations",
         ], replacements),
         tags = [
-            "maven_coordinates=org.jetbrains.kotlin:kotlin-stdlib:1.2.71",
+            "maven_coordinates=org.jetbrains.kotlin:kotlin-stdlib:1.3.61",
         ],
     )
 
 def org_jetbrains_kotlin_kotlin_stdlib_common(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_jetbrains_kotlin_kotlin_stdlib_common",
-        artifact = "org.jetbrains.kotlin:kotlin-stdlib-common:1.2.71",
+        artifact = "org.jetbrains.kotlin:kotlin-stdlib-common:1.3.61",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "63999687ff2fce8a592dd180ffbbf8f1d21c26b4044c55cdc74ff3cf3b3cf328",
+        artifact_sha256 = "a2e7f341cf3047b5f00a1917ef777d323cdab2a57377468b8ed62aa31469cf7f",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "e947bbdd1f6d3afd69ce01598327a9923b11b725f1bfc140340aca0fcfcf173a",
+        srcjar_sha256 = "272d20d52fe0c3c91b09d02125cea2c7fa2dabefb1397e0239a9c2601f002346",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=org.jetbrains.kotlin:kotlin-stdlib-common:1.2.71",
+            "maven_coordinates=org.jetbrains.kotlin:kotlin-stdlib-common:1.3.61",
         ],
     )
 
 def org_mockito_mockito_core(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_mockito_mockito_core",
-        artifact = "org.mockito:mockito-core:2.23.4",
+        artifact = "org.mockito:mockito-core:3.1.0",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "d77e018b6bc211d78ddcec54bc508732c4677b9a9eb9103793be85441b20bc5d",
+        artifact_sha256 = "89b09e518e04f5c35f5ccf7abe45e72f594070a53d95cc2579001bd392c5afa6",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "2e624439ee1de251c0e963a7183f47383eb67b29260d175ab6688675e05c9342",
+        srcjar_sha256 = "4f23acaa29ce8783b00f794c6e556c26f3046ee4ad7da4ce08255c9676aba2ce",
         exports = _replace_dependencies([
             "@net_bytebuddy_byte_buddy",
             "@net_bytebuddy_byte_buddy_agent",
             "@org_objenesis_objenesis",
         ], replacements),
         tags = [
-            "maven_coordinates=org.mockito:mockito-core:2.23.4",
+            "maven_coordinates=org.mockito:mockito-core:3.1.0",
         ],
     )
 
@@ -1355,91 +1377,91 @@ def org_reactivestreams_reactive_streams(fetch_sources, replacements):
 def org_slf4j_slf4j_api(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_slf4j_slf4j_api",
-        artifact = "org.slf4j:slf4j-api:1.7.28",
+        artifact = "org.slf4j:slf4j-api:1.7.29",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "fb6e4f67a2a4689e3e713584db17a5d1090c1ebe6eec30e9e0349a6ee118141e",
+        artifact_sha256 = "47b624903c712f9118330ad2fb91d0780f7f666c3f22919d0fc14522c5cad9ea",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "b1b8bfa4f2709684606001685d09ef905adc1b72ec53444ade90f44bfbcebcff",
+        srcjar_sha256 = "859a6c367b811efb6f7b00cbf612383a2aca00fda53ec04270587ce7d7b9e813",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=org.slf4j:slf4j-api:1.7.28",
+            "maven_coordinates=org.slf4j:slf4j-api:1.7.29",
         ],
     )
 
 def org_springframework_cloud_spring_cloud_commons(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_springframework_cloud_spring_cloud_commons",
-        artifact = "org.springframework.cloud:spring-cloud-commons:2.1.3.RELEASE",
+        artifact = "org.springframework.cloud:spring-cloud-commons:2.2.1.RELEASE",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "4161fcf51d8e8fe69c1e0613cc86dd9bcba77a79e58f021621f9c26e0ba87edf",
+        artifact_sha256 = "63eb5cac1b338c0b6ea83e5cde50afc9b08b89d7897b32db4b873b7ce3c84864",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "757476263ccb0b6aaa4ad359d86e30a84ae8eed6faa2ad17f4c12c75a3882f04",
+        srcjar_sha256 = "d3162d475649cc6b9d9852d162f574dcaa1f1fc6c2c00afd2a36096e43d35b98",
         exports = _replace_dependencies([
             "@org_springframework_security_spring_security_crypto",
         ], replacements),
         tags = [
-            "maven_coordinates=org.springframework.cloud:spring-cloud-commons:2.1.3.RELEASE",
+            "maven_coordinates=org.springframework.cloud:spring-cloud-commons:2.2.1.RELEASE",
         ],
     )
 
 def org_springframework_security_spring_security_crypto(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_springframework_security_spring_security_crypto",
-        artifact = "org.springframework.security:spring-security-crypto:5.1.6.RELEASE",
+        artifact = "org.springframework.security:spring-security-crypto:5.2.1.RELEASE",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "b71bca31cfae853c40c96aef072eb12249927e2122b8e66656e59551692abf8a",
+        artifact_sha256 = "1cdfb9e938a60c326660970c8bd42f808bdeefa1ed79baeaabbbeb8e3508439f",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "ba7e4fcc52183cddcb0bdbf8e79cd8f1de92bf6223926e3b41afbcdb90b1b6d9",
+        srcjar_sha256 = "3b452a8f1fd05ae508262f9028029f15a09a85b0992a38ccb5246cea0915dff9",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=org.springframework.security:spring-security-crypto:5.1.6.RELEASE",
+            "maven_coordinates=org.springframework.security:spring-security-crypto:5.2.1.RELEASE",
         ],
     )
 
 def org_springframework_spring_core(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_springframework_spring_core",
-        artifact = "org.springframework:spring-core:5.1.9.RELEASE",
+        artifact = "org.springframework:spring-core:5.2.2.RELEASE",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "427406f5423e032e08e5d43e5d3eccfbc83350b0d7c6ec22db839755ff1120de",
+        artifact_sha256 = "94459936895f669c8bdd794be79850b73a9b980cc01a4aec88f373f150002b70",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "d4c90b76cd68d695234862426234ec33ebed8f1a033bb5952054191b8d91ca88",
+        srcjar_sha256 = "da15b3adbd5dfd0f88a6902c1c59df9a82f75352ade78d9afe87cf40a7944ba7",
         exports = _replace_dependencies([
             "@org_springframework_spring_jcl",
         ], replacements),
         tags = [
-            "maven_coordinates=org.springframework:spring-core:5.1.9.RELEASE",
+            "maven_coordinates=org.springframework:spring-core:5.2.2.RELEASE",
         ],
     )
 
 def org_springframework_spring_jcl(fetch_sources, replacements):
     jvm_maven_import_external(
         name = "org_springframework_spring_jcl",
-        artifact = "org.springframework:spring-jcl:5.1.9.RELEASE",
+        artifact = "org.springframework:spring-jcl:5.2.2.RELEASE",
         server_urls = [
             "https://jcenter.bintray.com/",
         ],
-        artifact_sha256 = "e6f5a8162bc57aec3d9260fec9efc019cee904de2b0c5a6abe02598a17d10456",
+        artifact_sha256 = "db6ec0aa5330ab84a78933fd2c27db83581e3f0adbc1a562013c8647b3935dbd",
         licenses = ["notice"],
         fetch_sources = fetch_sources,
-        srcjar_sha256 = "6109feb26549148bfa13986ac713f21d5dcf73c660f4930460818d21b47c0350",
+        srcjar_sha256 = "315892faba19a2c518bac06ee62f49e0537cabff3b4af618f9f3d211e6bd0a24",
         exports = _replace_dependencies([
         ], replacements),
         tags = [
-            "maven_coordinates=org.springframework:spring-jcl:5.1.9.RELEASE",
+            "maven_coordinates=org.springframework:spring-jcl:5.2.2.RELEASE",
         ],
     )

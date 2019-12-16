@@ -4,44 +4,50 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "google_bazel_common",
-    sha256 = "2f4ff4f09df4143cba49ca2c3750c1e8f544cf5a4a6164d37b6dc59d224d0c12",
-    strip_prefix = "bazel-common-3ce0644a7d7da09218b96b3218f409ea8f8c84e6",
-    urls = ["https://github.com/google/bazel-common/archive/3ce0644a7d7da09218b96b3218f409ea8f8c84e6.zip"],
+    sha256 = "090d1f394c2bbeae37f091a9d7853bafc7a9b3174d1e100d762fdd07767a2269",
+    strip_prefix = "bazel-common-1c8dcb31eed0713306cb6dc07f8334d84c925a01",
+    urls = ["https://github.com/google/bazel-common/archive/1c8dcb31eed0713306cb6dc07f8334d84c925a01.zip"],
 )
 
 http_archive(
     name = "bazel_skylib",
-    sha256 = "2e351c3b4861b0c5de8db86fdd100869b544c759161008cd93949dddcbfaba53",
-    strip_prefix = "bazel-skylib-0.8.0",
-    urls = ["https://github.com/bazelbuild/bazel-skylib/archive/0.8.0.zip"],
+    sha256 = "97e70364e9249702246c0e9444bccdc4b847bed1eb03c5a3ece4f83dfe6abc44",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.0.2/bazel-skylib-1.0.2.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.0.2/bazel-skylib-1.0.2.tar.gz",
+    ],
 )
+
+load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+
+bazel_skylib_workspace()
 
 http_archive(
     name = "rules_cc",
-    sha256 = "35f2fb4ea0b3e61ad64a369de284e4fbbdcdba71836a5555abb5e194cf119509",
-    strip_prefix = "rules_cc-624b5d59dfb45672d4239422fa1e3de1822ee110",
-    urls = ["https://github.com/bazelbuild/rules_cc/archive/624b5d59dfb45672d4239422fa1e3de1822ee110.tar.gz"],
+    sha256 = "dafda2ff2a913028ce1718253b6b2f353b2d2163470f3069ca810a0d8d55a5a9",
+    strip_prefix = "rules_cc-cd7e8a690caf526e0634e3ca55b10308ee23182d",
+    urls = ["https://github.com/bazelbuild/rules_cc/archive/cd7e8a690caf526e0634e3ca55b10308ee23182d.tar.gz"],
 )
 
 http_archive(
     name = "rules_java",
-    sha256 = "ccf00372878d141f7d5568cedc4c42ad4811ba367ea3e26bc7c43445bbc52895",
-    strip_prefix = "rules_java-d7bf804c8731edd232cb061cb2a9fe003a85d8ee",
-    urls = ["https://github.com/bazelbuild/rules_java/archive/d7bf804c8731edd232cb061cb2a9fe003a85d8ee.tar.gz"],
+    sha256 = "1969a89e8da396eb7754fd0247b7df39b6df433c3dcca0095b4ba30a5409cc9d",
+    strip_prefix = "rules_java-32ddd6c4f0ad38a54169d049ec05febc393b58fc",
+    urls = ["https://github.com/bazelbuild/rules_java/archive/32ddd6c4f0ad38a54169d049ec05febc393b58fc.tar.gz"],
 )
 
 http_archive(
     name = "rules_proto",
-    sha256 = "57001a3b33ec690a175cdf0698243431ef27233017b9bed23f96d44b9c98242f",
-    strip_prefix = "rules_proto-9cd4f8f1ede19d81c6d48910429fe96776e567b1",
-    urls = ["https://github.com/bazelbuild/rules_proto/archive/9cd4f8f1ede19d81c6d48910429fe96776e567b1.tar.gz"],
+    sha256 = "73ebe9d15ba42401c785f9d0aeebccd73bd80bf6b8ac78f74996d31f2c0ad7a6",
+    strip_prefix = "rules_proto-2c0468366367d7ed97a1f702f9cd7155ab3f73c5",
+    urls = ["https://github.com/bazelbuild/rules_proto/archive/2c0468366367d7ed97a1f702f9cd7155ab3f73c5.tar.gz"],
 )
 
 http_archive(
     name = "rules_python",
-    sha256 = "b5bab4c47e863e0fbb77df4a40c45ca85f98f5a2826939181585644c9f31b97b",
-    strip_prefix = "rules_python-9d68f24659e8ce8b736590ba1e4418af06ec2552",
-    urls = ["https://github.com/bazelbuild/rules_python/archive/9d68f24659e8ce8b736590ba1e4418af06ec2552.tar.gz"],
+    sha256 = "c911dc70f62f507f3a361cbc21d6e0d502b91254382255309bc60b7a0f48de28",
+    strip_prefix = "rules_python-38f86fb55b698c51e8510c807489c9f4e047480e",
+    urls = ["https://github.com/bazelbuild/rules_python/archive/38f86fb55b698c51e8510c807489c9f4e047480e.tar.gz"],
 )
 
 load("//third_party/java:jarjar_repositories.bzl", "jarjar_repositories")
@@ -60,23 +66,27 @@ java_repositories(
     omit_io_grpc_grpc_netty = True,
     omit_io_grpc_grpc_protobuf = True,
     omit_io_grpc_grpc_protobuf_lite = True,
-    omit_io_grpc_grpc_services = False,  # TODO Mask when grpc-java fix the deprecated imports
+    omit_io_grpc_grpc_services = True,  # TODO Mask when grpc-java fix the deprecated imports
     omit_io_grpc_grpc_stub = True,
     replacements = {
         "@com_google_guava_listenablefuture": [],  # Empty jar anyway to avoid guava conflict
-        "@com_google_protobuf_protobuf_java": ["@com_google_protobuf//:protobuf_java"],
-        "@com_google_protobuf_protobuf_java_util": ["@com_google_protobuf//:protobuf_java_util"],
-        "@io_grpc_grpc_context": ["@io_grpc_grpc_java//context"],
+        "@com_google_protobuf_protobuf_java": ["@com_cgi_eoss_eopp//third_party/protobuf:protobuf_java"],
+        "@com_google_protobuf_protobuf_java_util": ["@com_cgi_eoss_eopp//third_party/protobuf:protobuf_java_util"],
+        "@io_grpc_grpc_context": ["@com_cgi_eoss_eopp//third_party/grpc:context"],
         "@io_grpc_grpc_core": [
-            # The published jar contains all these targets
-            "@io_grpc_grpc_java//core",
-            "@io_grpc_grpc_java//core:inprocess",
-            "@io_grpc_grpc_java//core:util",
+            "@com_cgi_eoss_eopp//third_party/grpc:core",
+            "@com_cgi_eoss_eopp//third_party/grpc:core_inprocess",
+            "@com_cgi_eoss_eopp//third_party/grpc:core_util",
         ],
-        "@io_grpc_grpc_netty": ["@io_grpc_grpc_java//netty"],
-        "@io_grpc_grpc_protobuf": ["@io_grpc_grpc_java//protobuf"],
-        "@io_grpc_grpc_protobuf_lite": ["@io_grpc_grpc_java//protobuf-lite"],
-        "@io_grpc_grpc_stub": ["@io_grpc_grpc_java//stub"],
+        "@io_grpc_grpc_netty": ["@com_cgi_eoss_eopp//third_party/grpc:netty"],
+        "@io_grpc_grpc_protobuf": ["@com_cgi_eoss_eopp//third_party/grpc:protobuf"],
+        "@io_grpc_grpc_protobuf_lite": ["@com_cgi_eoss_eopp//third_party/grpc:protobuf_lite"],
+        "@io_grpc_grpc_services": [
+            "@com_cgi_eoss_eopp//third_party/grpc:services_binarylog",
+            "@com_cgi_eoss_eopp//third_party/grpc:services_channelz",
+            "@com_cgi_eoss_eopp//third_party/grpc:services_reflection",
+        ],
+        "@io_grpc_grpc_stub": ["@com_cgi_eoss_eopp//third_party/grpc:stub"],
     },
 )
 
