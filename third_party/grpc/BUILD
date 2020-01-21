@@ -2,7 +2,7 @@ licenses(["notice"])
 
 # Re-exports with Maven coordinates for POM generation
 
-load(":grpc_repositories.bzl", "GRPC_JAVA_VERSION")
+load(":grpc_repositories.bzl", "GRPC_JAVA_VERSION", "REACTOR_GRPC_VERSION")
 
 java_library(
     name = "context",
@@ -15,6 +15,20 @@ java_library(
 )
 
 # Several targets are part of io.grpc:grpc-core, so tag them the same
+
+java_library(
+    name = "all_core",
+    tags = [
+        "manual",
+        "maven_coordinates=io.grpc:grpc-core:" + GRPC_JAVA_VERSION,
+    ],
+    visibility = ["//visibility:public"],
+    exports = [
+        "@io_grpc_grpc_java//core",
+        "@io_grpc_grpc_java//core:inprocess",
+        "@io_grpc_grpc_java//core:util",
+    ],
+)
 
 java_library(
     name = "core",
@@ -77,6 +91,20 @@ java_library(
 )
 
 java_library(
+    name = "all_services",
+    tags = [
+        "manual",
+        "maven_coordinates=io.grpc:grpc-services:" + GRPC_JAVA_VERSION,
+    ],
+    visibility = ["//visibility:public"],
+    exports = [
+        "@io_grpc_grpc_java//services:binarylog",
+        "@io_grpc_grpc_java//services:channelz",
+        "@io_grpc_grpc_java//services:reflection",
+    ],
+)
+
+java_library(
     name = "services_binarylog",
     tags = [
         "manual",
@@ -125,4 +153,14 @@ java_library(
     ],
     visibility = ["//visibility:public"],
     exports = ["@io_grpc_grpc_java//testing"],
+)
+
+java_library(
+    name = "reactor_grpc_stub",
+    tags = [
+        "manual",
+        "maven_coordinates=com.salesforce.servicelibs:reactor-grpc-stub:" + REACTOR_GRPC_VERSION,
+    ],
+    visibility = ["//visibility:public"],
+    exports = ["@com_salesforce_servicelibs_reactive_grpc//reactor/reactor-grpc-stub"],
 )

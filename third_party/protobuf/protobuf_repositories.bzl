@@ -33,7 +33,4 @@ def protobuf_repositories():
         sha256 = "311b29b8d0803ab4f89be22ff365266abb6c48fd3483d59b04772a144d7a24a1",
         strip_prefix = "protobuf-7b64714af67aa967dcf941df61fe5207975966be",
         urls = ["https://github.com/google/protobuf/archive/7b64714af67aa967dcf941df61fe5207975966be.zip"],
-        patches = ["//third_party/protobuf:protobuf_drop_java_7_compatibility.patch"],
-        patch_args = ["-p1"],
     )
-

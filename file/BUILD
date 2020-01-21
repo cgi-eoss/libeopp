@@ -36,7 +36,7 @@ maven_library(
         ":file_java_proto",
         "//third_party/protobuf:protobuf_java",
         "//util:timestamps",
-        "@com_google_guava_guava",
+        "@maven//:com_google_guava_guava",
     ],
 )
 
@@ -67,12 +67,12 @@ java_library(
     deps = [
         ":file",
         "//util:timestamps",
-        "@com_google_guava_guava",
         "@com_google_protobuf//:any_proto",
         "@com_google_protobuf//:protobuf_java",
-        "@com_google_truth_extensions_truth_proto_extension",
-        "@com_google_truth_truth",
-        "@junit_junit",
+        "@maven//:com_google_guava_guava",
+        "@maven//:com_google_truth_extensions_truth_proto_extension",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
     ],
 )
 

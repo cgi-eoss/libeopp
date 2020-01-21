@@ -15,7 +15,7 @@ maven_library(
     ],
     deps = [
         "//file",
-        "@org_springframework_spring_core",
+        "@maven//:org_springframework_spring_core",
     ],
 )
 
@@ -27,7 +27,7 @@ maven_library(
     deps = [
         ":resource",
         "//file",
-        "@org_springframework_spring_core",
+        "@maven//:org_springframework_spring_core",
     ],
 )
 
@@ -42,10 +42,10 @@ maven_library(
         "//util",
         "//util:eopp-headers",
         "//util:timestamps",
-        "@com_google_guava_guava",
-        "@com_squareup_okhttp3_okhttp",
-        "@org_slf4j_slf4j_api",
-        "@org_springframework_spring_core",
+        "@maven//:com_google_guava_guava",
+        "@maven//:com_squareup_okhttp3_okhttp",
+        "@maven//:org_slf4j_slf4j_api",
+        "@maven//:org_springframework_spring_core",
     ],
 )
 
@@ -60,11 +60,14 @@ java_library(
         "//file",
         "//util:eopp-headers",
         "//util:timestamps",
-        "@com_google_truth_extensions_truth_proto_extension",
-        "@com_google_truth_truth",
-        "@com_squareup_okhttp3_mockwebserver",
-        "@com_squareup_okhttp3_okhttp",
-        "@junit_junit",
+        "@com_google_protobuf//:protobuf_java",
+        "@maven//:com_google_guava_guava",
+        "@maven//:com_google_truth_extensions_truth_proto_extension",
+        "@maven//:com_google_truth_truth",
+        "@maven//:com_squareup_okhttp3_mockwebserver",
+        "@maven//:com_squareup_okhttp3_okhttp",
+        "@maven//:junit_junit",
+        "@maven//:org_checkerframework_checker_qual",
     ],
 )
 

@@ -33,8 +33,8 @@ java_library(
     srcs = glob(["src/test/java/**/*.java"]),
     deps = [
         ":util",
-        "@com_google_truth_truth",
-        "@junit_junit",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
     ],
 )
 

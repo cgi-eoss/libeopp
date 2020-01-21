@@ -61,9 +61,9 @@ java_library(
     deps = [
         ":identifier",
         ":identifier_test_java_proto",
-        "@com_google_truth_extensions_truth_proto_extension",
-        "@com_google_truth_truth",
-        "@junit_junit",
+        "@maven//:com_google_truth_extensions_truth_proto_extension",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
     ],
 )
 

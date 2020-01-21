@@ -36,7 +36,7 @@ maven_library(
     exports = [":job_java_proto"],
     deps = [
         ":job_java_proto",
-        "@com_google_guava_guava",
+        "@maven//:com_google_guava_guava",
     ],
 )
 

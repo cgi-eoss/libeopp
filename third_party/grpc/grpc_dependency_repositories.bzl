@@ -41,8 +41,8 @@ def grpc_dependency_repositories():
     )
 
     reactive_grpc_repositories(
-        omit_com_github_spullara_mustache_java_compiler = False,
-        omit_com_salesforce_servicelibs_jprotoc = False,
+        omit_com_github_spullara_mustache_java_compiler = True,
+        omit_com_salesforce_servicelibs_jprotoc = True,
         omit_io_grpc_grpc_java = True,
         omit_io_projectreactor_reactor_core = True,
         omit_io_reactivex_rxjava2_rxjava = True,

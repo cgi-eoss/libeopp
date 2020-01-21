@@ -29,7 +29,7 @@ maven_library(
         ":resolver",
         "//resource",
         "//resource:path-resource",
-        "@com_google_guava_guava",
+        "@maven//:com_google_guava_guava",
     ],
 )
 
@@ -42,8 +42,8 @@ maven_library(
         ":resolver",
         "//resource",
         "//resource:okhttp-resource",
-        "@com_google_guava_guava",
-        "@com_squareup_okhttp3_okhttp",
+        "@maven//:com_google_guava_guava",
+        "@maven//:com_squareup_okhttp3_okhttp",
     ],
 )
 
@@ -57,14 +57,15 @@ java_library(
         ":resolver",
         "//file",
         "//resource",
-        "//util:timestamps",
         "//util:eopp-headers",
-        "@com_google_guava_guava",
-        "@com_google_truth_extensions_truth_proto_extension",
-        "@com_google_truth_truth",
-        "@com_squareup_okhttp3_mockwebserver",
-        "@junit_junit",
-        "@org_mockito_mockito_core",
+        "//util:timestamps",
+        "@maven//:com_google_guava_guava",
+        "@maven//:com_google_truth_extensions_truth_proto_extension",
+        "@maven//:com_google_truth_truth",
+        "@maven//:com_squareup_okhttp3_mockwebserver",
+        "@maven//:com_squareup_okhttp3_okhttp",
+        "@maven//:junit_junit",
+        "@maven//:org_mockito_mockito_core",
     ],
 )
 

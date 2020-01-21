@@ -54,41 +54,50 @@ load("//third_party/java:jarjar_repositories.bzl", "jarjar_repositories")
 
 jarjar_repositories()
 
-load("//third_party/java:java_repositories.bzl", "java_repositories")
+RULES_JVM_EXTERNAL_TAG = "0a7cc6a0b6764232a0ddd31ad87b489e1d47b166"
 
-java_repositories(
-    fetch_sources = True,
-    omit_com_google_guava_listenablefuture = True,
-    omit_com_google_protobuf_protobuf_java = True,
-    omit_com_google_protobuf_protobuf_java_util = True,
-    omit_io_grpc_grpc_context = True,
-    omit_io_grpc_grpc_core = True,
-    omit_io_grpc_grpc_netty = True,
-    omit_io_grpc_grpc_protobuf = True,
-    omit_io_grpc_grpc_protobuf_lite = True,
-    omit_io_grpc_grpc_services = True,  # TODO Mask when grpc-java fix the deprecated imports
-    omit_io_grpc_grpc_stub = True,
-    replacements = {
-        "@com_google_guava_listenablefuture": [],  # Empty jar anyway to avoid guava conflict
-        "@com_google_protobuf_protobuf_java": ["@com_cgi_eoss_eopp//third_party/protobuf:protobuf_java"],
-        "@com_google_protobuf_protobuf_java_util": ["@com_cgi_eoss_eopp//third_party/protobuf:protobuf_java_util"],
-        "@io_grpc_grpc_context": ["@com_cgi_eoss_eopp//third_party/grpc:context"],
-        "@io_grpc_grpc_core": [
-            "@com_cgi_eoss_eopp//third_party/grpc:core",
-            "@com_cgi_eoss_eopp//third_party/grpc:core_inprocess",
-            "@com_cgi_eoss_eopp//third_party/grpc:core_util",
-        ],
-        "@io_grpc_grpc_netty": ["@com_cgi_eoss_eopp//third_party/grpc:netty"],
-        "@io_grpc_grpc_protobuf": ["@com_cgi_eoss_eopp//third_party/grpc:protobuf"],
-        "@io_grpc_grpc_protobuf_lite": ["@com_cgi_eoss_eopp//third_party/grpc:protobuf_lite"],
-        "@io_grpc_grpc_services": [
-            "@com_cgi_eoss_eopp//third_party/grpc:services_binarylog",
-            "@com_cgi_eoss_eopp//third_party/grpc:services_channelz",
-            "@com_cgi_eoss_eopp//third_party/grpc:services_reflection",
-        ],
-        "@io_grpc_grpc_stub": ["@com_cgi_eoss_eopp//third_party/grpc:stub"],
-    },
+RULES_JVM_EXTERNAL_SHA = "f4106ee24334ef35c31e31c66f612e89619efe072d06df840008d516dd3a7a22"
+
+http_archive(
+    name = "rules_jvm_external",
+    sha256 = RULES_JVM_EXTERNAL_SHA,
+    strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
+    url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
+
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+load("//third_party/java:java_repositories.bzl", "ARTIFACTS", "REPOSITORIES")
+
+maven_install(
+    name = "maven",
+    artifacts = ARTIFACTS,
+    fetch_sources = True,
+    generate_compat_repositories = True,
+    maven_install_json = "//third_party/java:maven_install.json",
+    override_targets = {
+        "com.google.protobuf:protobuf-java": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_java",
+        "com.google.protobuf:protobuf-java-util": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_java_util",
+        "io.grpc:grpc-context": "@com_cgi_eoss_eopp//third_party/grpc:context",
+        "io.grpc:grpc-core": "@com_cgi_eoss_eopp//third_party/grpc:all_core",
+        "io.grpc:grpc-netty": "@com_cgi_eoss_eopp//third_party/grpc:netty",
+        "io.grpc:grpc-protobuf": "@com_cgi_eoss_eopp//third_party/grpc:protobuf",
+        "io.grpc:grpc-protobuf-lite": "@com_cgi_eoss_eopp//third_party/grpc:protobuf_lite",
+        "io.grpc:grpc-services": "@com_cgi_eoss_eopp//third_party/grpc:all_services",
+        "io.grpc:grpc-stub": "@com_cgi_eoss_eopp//third_party/grpc:stub",
+    },
+    repositories = REPOSITORIES,
+    strict_visibility = True,
+    use_unsafe_shared_cache = True,
+    version_conflict_policy = "pinned",
+)
+
+load("@maven//:defs.bzl", "pinned_maven_install")
+
+pinned_maven_install()
+
+load("@maven//:compat.bzl", "compat_repositories")
+
+compat_repositories()
 
 rules_kotlin_version = "legacy-1.3.0-rc3"
 

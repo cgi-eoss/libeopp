@@ -1,6 +1,6 @@
 plugins {
     base
-    id("com.github.zetten.bazel-dependencies-plugin") version "1.4.0"
+    id("com.github.zetten.bazel-dependencies-plugin") version "1.7.1"
     id("com.github.ben-manes.versions") version "0.27.0"
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
 }
@@ -10,10 +10,27 @@ val generate by configurations.creating
 bazelDependencies {
     configuration = generate
     outputFile = project.rootDir.resolve("java_repositories.bzl")
-    strictLicenses = true
-    safeSources = true
+    mode = com.github.zetten.bazeldeps.BazelDependenciesMode.RULES_JVM_EXTERNAL
+    createMavenInstallJson = true
     sourcesChecksums = true
-    licenseOverrides = mapOf()
+    compileOnly = setOf(
+        "com.google.auto.value:auto-value-annotations:1.6.3",
+        "com.google.errorprone:error_prone_annotations:2.3.3",
+        "org.codehaus.mojo:animal-sniffer-annotations:1.18",
+        "javax.annotation:javax.annotation-api:1.3.2",
+        "org.jetbrains:annotations:13.0"
+    )
+    testOnly = setOf(
+        "com.google.truth.extensions:truth-java8-extension:1.0",
+        "com.google.truth.extensions:truth-liteproto-extension:1.0",
+        "com.google.truth.extensions:truth-proto-extension:1.0",
+        "com.google.truth:truth:1.0",
+        "com.squareup.okhttp3:mockwebserver:4.2.2",
+        "junit:junit:4.12",
+        "org.hamcrest:hamcrest:2.1",
+        "org.hamcrest:hamcrest-core:2.1",
+        "org.mockito:mockito-core:3.1.0"
+    )
 }
 
 repositories {
@@ -27,6 +44,7 @@ extra.set("j2objc-annotations.version", "1.3")
 extra.set("kotlin.version", "1.3.61")
 extra.set("okhttp.version", "4.2.2")
 extra.set("protobuf-java.version", "3.11.1")
+extra.set("reactor-grpc.version", "1.0.0")
 extra.set("spring-boot.version", "2.2.2.RELEASE")
 extra.set("spring-cloud.version", "Hoxton.SR1")
 extra.set("truth.version", "1.0")
@@ -46,6 +64,7 @@ dependencyManagement {
         dependency("com.google.truth.extensions:truth-java8-extension:${extra.get("truth.version")}")
         dependency("com.google.truth.extensions:truth-proto-extension:${extra.get("truth.version")}")
         dependency("com.google.truth:truth:${extra.get("truth.version")}")
+        dependency("com.salesforce.servicelibs:reactive-grpc-gencommon:${extra.get("reactor-grpc.version")}")
         dependency("com.squareup.okhttp3:logging-interceptor:${extra.get("okhttp.version")}")
         dependency("com.squareup.okhttp3:mockwebserver:${extra.get("okhttp.version")}")
         dependency("com.squareup.okhttp3:okhttp:${extra.get("okhttp.version")}")
@@ -60,6 +79,7 @@ dependencies {
     generate("com.google.truth.extensions:truth-java8-extension")
     generate("com.google.truth.extensions:truth-proto-extension")
     generate("com.google.truth:truth")
+    generate("com.salesforce.servicelibs:reactive-grpc-gencommon")
     generate("com.squareup.okhttp3:logging-interceptor")
     generate("com.squareup.okhttp3:mockwebserver")
     generate("com.squareup.okhttp3:okhttp")

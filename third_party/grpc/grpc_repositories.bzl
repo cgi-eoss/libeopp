@@ -4,6 +4,8 @@ GRPC_VERSION = "1.25.0"
 
 GRPC_JAVA_VERSION = "1.25.0"
 
+REACTOR_GRPC_VERSION = "1.0.0"
+
 def grpc_repositories():
     http_archive(
         name = "com_github_grpc_grpc",
@@ -22,6 +24,6 @@ def grpc_repositories():
     http_archive(
         name = "com_salesforce_servicelibs_reactive_grpc",
         sha256 = "ecbd374daa9398634253d9bb2f58f0193217c1cd94d63b7274e87ad41e232ad4",
-        strip_prefix = "reactive-grpc-1.0.0",
-        urls = ["https://github.com/salesforce/reactive-grpc/archive/v1.0.0.zip"],
+        strip_prefix = "reactive-grpc-%s" % REACTOR_GRPC_VERSION,
+        urls = ["https://github.com/salesforce/reactive-grpc/archive/v%s.zip" % REACTOR_GRPC_VERSION],
     )

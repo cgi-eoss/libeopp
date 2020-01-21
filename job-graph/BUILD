@@ -16,11 +16,11 @@ maven_library(
     build_kt_jvm_library = True,
     runtime_deps = ["@org_jetbrains_kotlin_kotlin_reflect"],
     deps = [
-        "//job",
         "//identifier",
+        "//job",
         "//workflow",
-        "@com_google_guava_guava",
-        "@org_slf4j_slf4j_api",
+        "@maven//:com_google_guava_guava",
+        "@maven//:org_slf4j_slf4j_api",
     ],
 )
 
@@ -29,16 +29,17 @@ java_library(
     testonly = True,
     srcs = glob(["src/test/java/**/*.java"]),
     runtime_deps = [
-        "@ch_qos_logback_logback_classic",
+        "@maven//:ch_qos_logback_logback_classic",
     ],
     deps = [
         ":job-graph",
-        "//job",
         "//identifier",
+        "//job",
         "//workflow",
-        "@com_google_truth_extensions_truth_proto_extension",
-        "@com_google_truth_truth",
-        "@junit_junit",
+        "@maven//:com_google_guava_guava",
+        "@maven//:com_google_truth_extensions_truth_proto_extension",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
     ],
 )
 
