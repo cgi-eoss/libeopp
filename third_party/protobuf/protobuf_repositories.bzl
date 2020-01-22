@@ -30,7 +30,9 @@ def protobuf_repositories():
 
     http_archive(
         name = "com_google_protobuf_javalite",
-        sha256 = "311b29b8d0803ab4f89be22ff365266abb6c48fd3483d59b04772a144d7a24a1",
-        strip_prefix = "protobuf-7b64714af67aa967dcf941df61fe5207975966be",
-        urls = ["https://github.com/google/protobuf/archive/7b64714af67aa967dcf941df61fe5207975966be.zip"],
+        sha256 = "e60211a40473f6be95b53f64559f82a3b2971672b11710db2fc9081708e25699",
+        strip_prefix = "protobuf-0425fa932ce95a32bb9f88b2c09b995e9ff8207b",
+        urls = ["https://github.com/google/protobuf/archive/0425fa932ce95a32bb9f88b2c09b995e9ff8207b.zip"],  # Commit with fixed javalite on 3.11.x branch
+        patches = ["//third_party/protobuf:protobuf_drop_java_7_compatibility.patch"],
+        patch_args = ["-p1"],
     )

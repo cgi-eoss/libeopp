@@ -77,6 +77,7 @@ maven_install(
     override_targets = {
         "com.google.protobuf:protobuf-java": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_java",
         "com.google.protobuf:protobuf-java-util": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_java_util",
+        "com.google.protobuf:protobuf-javalite": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_javalite",
         "io.grpc:grpc-context": "@com_cgi_eoss_eopp//third_party/grpc:context",
         "io.grpc:grpc-core": "@com_cgi_eoss_eopp//third_party/grpc:all_core",
         "io.grpc:grpc-netty": "@com_cgi_eoss_eopp//third_party/grpc:netty",

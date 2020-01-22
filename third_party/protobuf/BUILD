@@ -23,6 +23,16 @@ java_library(
     exports = ["@com_google_protobuf//:protobuf_java_util"],
 )
 
+java_library(
+    name = "protobuf_javalite",
+    tags = [
+        "manual",
+        "maven_coordinates=com.google.protobuf:protobuf-javalite:" + PROTOBUF_VERSION,
+    ],
+    visibility = ["//visibility:public"],
+    exports = ["@com_google_protobuf_javalite//:protobuf_javalite"],
+)
+
 java_proto_library(
     name = "timestamp_java_proto",
     tags = [

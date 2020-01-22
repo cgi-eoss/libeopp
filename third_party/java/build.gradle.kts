@@ -2,7 +2,7 @@ plugins {
     base
     id("com.github.zetten.bazel-dependencies-plugin") version "1.7.1"
     id("com.github.ben-manes.versions") version "0.27.0"
-    id("io.spring.dependency-management") version "1.0.8.RELEASE"
+    id("io.spring.dependency-management") version "1.0.9.RELEASE"
 }
 
 val generate by configurations.creating
@@ -15,17 +15,17 @@ bazelDependencies {
     sourcesChecksums = true
     compileOnly = setOf(
         "com.google.auto.value:auto-value-annotations:1.6.3",
-        "com.google.errorprone:error_prone_annotations:2.3.3",
-        "org.codehaus.mojo:animal-sniffer-annotations:1.18",
+        "com.google.errorprone:error_prone_annotations:2.3.4",
+        "org.codehaus.mojo:animal-sniffer-annotations:1.17",
         "javax.annotation:javax.annotation-api:1.3.2",
         "org.jetbrains:annotations:13.0"
     )
     testOnly = setOf(
-        "com.google.truth.extensions:truth-java8-extension:1.0",
-        "com.google.truth.extensions:truth-liteproto-extension:1.0",
-        "com.google.truth.extensions:truth-proto-extension:1.0",
-        "com.google.truth:truth:1.0",
-        "com.squareup.okhttp3:mockwebserver:4.2.2",
+        "com.google.truth.extensions:truth-java8-extension:1.0.1",
+        "com.google.truth.extensions:truth-liteproto-extension:1.0.1",
+        "com.google.truth.extensions:truth-proto-extension:1.0.1",
+        "com.google.truth:truth:1.0.1",
+        "com.squareup.okhttp3:mockwebserver:4.3.1",
         "junit:junit:4.12",
         "org.hamcrest:hamcrest:2.1",
         "org.hamcrest:hamcrest-core:2.1",
@@ -38,16 +38,16 @@ repositories {
 }
 
 extra.set("google-common-protos.version", "1.17.0")
-extra.set("grpc-java.version", "1.25.0")
-extra.set("guava.version", "28.1-jre")
+extra.set("grpc-java.version", "1.26.0")
+extra.set("guava.version", "28.2-jre")
 extra.set("j2objc-annotations.version", "1.3")
 extra.set("kotlin.version", "1.3.61")
-extra.set("okhttp.version", "4.2.2")
+extra.set("okhttp.version", "4.3.1")
 extra.set("protobuf-java.version", "3.11.1")
 extra.set("reactor-grpc.version", "1.0.0")
-extra.set("spring-boot.version", "2.2.2.RELEASE")
+extra.set("spring-boot.version", "2.2.4.RELEASE")
 extra.set("spring-cloud.version", "Hoxton.SR1")
-extra.set("truth.version", "1.0")
+extra.set("truth.version", "1.0.1")
 
 dependencyManagement {
     imports {
@@ -61,6 +61,7 @@ dependencyManagement {
         dependency("com.google.api.grpc:proto-google-common-protos:${extra.get("google-common-protos.version")}")
         dependency("com.google.guava:guava:${extra.get("guava.version")}")
         dependency("com.google.j2objc:j2objc-annotations:${extra.get("j2objc-annotations.version")}")
+        dependency("com.google.protobuf:protobuf-javalite:${extra.get("protobuf-java.version")}")
         dependency("com.google.truth.extensions:truth-java8-extension:${extra.get("truth.version")}")
         dependency("com.google.truth.extensions:truth-proto-extension:${extra.get("truth.version")}")
         dependency("com.google.truth:truth:${extra.get("truth.version")}")
@@ -76,6 +77,7 @@ dependencies {
     generate("com.google.api.grpc:proto-google-common-protos")
     generate("com.google.guava:guava")
     generate("com.google.protobuf:protobuf-java")
+    generate("com.google.protobuf:protobuf-javalite")
     generate("com.google.truth.extensions:truth-java8-extension")
     generate("com.google.truth.extensions:truth-proto-extension")
     generate("com.google.truth:truth")

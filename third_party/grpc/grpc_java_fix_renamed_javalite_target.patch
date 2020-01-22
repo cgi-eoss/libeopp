@@ -1,0 +1,23 @@
+From 274bf62e04f66fe9e0ffa4cac052a145e7c7b690 Mon Sep 17 00:00:00 2001
+From: Eric Anderson <ejona@google.com>
+Date: Wed, 18 Dec 2019 09:39:55 -0800
+Subject: [PATCH] bazel: Fix renamed javalite target
+
+This was missed from 2d592642a, because the select hid the failure.
+---
+ protobuf-lite/BUILD.bazel | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/protobuf-lite/BUILD.bazel b/protobuf-lite/BUILD.bazel
+index f1529c9c70..85cd9669e1 100644
+--- a/protobuf-lite/BUILD.bazel
++++ b/protobuf-lite/BUILD.bazel
+@@ -10,7 +10,7 @@ java_library(
+         "@com_google_guava_guava//jar",
+         "@com_google_j2objc_j2objc_annotations//jar",
+     ] + select({
+-        ":android": ["@com_google_protobuf_javalite//:protobuf_java_lite"],
++        ":android": ["@com_google_protobuf_javalite//:protobuf_javalite"],
+         "//conditions:default": ["@com_google_protobuf//:protobuf_java"],
+     }),
+ )
