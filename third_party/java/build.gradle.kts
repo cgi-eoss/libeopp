@@ -74,6 +74,8 @@ dependencyManagement {
 
 dependencies {
     generate("ch.qos.logback:logback-classic")
+    generate("com.fasterxml.jackson.core:jackson-databind")
+    generate("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     generate("com.google.api.grpc:proto-google-common-protos")
     generate("com.google.guava:guava")
     generate("com.google.protobuf:protobuf-java")

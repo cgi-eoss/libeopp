@@ -64,6 +64,126 @@
                 "sha256": "1f69b6b638ec551d26b10feeade5a2b77abe347f9759da95022f0da9a63a9971"
             },
             {
+                "coord": "com.fasterxml.jackson.core:jackson-annotations:2.10.2",
+                "file": "v1/https/jcenter.bintray.com/com/fasterxml/jackson/core/jackson-annotations/2.10.2/jackson-annotations-2.10.2.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/com/fasterxml/jackson/core/jackson-annotations/2.10.2/jackson-annotations-2.10.2.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/com/fasterxml/jackson/core/jackson-annotations/2.10.2/jackson-annotations-2.10.2.jar"
+                ],
+                "sha256": "8c3cba89bf3e03b35a0e6f892c2eb17ed8fdde2e214c3a4c18703d63796bae46"
+            },
+            {
+                "coord": "com.fasterxml.jackson.core:jackson-annotations:jar:sources:2.10.2",
+                "file": "v1/https/jcenter.bintray.com/com/fasterxml/jackson/core/jackson-annotations/2.10.2/jackson-annotations-2.10.2-sources.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/com/fasterxml/jackson/core/jackson-annotations/2.10.2/jackson-annotations-2.10.2-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/com/fasterxml/jackson/core/jackson-annotations/2.10.2/jackson-annotations-2.10.2-sources.jar"
+                ],
+                "sha256": "9ab9d0a64a8d911bc2dd4edcbf76dcf43af0d9c1835f30a3117f972de55bbe90"
+            },
+            {
+                "coord": "com.fasterxml.jackson.core:jackson-core:2.10.2",
+                "file": "v1/https/jcenter.bintray.com/com/fasterxml/jackson/core/jackson-core/2.10.2/jackson-core-2.10.2.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/com/fasterxml/jackson/core/jackson-core/2.10.2/jackson-core-2.10.2.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/com/fasterxml/jackson/core/jackson-core/2.10.2/jackson-core-2.10.2.jar"
+                ],
+                "sha256": "4c41f22a48f6ebb28752baeb6d25bf09ba4ff0ad8bfb82650dde448928b9da4f"
+            },
+            {
+                "coord": "com.fasterxml.jackson.core:jackson-core:jar:sources:2.10.2",
+                "file": "v1/https/jcenter.bintray.com/com/fasterxml/jackson/core/jackson-core/2.10.2/jackson-core-2.10.2-sources.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/com/fasterxml/jackson/core/jackson-core/2.10.2/jackson-core-2.10.2-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/com/fasterxml/jackson/core/jackson-core/2.10.2/jackson-core-2.10.2-sources.jar"
+                ],
+                "sha256": "3f356724ca7a5ba77a18e5448e31d544a4e04b9beca585f680fed81ff80767fb"
+            },
+            {
+                "coord": "com.fasterxml.jackson.core:jackson-databind:2.10.2",
+                "file": "v1/https/jcenter.bintray.com/com/fasterxml/jackson/core/jackson-databind/2.10.2/jackson-databind-2.10.2.jar",
+                "directDependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:2.10.2"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:2.10.2"
+                ],
+                "url": "https://jcenter.bintray.com/com/fasterxml/jackson/core/jackson-databind/2.10.2/jackson-databind-2.10.2.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/com/fasterxml/jackson/core/jackson-databind/2.10.2/jackson-databind-2.10.2.jar"
+                ],
+                "sha256": "42c25644e35fadfbded1b7f35a8d1e70a86737f190e43aa2c56cea4b96cbda88"
+            },
+            {
+                "coord": "com.fasterxml.jackson.core:jackson-databind:jar:sources:2.10.2",
+                "file": "v1/https/jcenter.bintray.com/com/fasterxml/jackson/core/jackson-databind/2.10.2/jackson-databind-2.10.2-sources.jar",
+                "directDependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:jar:sources:2.10.2"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:jar:sources:2.10.2"
+                ],
+                "url": "https://jcenter.bintray.com/com/fasterxml/jackson/core/jackson-databind/2.10.2/jackson-databind-2.10.2-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/com/fasterxml/jackson/core/jackson-databind/2.10.2/jackson-databind-2.10.2-sources.jar"
+                ],
+                "sha256": "6436b499a6d31caf37b2a03af3d1729c9d53b9971fbf40b9239da8551b3e8db6"
+            },
+            {
+                "coord": "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.10.2",
+                "file": "v1/https/jcenter.bintray.com/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.10.2/jackson-dataformat-yaml-2.10.2.jar",
+                "directDependencies": [
+                    "com.fasterxml.jackson.core:jackson-core:2.10.2",
+                    "org.yaml:snakeyaml:1.25"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-core:2.10.2",
+                    "org.yaml:snakeyaml:1.25"
+                ],
+                "url": "https://jcenter.bintray.com/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.10.2/jackson-dataformat-yaml-2.10.2.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.10.2/jackson-dataformat-yaml-2.10.2.jar"
+                ],
+                "sha256": "2a39b96c1e15960b257ab5fc2b6e7e3e77cf8bddc42254ff20c8455df5cde699"
+            },
+            {
+                "coord": "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:jar:sources:2.10.2",
+                "file": "v1/https/jcenter.bintray.com/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.10.2/jackson-dataformat-yaml-2.10.2-sources.jar",
+                "directDependencies": [
+                    "com.fasterxml.jackson.core:jackson-core:jar:sources:2.10.2",
+                    "org.yaml:snakeyaml:jar:sources:1.25"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-core:jar:sources:2.10.2",
+                    "org.yaml:snakeyaml:jar:sources:1.25"
+                ],
+                "url": "https://jcenter.bintray.com/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.10.2/jackson-dataformat-yaml-2.10.2-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.10.2/jackson-dataformat-yaml-2.10.2-sources.jar"
+                ],
+                "sha256": "2910f90945b44d675c038555ca9bb9c7a2ae8a228bb8814020579ce6f1a11ddd"
+            },
+            {
                 "coord": "com.github.spullara.mustache.java:compiler:0.9.4",
                 "file": "v1/https/jcenter.bintray.com/com/github/spullara/mustache/java/compiler/0.9.4/compiler-0.9.4.jar",
                 "directDependencies": [
@@ -2707,9 +2827,35 @@
                     "https://jcenter.bintray.com/org/springframework/spring-jcl/5.2.3.RELEASE/spring-jcl-5.2.3.RELEASE-sources.jar"
                 ],
                 "sha256": "8662e1f9347bce0caf63faa67d246c636b8cc63f2647a7d63f6ccea938b44b88"
+            },
+            {
+                "coord": "org.yaml:snakeyaml:1.25",
+                "file": "v1/https/jcenter.bintray.com/org/yaml/snakeyaml/1.25/snakeyaml-1.25.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/org/yaml/snakeyaml/1.25/snakeyaml-1.25.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/org/yaml/snakeyaml/1.25/snakeyaml-1.25.jar"
+                ],
+                "sha256": "b50ef33187e7dc922b26dbe4dd0fdb3a9cf349e75a08b95269901548eee546eb"
+            },
+            {
+                "coord": "org.yaml:snakeyaml:jar:sources:1.25",
+                "file": "v1/https/jcenter.bintray.com/org/yaml/snakeyaml/1.25/snakeyaml-1.25-sources.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/org/yaml/snakeyaml/1.25/snakeyaml-1.25-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/org/yaml/snakeyaml/1.25/snakeyaml-1.25-sources.jar"
+                ],
+                "sha256": "fcc58a580b640e80f6c71acdd20b00dd87b80c9944dcad0389a904b77f04c88d"
             }
         ],
         "version": "0.1.0",
-        "__AUTOGENERATED_FILE_DO_NOT_MODIFY_THIS_FILE_MANUALLY": -749575253
+        "__AUTOGENERATED_FILE_DO_NOT_MODIFY_THIS_FILE_MANUALLY": 1111737173
     }
 }

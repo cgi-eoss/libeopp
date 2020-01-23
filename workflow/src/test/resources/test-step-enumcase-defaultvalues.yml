@@ -1,0 +1,39 @@
+identifier: test
+version: "2.0.1"
+title: Test Step
+abstract: A test step.
+keywords:
+  - some
+  - key
+  - words
+parameters:
+  - identifier: BAZ
+    min_occurs: 1
+    data_type: String
+    default_value: default
+  - identifier: SHOULD_PASS
+    min_occurs: 1
+    max_occurs: 1
+    data_type: Boolean
+    default_value: true
+  - identifier: SLEEP_TIME
+    min_occurs: 1
+    max_occurs: 1
+    data_type: Integer
+    uom: seconds
+    default_value: 2
+inputs:
+  - identifier: test_input
+    title: Dummy Input
+    abstract: Some dummy input file.
+    min_occurs: 1
+    max_occurs: 1
+outputs:
+  - identifier: test_output
+    title: Test Output
+    abstract: A dummy output file.
+    min_occurs: 1
+    max_occurs: 1
+requests:
+  cpu: 50m
+  memory: 50Mi

@@ -7,6 +7,10 @@ REPOSITORIES = [
 ARTIFACTS = [
     maven.artifact("ch.qos.logback", "logback-classic", "1.2.3"),
     maven.artifact("ch.qos.logback", "logback-core", "1.2.3"),
+    maven.artifact("com.fasterxml.jackson.core", "jackson-annotations", "2.10.2"),
+    maven.artifact("com.fasterxml.jackson.core", "jackson-core", "2.10.2"),
+    maven.artifact("com.fasterxml.jackson.core", "jackson-databind", "2.10.2"),
+    maven.artifact("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", "2.10.2"),
     maven.artifact("com.github.spullara.mustache.java", "compiler", "0.9.4"),
     maven.artifact("com.google.android", "annotations", "4.1.1.4"),
     maven.artifact("com.google.api.grpc", "proto-google-common-protos", "1.17.0"),
@@ -76,4 +80,5 @@ ARTIFACTS = [
     maven.artifact("org.springframework.security", "spring-security-crypto", "5.2.1.RELEASE"),
     maven.artifact("org.springframework", "spring-core", "5.2.3.RELEASE"),
     maven.artifact("org.springframework", "spring-jcl", "5.2.3.RELEASE"),
+    maven.artifact("org.yaml", "snakeyaml", "1.25"),
 ]

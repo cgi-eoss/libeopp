@@ -11,16 +11,17 @@ import "identifier/src/main/proto/identifier.proto";
 // Enumerator for literal data types. Derived from XML schema, with the exception of Geometry, which has
 // libeopp-specific meaning.
 enum ParameterDataType {
-    BOOLEAN = 0;
-    DATE = 1;
-    DATETIME = 2;
-    DECIMAL = 3;
-    DOUBLE = 4;
-    FLOAT = 5;
-    GEOMETRY = 6;
-    INTEGER = 7;
-    STRING = 8;
-    TIME = 9;
+    UNKNOWN = 0;
+    BOOLEAN = 1;
+    DATE = 2;
+    DATETIME = 3;
+    DECIMAL = 4;
+    DOUBLE = 5;
+    FLOAT = 6;
+    GEOMETRY = 7;
+    INTEGER = 8;
+    STRING = 9;
+    TIME = 10;
     OTHER = 999;
 }
 

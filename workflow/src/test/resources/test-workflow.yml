@@ -1,0 +1,82 @@
+---
+uuid: null
+identifier:
+  identifier: test-workflow
+  version: 1.0.0
+title: Test Workflow
+abstract: |-
+  This is a test workflow.
+
+  It has a multiline abstract.
+keywords:
+  - some
+  - test
+  - keywords
+
+parameters:
+  - identifier: param-1
+    title: Parameter 1
+    min_occurs: 1
+    max_occurs: 10
+    data_type: STRING
+    uom: candela
+    default_values:
+      - param-1-value-1
+      - param-1-value-2
+    allowed_values:
+      - value: param-1-value-1
+        type: VALUE
+      - value: param-1-value-2
+      - value: param-1-value-[0-9]+
+        type: REGEX
+
+inputs:
+  - identifier: input-1
+    title: Input 1
+    abstract: Some random input data
+    min_occurs: 0
+    format: SAFE
+  - identifier: input-2
+    title: Input 2
+    abstract: Some more random input data
+    min_occurs: 1
+    data_type: UNKNOWN
+
+outputs:
+  - identifier: output-1
+    title: Output 1
+    abstract: A step output file.
+    min_occurs: 1
+    max_occurs: 1
+    format: SAFE
+    sources:
+      step_outputs:
+        - step_identifier: processing-step-1
+          output_identifier: step-output
+  - identifier: output-2
+    title: Output 2
+    abstract: A passed-through workflow input.
+    min_occurs: 0
+    format: SAFE
+    sources:
+      workflow_inputs:
+        - input-1
+
+stepConfigurations:
+  - identifier: processing-step-1
+    step:
+      identifier:
+        identifier: test-step
+        version: 1.0.0
+    parameter_links:
+      - identifier: test-step-param-1
+        hardcoded_values:
+          - hardcoded-test-value
+      - identifier: test-step-param-2
+        workflow_parameter: param-1
+    input_links:
+      - identifier: test-step-input-1
+        sources:
+          workflow_inputs:
+            - input-2
+        parallel: true
