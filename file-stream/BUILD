@@ -17,7 +17,6 @@ maven_library(
         "//third_party/grpc:reactor_grpc_stub",
         "//third_party/grpc:stub",
         "//third_party/protobuf:protobuf_java",
-        "//util",
         "@maven//:com_google_guava_guava",
         "@maven//:io_projectreactor_reactor_core",
         "@maven//:org_slf4j_slf4j_api",
@@ -28,7 +27,10 @@ maven_library(
 java_library(
     name = "file-stream_java_tests",
     testonly = True,
-    srcs = ["src/test/java/com/cgi/eoss/eopp/filestream/EoppFileStreamResourceTest.java"],
+    srcs = [
+        "src/test/java/com/cgi/eoss/eopp/filestream/EoppFileStreamResourceReactiveTest.java",
+        "src/test/java/com/cgi/eoss/eopp/filestream/EoppFileStreamResourceTest.java",
+    ],
     data = glob(["src/test/resources/**"]),
     deps = [
         ":file-stream",
@@ -49,6 +51,13 @@ java_test(
     name = "EoppFileStreamResourceTest",
     size = "small",
     test_class = "com.cgi.eoss.eopp.filestream.EoppFileStreamResourceTest",
+    runtime_deps = [":file-stream_java_tests"],
+)
+
+java_test(
+    name = "EoppFileStreamResourceReactiveTest",
+    size = "small",
+    test_class = "com.cgi.eoss.eopp.filestream.EoppFileStreamResourceReactiveTest",
     runtime_deps = [":file-stream_java_tests"],
 )
 
@@ -89,20 +98,29 @@ reactor_grpc_library(
 java_library(
     name = "filestream_test_server_java",
     testonly = True,
-    srcs = ["src/test/java/com/cgi/eoss/eopp/filestream/FileStreamTestServer.java"],
+    srcs = [
+        "src/test/java/com/cgi/eoss/eopp/filestream/FileStreamTestServer.java",
+        "src/test/java/com/cgi/eoss/eopp/filestream/ReactiveFileStreamTestServer.java",
+    ],
     visibility = ["//visibility:public"],
     exports = [
         ":filestream_test_server_java_grpc",
         ":filestream_test_server_java_proto",
         ":filestream_test_server_reactor_grpc",
     ],
+    runtime_deps = [
+        "@maven//:ch_qos_logback_logback_classic",
+    ],
     deps = [
         ":filestream_test_server_java_grpc",
         ":filestream_test_server_java_proto",
+        ":filestream_test_server_reactor_grpc",
         "//file",
         "//file-stream",
         "//third_party/grpc:stub",
+        "@io_grpc_grpc_java//api",
         "@maven//:com_google_guava_guava",
+        "@maven//:io_projectreactor_reactor_core",
         "@maven//:org_slf4j_slf4j_api",
         "@maven//:org_springframework_spring_core",
     ],

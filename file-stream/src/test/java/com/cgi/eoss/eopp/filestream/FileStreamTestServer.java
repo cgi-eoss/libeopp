@@ -1,77 +1,62 @@
+/*
+ * Copyright 2020 The libeopp Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.cgi.eoss.eopp.filestream;
 
 import com.cgi.eoss.eopp.file.FileChunk;
-import com.cgi.eoss.eopp.file.FileMeta;
-import com.cgi.eoss.eopp.file.FileMetas;
 import com.google.common.base.Stopwatch;
-import com.google.common.io.Resources;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.UrlResource;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URLConnection;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class FileStreamTestServer extends FileStreamTestServerGrpc.FileStreamTestServerImplBase {
     private static final Logger log = LoggerFactory.getLogger(FileStreamTestServer.class);
 
-    private final Path targetRoot;
-
-    public FileStreamTestServer(Path targetRoot) {
-        this.targetRoot = targetRoot;
-    }
-
-    public FileStreamTestServer() {
-        this(null);
-    }
-
     @Override
     public void getFile(GetFileParam request, StreamObserver<FileChunk> responseObserver) {
-        URLConnection testFileConnection = getTestFileConnection(request.getUri());
-
-        try (FileStreamSendingServer fileStreamServer = new FileStreamSendingServer(responseObserver) {
-            @Override
-            protected FileMeta buildFileMeta() {
-                try {
-                    return FileMeta.newBuilder()
-                            .setFilename(StringUtils.getFilename(request.getUri()))
-                            .setSize(testFileConnection.getContentLength())
-                            .setChecksum(FileMetas.checksum(Resources.asByteSource(testFileConnection.getURL())))
-                            .build();
-                } catch (IOException e) {
-                    throw new FileStreamIOException(e);
-                }
-            }
-
-            @Override
-            protected ReadableByteChannel buildByteChannel() {
-                try {
-                    return Channels.newChannel(testFileConnection.getInputStream());
-                } catch (IOException e) {
-                    throw new FileStreamIOException(e);
-                }
-            }
-        }) {
-            log.info("Serving output file: {} ({} bytes)", fileStreamServer.getFileMeta().getFilename(), fileStreamServer.getFileMeta().getSize());
-            Stopwatch stopwatch = Stopwatch.createStarted();
-            fileStreamServer.streamFile();
-            log.info("Served output file {} ({} bytes) in {}", fileStreamServer.getFileMeta().getFilename(), fileStreamServer.getFileMeta().getSize(), stopwatch.stop().elapsed());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static URLConnection getTestFileConnection(String uri) {
+        String filename = StringUtils.getFilename(request.getUri());
         try {
-            return URI.create(uri).toURL().openConnection();
+            UrlResource resource = new UrlResource(URI.create(request.getUri()));
+            long size = resource.contentLength();
+
+            Stopwatch stopwatch = Stopwatch.createUnstarted();
+            FileStreams.create(resource)
+                    .doOnSubscribe(subscription -> {
+                        log.info("Serving output file: {} ({} bytes)", filename, size);
+                        stopwatch.start();
+                    })
+                    .subscribe(
+                            responseObserver::onNext,
+                            e -> {
+                                log.error("Failed serving output file: {}", filename, e);
+                                responseObserver.onError(Status.UNKNOWN.withDescription("Error returning product as FileStream").withCause(e).asException());
+                            },
+                            () -> {
+                                log.info("Served output file {} ({} bytes) in {}", filename, size, stopwatch.stop().elapsed());
+                                responseObserver.onCompleted();
+                            }
+                    );
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("Failed serving output file: {}", filename, e);
+            responseObserver.onError(Status.UNKNOWN.withDescription("Error returning product as FileStream").withCause(e).asException());
         }
     }
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 The libeopp Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.cgi.eoss.eopp.filestream;
 
 import com.cgi.eoss.eopp.file.FileChunk;
@@ -13,7 +29,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import reactor.core.publisher.Mono;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -35,7 +50,6 @@ public class EoppFileStreamResourceTest {
     @Rule
     public final GrpcCleanupRule grpcCleanup = new GrpcCleanupRule();
     private FileStreamTestServerGrpc.FileStreamTestServerStub fileServerStub;
-    private ReactorFileStreamTestServerGrpc.ReactorFileStreamTestServerStub reactiveFileServerStub;
 
     @Before
     public void setUp() throws Exception {
@@ -45,7 +59,6 @@ public class EoppFileStreamResourceTest {
 
         InProcessChannelBuilder channelBuilder = InProcessChannelBuilder.forName(serverName).directExecutor();
         fileServerStub = FileStreamTestServerGrpc.newStub(grpcCleanup.register(channelBuilder.build()));
-        reactiveFileServerStub = ReactorFileStreamTestServerGrpc.newReactorStub(grpcCleanup.register(channelBuilder.build()));
     }
 
     @Test
@@ -93,43 +106,6 @@ public class EoppFileStreamResourceTest {
             fail("Expected UnsupportedOperationException");
         } catch (UnsupportedOperationException expected) {
         }
-    }
-
-    @Test
-    public void testReactiveResource() throws IOException {
-        Path testfile = Paths.get("file-stream/src/test/resources/testfile");
-        FileMeta fileMeta = FileMetas.get(testfile);
-
-        GetFileParam getFile = GetFileParam.newBuilder().setUri(testfile.toUri().toString()).build();
-        GrpcMethod<ReactorFileStreamTestServerGrpc.ReactorFileStreamTestServerStub, GetFileParam, FileChunk> getFileMethod
-                = new GrpcMethod<>(reactiveFileServerStub, FileStreamTestServerGrpc.getGetFileMethod(), getFile);
-        EoppFileStreamResource<ReactorFileStreamTestServerGrpc.ReactorFileStreamTestServerStub, GetFileParam> resource = new EoppFileStreamResource<>(fileMeta, getFileMethod, reactiveFileServerStub::getFile);
-
-        HashingCountingOutputStream target = new HashingCountingOutputStream(ByteStreams.nullOutputStream());
-        try {
-            ByteStreams.copy(resource.getInputStream(), target);
-        } finally {
-            target.close();
-        }
-        assertThat(target.getCount()).isEqualTo(fileMeta.getSize());
-        assertThat(target.checksum()).isEqualTo(fileMeta.getChecksum());
-    }
-
-    @Test
-    public void testReactiveDataStream() throws IOException {
-        Path testfile = Paths.get("file-stream/src/test/resources/testfile");
-        FileMeta fileMeta = FileMetas.get(testfile);
-
-        GetFileParam getFile = GetFileParam.newBuilder().setUri(testfile.toUri().toString()).build();
-
-        HashingCountingOutputStream target = new HashingCountingOutputStream(ByteStreams.nullOutputStream());
-        try {
-            FileStreams.writeToStream(Mono.just(getFile), reactiveFileServerStub::getFile, target);
-        } finally {
-            target.close();
-        }
-        assertThat(target.getCount()).isEqualTo(fileMeta.getSize());
-        assertThat(target.checksum()).isEqualTo(fileMeta.getChecksum());
     }
 
 }
