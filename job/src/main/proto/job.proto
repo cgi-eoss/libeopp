@@ -287,3 +287,11 @@ message StepInput {
     // The source data for a step input.
     repeated StepDataSet sources = 7;
 }
+
+// A unique identifier for a step instance within the system.
+message StepInstanceId {
+    // The identifier of the job to which this step belongs.
+    string job_uuid = 1;
+    // The identifier of this step within the job.
+    string identifier = 2;
+}
