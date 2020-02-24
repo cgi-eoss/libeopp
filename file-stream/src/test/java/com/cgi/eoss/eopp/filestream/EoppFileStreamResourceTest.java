@@ -20,6 +20,7 @@ import com.cgi.eoss.eopp.file.FileChunk;
 import com.cgi.eoss.eopp.file.FileMeta;
 import com.cgi.eoss.eopp.file.FileMetas;
 import com.cgi.eoss.eopp.rpc.GrpcMethod;
+import com.cgi.eoss.eopp.util.HashingCountingOutputStream;
 import com.google.common.io.ByteStreams;
 import io.grpc.inprocess.InProcessChannelBuilder;
 import io.grpc.inprocess.InProcessServerBuilder;

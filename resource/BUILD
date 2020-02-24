@@ -4,8 +4,10 @@ maven_library(
     name = "resource",
     srcs = [
         "src/main/java/com/cgi/eoss/eopp/resource/EoppResource.java",
+        "src/main/java/com/cgi/eoss/eopp/resource/EoppZipCombiningResource.java",
         "src/main/java/com/cgi/eoss/eopp/resource/ResourceMetadataWrapper.java",
         "src/main/java/com/cgi/eoss/eopp/resource/WritableEoppResource.java",
+        "src/main/java/com/cgi/eoss/eopp/resource/ZipCombiningResource.java",
     ],
     artifact_name = "libeopp :: resource",
     sq_srcs = glob(["src/main/java/**"]),
@@ -17,6 +19,9 @@ maven_library(
     ],
     deps = [
         "//file",
+        "//util:io",
+        "//util:timestamps",
+        "@maven//:com_google_guava_guava",
         "@maven//:org_springframework_spring_core",
     ],
 )
@@ -116,5 +121,12 @@ java_test(
     name = "EoppS3ObjectResourceTest",
     size = "small",
     test_class = "com.cgi.eoss.eopp.resource.EoppS3ObjectResourceTest",
+    runtime_deps = [":resource_java_tests"],
+)
+
+java_test(
+    name = "EoppZipCombiningResourceTest",
+    size = "small",
+    test_class = "com.cgi.eoss.eopp.resource.EoppZipCombiningResourceTest",
     runtime_deps = [":resource_java_tests"],
 )

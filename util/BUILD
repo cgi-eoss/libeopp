@@ -9,6 +9,7 @@ maven_library(
         ":util",
         ":timestamps",
         ":eopp-headers",
+        ":io",
     ],
 )
 
@@ -25,6 +26,17 @@ maven_library(
     srcs = ["src/main/java/com/cgi/eoss/eopp/util/EoppHeaders.java"],
     artifact_name = "libeopp :: util :: eopp-headers",
     generate_sonarqube_project = False,
+)
+
+maven_library(
+    name = "io",
+    srcs = ["src/main/java/com/cgi/eoss/eopp/util/HashingCountingOutputStream.java"],
+    artifact_name = "libeopp :: util :: io",
+    generate_sonarqube_project = False,
+    deps = [
+        "//file",
+        "@maven//:com_google_guava_guava",
+    ],
 )
 
 java_library(

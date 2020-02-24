@@ -43,6 +43,7 @@ NON_SQ_TARGETS = [
     "//resource:s3-resource",
     "//util:eopp-headers",
     "//util:timestamps",
+    "//util:io",
 ]
 
 load("//tools:maven.bzl", "POM_VERSION", "pom_file")
