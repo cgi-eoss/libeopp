@@ -28,10 +28,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -48,12 +45,8 @@ public class EoppOkHttpResource implements EoppResource {
 
     private final OkHttpClient httpClient;
     private final HttpUrl url;
-    private final Function<String, Optional<String>> filenameFromHeader = s -> {
-        Matcher matcher = Pattern.compile("attachment; filename=\"?(.*)\"?").matcher(s);
-        return matcher.matches() ? Optional.of(matcher.group(1)) : Optional.empty();
-    };
 
-    private Supplier<HttpResourceMetadata> metadata = Lazy.lazily(this::getHttpResourceMetadata);
+    private Supplier<ResourceMetadataWrapper> metadata = Lazy.lazily(this::getHttpResourceMetadata);
     private int remainingRetries = 3;
 
     public EoppOkHttpResource(OkHttpClient httpClient, HttpUrl url) {
@@ -68,7 +61,7 @@ public class EoppOkHttpResource implements EoppResource {
                 .setSize(this.contentLength())
                 .setLastModified(Timestamps.timestampFromInstant(Instant.ofEpochMilli(this.lastModified())))
                 .setExecutable(false);
-        metadata.get().checksum.ifPresent(fileMeta::setChecksum);
+        metadata.get().getChecksum().ifPresent(fileMeta::setChecksum);
         return fileMeta.build();
     }
 
@@ -88,12 +81,12 @@ public class EoppOkHttpResource implements EoppResource {
 
     @Override
     public boolean exists() {
-        return metadata.get().exists;
+        return metadata.get().isExists();
     }
 
     @Override
     public boolean isReadable() {
-        return metadata.get().readable;
+        return metadata.get().isReadable();
     }
 
     @Override
@@ -118,12 +111,12 @@ public class EoppOkHttpResource implements EoppResource {
 
     @Override
     public long contentLength() {
-        return metadata.get().contentLength;
+        return metadata.get().getContentLength();
     }
 
     @Override
     public long lastModified() {
-        return metadata.get().lastModified;
+        return metadata.get().getLastModified();
     }
 
     @Override
@@ -136,7 +129,7 @@ public class EoppOkHttpResource implements EoppResource {
 
     @Override
     public String getFilename() {
-        return metadata.get().filename;
+        return metadata.get().getFilename();
     }
 
     @Override
@@ -158,33 +151,35 @@ public class EoppOkHttpResource implements EoppResource {
         }
     }
 
-    private HttpResourceMetadata getHttpResourceMetadata() {
+    private ResourceMetadataWrapper getHttpResourceMetadata() {
         // Make a HEAD request to get metadata only
         Request request = new Request.Builder().url(url).head().build();
 
-        HttpResourceMetadata httpResourceMetadata = new HttpResourceMetadata();
+        ResourceMetadataWrapper.ResourceMetadataWrapperBuilder builder = ResourceMetadataWrapper.builder();
 
         try (Response response = httpClient.newCall(request).execute()) {
             log.debug("Received HEAD response: {}", response);
-            httpResourceMetadata.exists = response.isSuccessful();
-            httpResourceMetadata.readable = response.isSuccessful();
-            httpResourceMetadata.lastModified = Optional.ofNullable(response.header(HttpHeaders.LAST_MODIFIED))
-                    .map(h -> parseDate(h).toInstant().toEpochMilli()).orElse(0L);
-            httpResourceMetadata.contentLength = Stream.of(Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader())).map(Long::valueOf),
+            builder.exists(response.isSuccessful());
+            builder.readable(response.isSuccessful());
+            Optional.ofNullable(response.header(HttpHeaders.LAST_MODIFIED))
+                    .map(h -> parseDate(h).toInstant().toEpochMilli())
+                    .ifPresent(builder::lastModified);
+            Stream.of(Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader())).map(Long::valueOf),
                     Optional.ofNullable(response.header(HttpHeaders.CONTENT_LENGTH)).map(Long::valueOf))
                     .filter(Optional::isPresent).map(Optional::get).findFirst()
-                    .orElse(0L);
-            httpResourceMetadata.filename = Stream.of(
+                    .ifPresent(builder::contentLength);
+            builder.filename(Stream.of(
                     Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader())),
-                    Optional.ofNullable(response.header(HttpHeaders.CONTENT_DISPOSITION)).flatMap(filenameFromHeader))
+                    Optional.ofNullable(response.header(HttpHeaders.CONTENT_DISPOSITION)).flatMap(EoppHeaders.FILENAME_FROM_HTTP_HEADER))
                     .filter(Optional::isPresent).map(Optional::get).findFirst()
-                    .orElse(StringUtils.getFilename(url.encodedPath()));
-            httpResourceMetadata.checksum = Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader()));
+                    .orElse(StringUtils.getFilename(url.encodedPath())));
+            Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader()))
+                    .ifPresent(builder::checksum);
         } catch (IOException e) {
             log.warn("Failed to HEAD resource at {}", url, e);
         }
 
-        return httpResourceMetadata;
+        return builder.build();
     }
 
     private Date parseDate(String httpDate) {
@@ -196,15 +191,6 @@ public class EoppOkHttpResource implements EoppResource {
             }
         }
         throw new IllegalArgumentException("Could not parse date as any HTTP-Date format: " + httpDate);
-    }
-
-    private static final class HttpResourceMetadata {
-        private boolean exists;
-        private boolean readable;
-        private long lastModified;
-        private String filename;
-        private long contentLength;
-        private Optional<String> checksum;
     }
 
 }

@@ -4,6 +4,7 @@ maven_library(
     name = "resource",
     srcs = [
         "src/main/java/com/cgi/eoss/eopp/resource/EoppResource.java",
+        "src/main/java/com/cgi/eoss/eopp/resource/ResourceMetadataWrapper.java",
         "src/main/java/com/cgi/eoss/eopp/resource/WritableEoppResource.java",
     ],
     artifact_name = "libeopp :: resource",
@@ -12,6 +13,7 @@ maven_library(
         ":okhttp-resource",
         ":path-resource",
         ":resource",
+        ":s3-resource",
     ],
     deps = [
         "//file",
@@ -49,17 +51,39 @@ maven_library(
     ],
 )
 
+maven_library(
+    name = "s3-resource",
+    srcs = ["src/main/java/com/cgi/eoss/eopp/resource/EoppS3ObjectResource.java"],
+    artifact_name = "libeopp :: resource :: s3",
+    generate_sonarqube_project = False,
+    deps = [
+        ":resource",
+        "//file",
+        "//util",
+        "//util:eopp-headers",
+        "//util:timestamps",
+        "@maven//:io_projectreactor_reactor_core",
+        "@maven//:org_slf4j_slf4j_api",
+        "@maven//:org_springframework_spring_core",
+        "@maven//:software_amazon_awssdk_s3",
+        "@maven//:software_amazon_awssdk_sdk_core",
+    ],
+)
+
 java_library(
     name = "resource_java_tests",
     testonly = True,
     srcs = glob(["src/test/java/**/*.java"]),
+    runtime_deps = [
+        "@maven//:ch_qos_logback_logback_classic",
+    ],
     deps = [
         ":okhttp-resource",
         ":path-resource",
         ":resource",
+        ":s3-resource",
         "//file",
         "//util:eopp-headers",
-        "//util:timestamps",
         "@com_google_protobuf//:protobuf_java",
         "@maven//:com_google_guava_guava",
         "@maven//:com_google_truth_extensions_truth_proto_extension",
@@ -67,7 +91,10 @@ java_library(
         "@maven//:com_squareup_okhttp3_mockwebserver",
         "@maven//:com_squareup_okhttp3_okhttp",
         "@maven//:junit_junit",
-        "@maven//:org_checkerframework_checker_qual",
+        "@maven//:org_slf4j_slf4j_api",
+        "@maven//:software_amazon_awssdk_auth",
+        "@maven//:software_amazon_awssdk_regions",
+        "@maven//:software_amazon_awssdk_s3",
     ],
 )
 
@@ -82,5 +109,12 @@ java_test(
     name = "EoppOkHttpResourceTest",
     size = "small",
     test_class = "com.cgi.eoss.eopp.resource.EoppOkHttpResourceTest",
+    runtime_deps = [":resource_java_tests"],
+)
+
+java_test(
+    name = "EoppS3ObjectResourceTest",
+    size = "small",
+    test_class = "com.cgi.eoss.eopp.resource.EoppS3ObjectResourceTest",
     runtime_deps = [":resource_java_tests"],
 )

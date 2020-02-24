@@ -1233,6 +1233,124 @@
                 "sha256": "a844150e553ec729acc26ccae148670bd00621d234d2c2b96267b110001a0a3f"
             },
             {
+                "coord": "com.typesafe.netty:netty-reactive-streams-http:2.0.4",
+                "file": "v1/https/jcenter.bintray.com/com/typesafe/netty/netty-reactive-streams-http/2.0.4/netty-reactive-streams-http-2.0.4.jar",
+                "directDependencies": [
+                    "com.typesafe.netty:netty-reactive-streams:2.0.4",
+                    "io.netty:netty-codec-http:4.1.45.Final"
+                ],
+                "dependencies": [
+                    "com.typesafe.netty:netty-reactive-streams:2.0.4",
+                    "io.netty:netty-buffer:4.1.45.Final",
+                    "io.netty:netty-codec-http:4.1.45.Final",
+                    "io.netty:netty-codec:4.1.45.Final",
+                    "io.netty:netty-common:4.1.45.Final",
+                    "io.netty:netty-handler:4.1.45.Final",
+                    "io.netty:netty-resolver:4.1.45.Final",
+                    "io.netty:netty-transport:4.1.45.Final",
+                    "org.reactivestreams:reactive-streams:1.0.3"
+                ],
+                "url": "https://jcenter.bintray.com/com/typesafe/netty/netty-reactive-streams-http/2.0.4/netty-reactive-streams-http-2.0.4.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/com/typesafe/netty/netty-reactive-streams-http/2.0.4/netty-reactive-streams-http-2.0.4.jar"
+                ],
+                "sha256": "5169968101d8e17a7c4cde324768b8595ba46031884a7dece742a8ac32e9f070"
+            },
+            {
+                "coord": "com.typesafe.netty:netty-reactive-streams-http:jar:sources:2.0.4",
+                "file": "v1/https/jcenter.bintray.com/com/typesafe/netty/netty-reactive-streams-http/2.0.4/netty-reactive-streams-http-2.0.4-sources.jar",
+                "directDependencies": [
+                    "com.typesafe.netty:netty-reactive-streams:jar:sources:2.0.4",
+                    "io.netty:netty-codec-http:jar:sources:4.1.45.Final"
+                ],
+                "dependencies": [
+                    "com.typesafe.netty:netty-reactive-streams:jar:sources:2.0.4",
+                    "io.netty:netty-buffer:jar:sources:4.1.45.Final",
+                    "io.netty:netty-codec-http:jar:sources:4.1.45.Final",
+                    "io.netty:netty-codec:jar:sources:4.1.45.Final",
+                    "io.netty:netty-common:jar:sources:4.1.45.Final",
+                    "io.netty:netty-handler:jar:sources:4.1.45.Final",
+                    "io.netty:netty-resolver:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport:jar:sources:4.1.45.Final",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3"
+                ],
+                "url": "https://jcenter.bintray.com/com/typesafe/netty/netty-reactive-streams-http/2.0.4/netty-reactive-streams-http-2.0.4-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/com/typesafe/netty/netty-reactive-streams-http/2.0.4/netty-reactive-streams-http-2.0.4-sources.jar"
+                ],
+                "sha256": "9efcb24b1d35e7533f6808aea806c7d77b51b9c1235fa4086f96861722e7c20a"
+            },
+            {
+                "coord": "com.typesafe.netty:netty-reactive-streams:2.0.4",
+                "file": "v1/https/jcenter.bintray.com/com/typesafe/netty/netty-reactive-streams/2.0.4/netty-reactive-streams-2.0.4.jar",
+                "directDependencies": [
+                    "io.netty:netty-handler:4.1.45.Final",
+                    "org.reactivestreams:reactive-streams:1.0.3"
+                ],
+                "dependencies": [
+                    "io.netty:netty-buffer:4.1.45.Final",
+                    "io.netty:netty-codec:4.1.45.Final",
+                    "io.netty:netty-common:4.1.45.Final",
+                    "io.netty:netty-handler:4.1.45.Final",
+                    "io.netty:netty-resolver:4.1.45.Final",
+                    "io.netty:netty-transport:4.1.45.Final",
+                    "org.reactivestreams:reactive-streams:1.0.3"
+                ],
+                "url": "https://jcenter.bintray.com/com/typesafe/netty/netty-reactive-streams/2.0.4/netty-reactive-streams-2.0.4.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/com/typesafe/netty/netty-reactive-streams/2.0.4/netty-reactive-streams-2.0.4.jar"
+                ],
+                "sha256": "eafc52d500b49e891db095ee7baac0420aea8a97015ab7671ba1f1ccabf799d2"
+            },
+            {
+                "coord": "com.typesafe.netty:netty-reactive-streams:jar:sources:2.0.4",
+                "file": "v1/https/jcenter.bintray.com/com/typesafe/netty/netty-reactive-streams/2.0.4/netty-reactive-streams-2.0.4-sources.jar",
+                "directDependencies": [
+                    "io.netty:netty-handler:jar:sources:4.1.45.Final",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3"
+                ],
+                "dependencies": [
+                    "io.netty:netty-buffer:jar:sources:4.1.45.Final",
+                    "io.netty:netty-codec:jar:sources:4.1.45.Final",
+                    "io.netty:netty-common:jar:sources:4.1.45.Final",
+                    "io.netty:netty-handler:jar:sources:4.1.45.Final",
+                    "io.netty:netty-resolver:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport:jar:sources:4.1.45.Final",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3"
+                ],
+                "url": "https://jcenter.bintray.com/com/typesafe/netty/netty-reactive-streams/2.0.4/netty-reactive-streams-2.0.4-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/com/typesafe/netty/netty-reactive-streams/2.0.4/netty-reactive-streams-2.0.4-sources.jar"
+                ],
+                "sha256": "76df17cc7c4fac9c470e557b5cca224df51ba878ec9fd3fd8f0f89878cbf98ab"
+            },
+            {
+                "coord": "commons-codec:commons-codec:1.13",
+                "file": "v1/https/jcenter.bintray.com/commons-codec/commons-codec/1.13/commons-codec-1.13.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/commons-codec/commons-codec/1.13/commons-codec-1.13.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/commons-codec/commons-codec/1.13/commons-codec-1.13.jar"
+                ],
+                "sha256": "61f7a3079e92b9fdd605238d0295af5fd11ac411a0a0af48deace1f6c5ffa072"
+            },
+            {
+                "coord": "commons-codec:commons-codec:jar:sources:1.13",
+                "file": "v1/https/jcenter.bintray.com/commons-codec/commons-codec/1.13/commons-codec-1.13-sources.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/commons-codec/commons-codec/1.13/commons-codec-1.13-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/commons-codec/commons-codec/1.13/commons-codec-1.13-sources.jar"
+                ],
+                "sha256": "09a72795a920c1a9c0209cfb8395f8d97089832d249cba8c0938a3423b3ed1d1"
+            },
+            {
                 "coord": "io.grpc:grpc-api:1.26.0",
                 "file": "v1/https/jcenter.bintray.com/io/grpc/grpc-api/1.26.0/grpc-api-1.26.0.jar",
                 "directDependencies": [
@@ -2079,6 +2197,90 @@
                 "sha256": "edb6495748e5466a4b944bb13991f37bfc0534929c5b3cd3c80ead7f3a4cbc8e"
             },
             {
+                "coord": "io.netty:netty-transport-native-epoll:jar:linux-x86_64:4.1.45.Final",
+                "file": "v1/https/jcenter.bintray.com/io/netty/netty-transport-native-epoll/4.1.45.Final/netty-transport-native-epoll-4.1.45.Final-linux-x86_64.jar",
+                "directDependencies": [
+                    "io.netty:netty-buffer:4.1.45.Final",
+                    "io.netty:netty-common:4.1.45.Final",
+                    "io.netty:netty-transport-native-unix-common:4.1.45.Final",
+                    "io.netty:netty-transport:4.1.45.Final"
+                ],
+                "dependencies": [
+                    "io.netty:netty-buffer:4.1.45.Final",
+                    "io.netty:netty-common:4.1.45.Final",
+                    "io.netty:netty-resolver:4.1.45.Final",
+                    "io.netty:netty-transport-native-unix-common:4.1.45.Final",
+                    "io.netty:netty-transport:4.1.45.Final"
+                ],
+                "url": "https://jcenter.bintray.com/io/netty/netty-transport-native-epoll/4.1.45.Final/netty-transport-native-epoll-4.1.45.Final-linux-x86_64.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/io/netty/netty-transport-native-epoll/4.1.45.Final/netty-transport-native-epoll-4.1.45.Final-linux-x86_64.jar"
+                ],
+                "sha256": "3a9a5645177e20adef2fadb0feabba0d544e8f4403b2fc07353658717593af3e"
+            },
+            {
+                "coord": "io.netty:netty-transport-native-epoll:jar:sources:4.1.45.Final",
+                "file": "v1/https/jcenter.bintray.com/io/netty/netty-transport-native-epoll/4.1.45.Final/netty-transport-native-epoll-4.1.45.Final-sources.jar",
+                "directDependencies": [
+                    "io.netty:netty-buffer:jar:sources:4.1.45.Final",
+                    "io.netty:netty-common:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport-native-unix-common:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport:jar:sources:4.1.45.Final"
+                ],
+                "dependencies": [
+                    "io.netty:netty-buffer:jar:sources:4.1.45.Final",
+                    "io.netty:netty-common:jar:sources:4.1.45.Final",
+                    "io.netty:netty-resolver:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport-native-unix-common:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport:jar:sources:4.1.45.Final"
+                ],
+                "url": "https://jcenter.bintray.com/io/netty/netty-transport-native-epoll/4.1.45.Final/netty-transport-native-epoll-4.1.45.Final-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/io/netty/netty-transport-native-epoll/4.1.45.Final/netty-transport-native-epoll-4.1.45.Final-sources.jar"
+                ],
+                "sha256": "ebe79f0a2a63695bfc8fa81c1b0c7eecef20211a578fb98d72580dab5c132127"
+            },
+            {
+                "coord": "io.netty:netty-transport-native-unix-common:4.1.45.Final",
+                "file": "v1/https/jcenter.bintray.com/io/netty/netty-transport-native-unix-common/4.1.45.Final/netty-transport-native-unix-common-4.1.45.Final.jar",
+                "directDependencies": [
+                    "io.netty:netty-buffer:4.1.45.Final",
+                    "io.netty:netty-common:4.1.45.Final",
+                    "io.netty:netty-transport:4.1.45.Final"
+                ],
+                "dependencies": [
+                    "io.netty:netty-buffer:4.1.45.Final",
+                    "io.netty:netty-common:4.1.45.Final",
+                    "io.netty:netty-resolver:4.1.45.Final",
+                    "io.netty:netty-transport:4.1.45.Final"
+                ],
+                "url": "https://jcenter.bintray.com/io/netty/netty-transport-native-unix-common/4.1.45.Final/netty-transport-native-unix-common-4.1.45.Final.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/io/netty/netty-transport-native-unix-common/4.1.45.Final/netty-transport-native-unix-common-4.1.45.Final.jar"
+                ],
+                "sha256": "de57e127f41f09da2487c233e8415b85c7867eaf4778ad3d49c2b0e050b60635"
+            },
+            {
+                "coord": "io.netty:netty-transport-native-unix-common:jar:sources:4.1.45.Final",
+                "file": "v1/https/jcenter.bintray.com/io/netty/netty-transport-native-unix-common/4.1.45.Final/netty-transport-native-unix-common-4.1.45.Final-sources.jar",
+                "directDependencies": [
+                    "io.netty:netty-buffer:jar:sources:4.1.45.Final",
+                    "io.netty:netty-common:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport:jar:sources:4.1.45.Final"
+                ],
+                "dependencies": [
+                    "io.netty:netty-buffer:jar:sources:4.1.45.Final",
+                    "io.netty:netty-common:jar:sources:4.1.45.Final",
+                    "io.netty:netty-resolver:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport:jar:sources:4.1.45.Final"
+                ],
+                "url": "https://jcenter.bintray.com/io/netty/netty-transport-native-unix-common/4.1.45.Final/netty-transport-native-unix-common-4.1.45.Final-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/io/netty/netty-transport-native-unix-common/4.1.45.Final/netty-transport-native-unix-common-4.1.45.Final-sources.jar"
+                ],
+                "sha256": "3830a3c178c2ddcc5e62e215881836cd93f0037b01bc780acde776fcca05a0bd"
+            },
+            {
                 "coord": "io.netty:netty-transport:4.1.45.Final",
                 "file": "v1/https/jcenter.bintray.com/io/netty/netty-transport/4.1.45.Final/netty-transport-4.1.45.Final.jar",
                 "directDependencies": [
@@ -2345,6 +2547,66 @@
                     "https://jcenter.bintray.com/net/bytebuddy/byte-buddy/1.10.6/byte-buddy-1.10.6-sources.jar"
                 ],
                 "sha256": "6dcc5a253eff567959b61fe256d3c8c9959d51134215b2f24dd77a719e73285d"
+            },
+            {
+                "coord": "org.apache.httpcomponents:httpclient:4.5.10",
+                "file": "v1/https/jcenter.bintray.com/org/apache/httpcomponents/httpclient/4.5.10/httpclient-4.5.10.jar",
+                "directDependencies": [
+                    "commons-codec:commons-codec:1.13",
+                    "org.apache.httpcomponents:httpcore:4.4.13"
+                ],
+                "dependencies": [
+                    "commons-codec:commons-codec:1.13",
+                    "org.apache.httpcomponents:httpcore:4.4.13"
+                ],
+                "url": "https://jcenter.bintray.com/org/apache/httpcomponents/httpclient/4.5.10/httpclient-4.5.10.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/org/apache/httpcomponents/httpclient/4.5.10/httpclient-4.5.10.jar"
+                ],
+                "sha256": "38b9f16f504928e4db736a433b9cd10968d9ec8d6f5d0e61a64889a689172134"
+            },
+            {
+                "coord": "org.apache.httpcomponents:httpclient:jar:sources:4.5.10",
+                "file": "v1/https/jcenter.bintray.com/org/apache/httpcomponents/httpclient/4.5.10/httpclient-4.5.10-sources.jar",
+                "directDependencies": [
+                    "commons-codec:commons-codec:jar:sources:1.13",
+                    "org.apache.httpcomponents:httpcore:jar:sources:4.4.13"
+                ],
+                "dependencies": [
+                    "commons-codec:commons-codec:jar:sources:1.13",
+                    "org.apache.httpcomponents:httpcore:jar:sources:4.4.13"
+                ],
+                "url": "https://jcenter.bintray.com/org/apache/httpcomponents/httpclient/4.5.10/httpclient-4.5.10-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/org/apache/httpcomponents/httpclient/4.5.10/httpclient-4.5.10-sources.jar"
+                ],
+                "sha256": "47bf60b49b072039a509c7fa22bb70272de5e30acb83a1a40195f4d60399076e"
+            },
+            {
+                "coord": "org.apache.httpcomponents:httpcore:4.4.13",
+                "file": "v1/https/jcenter.bintray.com/org/apache/httpcomponents/httpcore/4.4.13/httpcore-4.4.13.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/org/apache/httpcomponents/httpcore/4.4.13/httpcore-4.4.13.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/org/apache/httpcomponents/httpcore/4.4.13/httpcore-4.4.13.jar"
+                ],
+                "sha256": "e06e89d40943245fcfa39ec537cdbfce3762aecde8f9c597780d2b00c2b43424"
+            },
+            {
+                "coord": "org.apache.httpcomponents:httpcore:jar:sources:4.4.13",
+                "file": "v1/https/jcenter.bintray.com/org/apache/httpcomponents/httpcore/4.4.13/httpcore-4.4.13-sources.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/org/apache/httpcomponents/httpcore/4.4.13/httpcore-4.4.13-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/org/apache/httpcomponents/httpcore/4.4.13/httpcore-4.4.13-sources.jar"
+                ],
+                "sha256": "c0418a6ee8c32e9de37e4ba515e9562a2acc6a36b684b618fee56d41b81ef2a9"
             },
             {
                 "coord": "org.checkerframework:checker-compat-qual:2.5.5",
@@ -2853,9 +3115,925 @@
                     "https://jcenter.bintray.com/org/yaml/snakeyaml/1.25/snakeyaml-1.25-sources.jar"
                 ],
                 "sha256": "fcc58a580b640e80f6c71acdd20b00dd87b80c9944dcad0389a904b77f04c88d"
+            },
+            {
+                "coord": "software.amazon.awssdk:annotations:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/annotations/2.10.68/annotations-2.10.68.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/annotations/2.10.68/annotations-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/annotations/2.10.68/annotations-2.10.68.jar"
+                ],
+                "sha256": "19bac1bb18873bd041fb30a7de99335aef022e8bde3e99b2023e25220c517030"
+            },
+            {
+                "coord": "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/annotations/2.10.68/annotations-2.10.68-sources.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/annotations/2.10.68/annotations-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/annotations/2.10.68/annotations-2.10.68-sources.jar"
+                ],
+                "sha256": "ba67e6b41b8ee68dff3430b49aaafd43b689d61de3170dd8fe545a03129feb4a"
+            },
+            {
+                "coord": "software.amazon.awssdk:apache-client:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/apache-client/2.10.68/apache-client-2.10.68.jar",
+                "directDependencies": [
+                    "org.apache.httpcomponents:httpclient:4.5.10",
+                    "org.apache.httpcomponents:httpcore:4.4.13",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "dependencies": [
+                    "commons-codec:commons-codec:1.13",
+                    "org.apache.httpcomponents:httpclient:4.5.10",
+                    "org.apache.httpcomponents:httpcore:4.4.13",
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/apache-client/2.10.68/apache-client-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/apache-client/2.10.68/apache-client-2.10.68.jar"
+                ],
+                "sha256": "814328efea5e2804eeacbc4762320c9135401f1a97a363d07af4f778a19bed2f"
+            },
+            {
+                "coord": "software.amazon.awssdk:apache-client:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/apache-client/2.10.68/apache-client-2.10.68-sources.jar",
+                "directDependencies": [
+                    "org.apache.httpcomponents:httpclient:jar:sources:4.5.10",
+                    "org.apache.httpcomponents:httpcore:jar:sources:4.4.13",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "dependencies": [
+                    "commons-codec:commons-codec:jar:sources:1.13",
+                    "org.apache.httpcomponents:httpclient:jar:sources:4.5.10",
+                    "org.apache.httpcomponents:httpcore:jar:sources:4.4.13",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/apache-client/2.10.68/apache-client-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/apache-client/2.10.68/apache-client-2.10.68-sources.jar"
+                ],
+                "sha256": "46a8295ccc37bad973044a4460e0adfa22940908e965d11eee229752e8deb53a"
+            },
+            {
+                "coord": "software.amazon.awssdk:arns:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/arns/2.10.68/arns-2.10.68.jar",
+                "directDependencies": [
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "dependencies": [
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/arns/2.10.68/arns-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/arns/2.10.68/arns-2.10.68.jar"
+                ],
+                "sha256": "76b8aa74cdaaeed48015af65b8a54b5631e36232e9165f7c55d3040fa8bcb45b"
+            },
+            {
+                "coord": "software.amazon.awssdk:arns:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/arns/2.10.68/arns-2.10.68-sources.jar",
+                "directDependencies": [
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "dependencies": [
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/arns/2.10.68/arns-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/arns/2.10.68/arns-2.10.68-sources.jar"
+                ],
+                "sha256": "f4e890375e107e505de3c69a7729172aa50f8b6769e14a645a53255c648c5b17"
+            },
+            {
+                "coord": "software.amazon.awssdk:auth:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/auth/2.10.68/auth-2.10.68.jar",
+                "directDependencies": [
+                    "com.fasterxml.jackson.core:jackson-databind:2.10.2",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:profiles:2.10.68",
+                    "software.amazon.awssdk:regions:2.10.68",
+                    "software.amazon.awssdk:sdk-core:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68",
+                    "software.amazon.eventstream:eventstream:1.0.1"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:2.10.2",
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:profiles:2.10.68",
+                    "software.amazon.awssdk:regions:2.10.68",
+                    "software.amazon.awssdk:sdk-core:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68",
+                    "software.amazon.eventstream:eventstream:1.0.1"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/auth/2.10.68/auth-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/auth/2.10.68/auth-2.10.68.jar"
+                ],
+                "sha256": "0e38cfdb74fdc383620d822de6edba8b7403074947a7f294b31b7d184164767d"
+            },
+            {
+                "coord": "software.amazon.awssdk:auth:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/auth/2.10.68/auth-2.10.68-sources.jar",
+                "directDependencies": [
+                    "com.fasterxml.jackson.core:jackson-databind:jar:sources:2.10.2",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:profiles:jar:sources:2.10.68",
+                    "software.amazon.awssdk:regions:jar:sources:2.10.68",
+                    "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68",
+                    "software.amazon.eventstream:eventstream:jar:sources:1.0.1"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:jar:sources:2.10.2",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:profiles:jar:sources:2.10.68",
+                    "software.amazon.awssdk:regions:jar:sources:2.10.68",
+                    "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68",
+                    "software.amazon.eventstream:eventstream:jar:sources:1.0.1"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/auth/2.10.68/auth-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/auth/2.10.68/auth-2.10.68-sources.jar"
+                ],
+                "sha256": "3841615afd98b6bd55a7cb8f31a6e19fd8ed59c9896fb4616003b607048eff2d"
+            },
+            {
+                "coord": "software.amazon.awssdk:aws-core:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/aws-core/2.10.68/aws-core-2.10.68.jar",
+                "directDependencies": [
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:auth:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:regions:2.10.68",
+                    "software.amazon.awssdk:sdk-core:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68",
+                    "software.amazon.eventstream:eventstream:1.0.1"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:2.10.2",
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:auth:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:profiles:2.10.68",
+                    "software.amazon.awssdk:regions:2.10.68",
+                    "software.amazon.awssdk:sdk-core:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68",
+                    "software.amazon.eventstream:eventstream:1.0.1"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/aws-core/2.10.68/aws-core-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/aws-core/2.10.68/aws-core-2.10.68.jar"
+                ],
+                "sha256": "21a287ff77ce98a19dca8bbdb7944760b9349fd050b05cecd87552a1558e9c7e"
+            },
+            {
+                "coord": "software.amazon.awssdk:aws-core:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/aws-core/2.10.68/aws-core-2.10.68-sources.jar",
+                "directDependencies": [
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:auth:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:regions:jar:sources:2.10.68",
+                    "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68",
+                    "software.amazon.eventstream:eventstream:jar:sources:1.0.1"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:jar:sources:2.10.2",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:auth:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:profiles:jar:sources:2.10.68",
+                    "software.amazon.awssdk:regions:jar:sources:2.10.68",
+                    "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68",
+                    "software.amazon.eventstream:eventstream:jar:sources:1.0.1"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/aws-core/2.10.68/aws-core-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/aws-core/2.10.68/aws-core-2.10.68-sources.jar"
+                ],
+                "sha256": "43a8ec8949004c23acb33e45de62910846c1b7a006e310e184e336d773326f47"
+            },
+            {
+                "coord": "software.amazon.awssdk:aws-query-protocol:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/aws-query-protocol/2.10.68/aws-query-protocol-2.10.68.jar",
+                "directDependencies": [
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:aws-core:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:protocol-core:2.10.68",
+                    "software.amazon.awssdk:sdk-core:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:2.10.2",
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:auth:2.10.68",
+                    "software.amazon.awssdk:aws-core:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:profiles:2.10.68",
+                    "software.amazon.awssdk:protocol-core:2.10.68",
+                    "software.amazon.awssdk:regions:2.10.68",
+                    "software.amazon.awssdk:sdk-core:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68",
+                    "software.amazon.eventstream:eventstream:1.0.1"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/aws-query-protocol/2.10.68/aws-query-protocol-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/aws-query-protocol/2.10.68/aws-query-protocol-2.10.68.jar"
+                ],
+                "sha256": "42fdbd3cc53441aad5a9310d539238d9e29a61458d5eefd3b8abbd207f68368b"
+            },
+            {
+                "coord": "software.amazon.awssdk:aws-query-protocol:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/aws-query-protocol/2.10.68/aws-query-protocol-2.10.68-sources.jar",
+                "directDependencies": [
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:aws-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:protocol-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:jar:sources:2.10.2",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:auth:jar:sources:2.10.68",
+                    "software.amazon.awssdk:aws-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:profiles:jar:sources:2.10.68",
+                    "software.amazon.awssdk:protocol-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:regions:jar:sources:2.10.68",
+                    "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68",
+                    "software.amazon.eventstream:eventstream:jar:sources:1.0.1"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/aws-query-protocol/2.10.68/aws-query-protocol-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/aws-query-protocol/2.10.68/aws-query-protocol-2.10.68-sources.jar"
+                ],
+                "sha256": "643311454dc9ea77312cd401a7669a3c14981c8eaa96bc583f7b56c5b7ae3bcb"
+            },
+            {
+                "coord": "software.amazon.awssdk:aws-xml-protocol:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/aws-xml-protocol/2.10.68/aws-xml-protocol-2.10.68.jar",
+                "directDependencies": [
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:aws-core:2.10.68",
+                    "software.amazon.awssdk:aws-query-protocol:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:protocol-core:2.10.68",
+                    "software.amazon.awssdk:sdk-core:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:2.10.2",
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:auth:2.10.68",
+                    "software.amazon.awssdk:aws-core:2.10.68",
+                    "software.amazon.awssdk:aws-query-protocol:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:profiles:2.10.68",
+                    "software.amazon.awssdk:protocol-core:2.10.68",
+                    "software.amazon.awssdk:regions:2.10.68",
+                    "software.amazon.awssdk:sdk-core:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68",
+                    "software.amazon.eventstream:eventstream:1.0.1"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/aws-xml-protocol/2.10.68/aws-xml-protocol-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/aws-xml-protocol/2.10.68/aws-xml-protocol-2.10.68.jar"
+                ],
+                "sha256": "3cd70f579eda6dd102f1cc74f0b2e5e1049220f271be34f9cd3a924579087550"
+            },
+            {
+                "coord": "software.amazon.awssdk:aws-xml-protocol:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/aws-xml-protocol/2.10.68/aws-xml-protocol-2.10.68-sources.jar",
+                "directDependencies": [
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:aws-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:aws-query-protocol:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:protocol-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:jar:sources:2.10.2",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:auth:jar:sources:2.10.68",
+                    "software.amazon.awssdk:aws-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:aws-query-protocol:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:profiles:jar:sources:2.10.68",
+                    "software.amazon.awssdk:protocol-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:regions:jar:sources:2.10.68",
+                    "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68",
+                    "software.amazon.eventstream:eventstream:jar:sources:1.0.1"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/aws-xml-protocol/2.10.68/aws-xml-protocol-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/aws-xml-protocol/2.10.68/aws-xml-protocol-2.10.68-sources.jar"
+                ],
+                "sha256": "22f91ef46b37ae2db4d0f4cf6aef676c460cba451f2000b13bc2da0a75590690"
+            },
+            {
+                "coord": "software.amazon.awssdk:http-client-spi:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/http-client-spi/2.10.68/http-client-spi-2.10.68.jar",
+                "directDependencies": [
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "dependencies": [
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/http-client-spi/2.10.68/http-client-spi-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/http-client-spi/2.10.68/http-client-spi-2.10.68.jar"
+                ],
+                "sha256": "abdeea53e292a186cef98febd2a818950edd0538f65a991df5a46c7c21e45661"
+            },
+            {
+                "coord": "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/http-client-spi/2.10.68/http-client-spi-2.10.68-sources.jar",
+                "directDependencies": [
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "dependencies": [
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/http-client-spi/2.10.68/http-client-spi-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/http-client-spi/2.10.68/http-client-spi-2.10.68-sources.jar"
+                ],
+                "sha256": "2353f48df1af921ba1a19e6998d0a67d5b6f6c4fbc7c1dbf12656ee74c4f2433"
+            },
+            {
+                "coord": "software.amazon.awssdk:netty-nio-client:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/netty-nio-client/2.10.68/netty-nio-client-2.10.68.jar",
+                "directDependencies": [
+                    "com.typesafe.netty:netty-reactive-streams-http:2.0.4",
+                    "io.netty:netty-buffer:4.1.45.Final",
+                    "io.netty:netty-codec-http2:4.1.45.Final",
+                    "io.netty:netty-codec-http:4.1.45.Final",
+                    "io.netty:netty-codec:4.1.45.Final",
+                    "io.netty:netty-common:4.1.45.Final",
+                    "io.netty:netty-handler:4.1.45.Final",
+                    "io.netty:netty-transport-native-epoll:jar:linux-x86_64:4.1.45.Final",
+                    "io.netty:netty-transport:4.1.45.Final",
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "dependencies": [
+                    "com.typesafe.netty:netty-reactive-streams-http:2.0.4",
+                    "com.typesafe.netty:netty-reactive-streams:2.0.4",
+                    "io.netty:netty-buffer:4.1.45.Final",
+                    "io.netty:netty-codec-http2:4.1.45.Final",
+                    "io.netty:netty-codec-http:4.1.45.Final",
+                    "io.netty:netty-codec:4.1.45.Final",
+                    "io.netty:netty-common:4.1.45.Final",
+                    "io.netty:netty-handler:4.1.45.Final",
+                    "io.netty:netty-resolver:4.1.45.Final",
+                    "io.netty:netty-transport-native-epoll:jar:linux-x86_64:4.1.45.Final",
+                    "io.netty:netty-transport-native-unix-common:4.1.45.Final",
+                    "io.netty:netty-transport:4.1.45.Final",
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/netty-nio-client/2.10.68/netty-nio-client-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/netty-nio-client/2.10.68/netty-nio-client-2.10.68.jar"
+                ],
+                "sha256": "f6b1fdcf2833211c95fb392201fda7e93777b6d09ae314ba2ebd80c76e9e5f93"
+            },
+            {
+                "coord": "software.amazon.awssdk:netty-nio-client:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/netty-nio-client/2.10.68/netty-nio-client-2.10.68-sources.jar",
+                "directDependencies": [
+                    "com.typesafe.netty:netty-reactive-streams-http:jar:sources:2.0.4",
+                    "io.netty:netty-buffer:jar:sources:4.1.45.Final",
+                    "io.netty:netty-codec-http2:jar:sources:4.1.45.Final",
+                    "io.netty:netty-codec-http:jar:sources:4.1.45.Final",
+                    "io.netty:netty-codec:jar:sources:4.1.45.Final",
+                    "io.netty:netty-common:jar:sources:4.1.45.Final",
+                    "io.netty:netty-handler:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport-native-epoll:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport:jar:sources:4.1.45.Final",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "dependencies": [
+                    "com.typesafe.netty:netty-reactive-streams-http:jar:sources:2.0.4",
+                    "com.typesafe.netty:netty-reactive-streams:jar:sources:2.0.4",
+                    "io.netty:netty-buffer:jar:sources:4.1.45.Final",
+                    "io.netty:netty-codec-http2:jar:sources:4.1.45.Final",
+                    "io.netty:netty-codec-http:jar:sources:4.1.45.Final",
+                    "io.netty:netty-codec:jar:sources:4.1.45.Final",
+                    "io.netty:netty-common:jar:sources:4.1.45.Final",
+                    "io.netty:netty-handler:jar:sources:4.1.45.Final",
+                    "io.netty:netty-resolver:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport-native-epoll:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport-native-unix-common:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport:jar:sources:4.1.45.Final",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/netty-nio-client/2.10.68/netty-nio-client-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/netty-nio-client/2.10.68/netty-nio-client-2.10.68-sources.jar"
+                ],
+                "sha256": "42e98417696a44afc888cdc8ca4c22b44f9aee7957f3e860b1e8e0712d4683e7"
+            },
+            {
+                "coord": "software.amazon.awssdk:profiles:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/profiles/2.10.68/profiles-2.10.68.jar",
+                "directDependencies": [
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "dependencies": [
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/profiles/2.10.68/profiles-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/profiles/2.10.68/profiles-2.10.68.jar"
+                ],
+                "sha256": "5afe08765f8b16be632a8db29fe4a6ad20f506969f8a5933427e832576373d29"
+            },
+            {
+                "coord": "software.amazon.awssdk:profiles:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/profiles/2.10.68/profiles-2.10.68-sources.jar",
+                "directDependencies": [
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "dependencies": [
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/profiles/2.10.68/profiles-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/profiles/2.10.68/profiles-2.10.68-sources.jar"
+                ],
+                "sha256": "b7b01ac8ab04c70d24f88b7db3f3c1ec77d15292931a666b0dd5ff5bbd337784"
+            },
+            {
+                "coord": "software.amazon.awssdk:protocol-core:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/protocol-core/2.10.68/protocol-core-2.10.68.jar",
+                "directDependencies": [
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:sdk-core:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:2.10.2",
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:profiles:2.10.68",
+                    "software.amazon.awssdk:sdk-core:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/protocol-core/2.10.68/protocol-core-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/protocol-core/2.10.68/protocol-core-2.10.68.jar"
+                ],
+                "sha256": "be94612cc0944d56feff3ce3dd1db891384e906347efaba5ef50f2d7360c630a"
+            },
+            {
+                "coord": "software.amazon.awssdk:protocol-core:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/protocol-core/2.10.68/protocol-core-2.10.68-sources.jar",
+                "directDependencies": [
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:jar:sources:2.10.2",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:profiles:jar:sources:2.10.68",
+                    "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/protocol-core/2.10.68/protocol-core-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/protocol-core/2.10.68/protocol-core-2.10.68-sources.jar"
+                ],
+                "sha256": "8a96be22d17f02410813e0de0d84e8ca08180fe851e16161d780cb681ec7c926"
+            },
+            {
+                "coord": "software.amazon.awssdk:regions:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/regions/2.10.68/regions-2.10.68.jar",
+                "directDependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:2.10.2",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:profiles:2.10.68",
+                    "software.amazon.awssdk:sdk-core:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:2.10.2",
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:profiles:2.10.68",
+                    "software.amazon.awssdk:sdk-core:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/regions/2.10.68/regions-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/regions/2.10.68/regions-2.10.68.jar"
+                ],
+                "sha256": "170700fca2312f3f9a3dcace9671859da33c2bf5545455aee524748d0bf68b19"
+            },
+            {
+                "coord": "software.amazon.awssdk:regions:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/regions/2.10.68/regions-2.10.68-sources.jar",
+                "directDependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:jar:sources:2.10.2",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:profiles:jar:sources:2.10.68",
+                    "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:jar:sources:2.10.2",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:profiles:jar:sources:2.10.68",
+                    "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/regions/2.10.68/regions-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/regions/2.10.68/regions-2.10.68-sources.jar"
+                ],
+                "sha256": "5b14656e09a12c2dd8ad2703faef8ed5153d6aa569b03008ceec5c5a460ba35b"
+            },
+            {
+                "coord": "software.amazon.awssdk:s3:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/s3/2.10.68/s3-2.10.68.jar",
+                "directDependencies": [
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:apache-client:2.10.68",
+                    "software.amazon.awssdk:arns:2.10.68",
+                    "software.amazon.awssdk:auth:2.10.68",
+                    "software.amazon.awssdk:aws-core:2.10.68",
+                    "software.amazon.awssdk:aws-xml-protocol:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:netty-nio-client:2.10.68",
+                    "software.amazon.awssdk:profiles:2.10.68",
+                    "software.amazon.awssdk:protocol-core:2.10.68",
+                    "software.amazon.awssdk:regions:2.10.68",
+                    "software.amazon.awssdk:sdk-core:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:2.10.2",
+                    "com.typesafe.netty:netty-reactive-streams-http:2.0.4",
+                    "com.typesafe.netty:netty-reactive-streams:2.0.4",
+                    "commons-codec:commons-codec:1.13",
+                    "io.netty:netty-buffer:4.1.45.Final",
+                    "io.netty:netty-codec-http2:4.1.45.Final",
+                    "io.netty:netty-codec-http:4.1.45.Final",
+                    "io.netty:netty-codec:4.1.45.Final",
+                    "io.netty:netty-common:4.1.45.Final",
+                    "io.netty:netty-handler:4.1.45.Final",
+                    "io.netty:netty-resolver:4.1.45.Final",
+                    "io.netty:netty-transport-native-epoll:jar:linux-x86_64:4.1.45.Final",
+                    "io.netty:netty-transport-native-unix-common:4.1.45.Final",
+                    "io.netty:netty-transport:4.1.45.Final",
+                    "org.apache.httpcomponents:httpclient:4.5.10",
+                    "org.apache.httpcomponents:httpcore:4.4.13",
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:apache-client:2.10.68",
+                    "software.amazon.awssdk:arns:2.10.68",
+                    "software.amazon.awssdk:auth:2.10.68",
+                    "software.amazon.awssdk:aws-core:2.10.68",
+                    "software.amazon.awssdk:aws-query-protocol:2.10.68",
+                    "software.amazon.awssdk:aws-xml-protocol:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:netty-nio-client:2.10.68",
+                    "software.amazon.awssdk:profiles:2.10.68",
+                    "software.amazon.awssdk:protocol-core:2.10.68",
+                    "software.amazon.awssdk:regions:2.10.68",
+                    "software.amazon.awssdk:sdk-core:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68",
+                    "software.amazon.eventstream:eventstream:1.0.1"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/s3/2.10.68/s3-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/s3/2.10.68/s3-2.10.68.jar"
+                ],
+                "sha256": "81eaaf9df52ab97e43da585e5ccae91923224eadee4fe94ee44fc39eea1786cb"
+            },
+            {
+                "coord": "software.amazon.awssdk:s3:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/s3/2.10.68/s3-2.10.68-sources.jar",
+                "directDependencies": [
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:apache-client:jar:sources:2.10.68",
+                    "software.amazon.awssdk:arns:jar:sources:2.10.68",
+                    "software.amazon.awssdk:auth:jar:sources:2.10.68",
+                    "software.amazon.awssdk:aws-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:aws-xml-protocol:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:netty-nio-client:jar:sources:2.10.68",
+                    "software.amazon.awssdk:profiles:jar:sources:2.10.68",
+                    "software.amazon.awssdk:protocol-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:regions:jar:sources:2.10.68",
+                    "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:jar:sources:2.10.2",
+                    "com.typesafe.netty:netty-reactive-streams-http:jar:sources:2.0.4",
+                    "com.typesafe.netty:netty-reactive-streams:jar:sources:2.0.4",
+                    "commons-codec:commons-codec:jar:sources:1.13",
+                    "io.netty:netty-buffer:jar:sources:4.1.45.Final",
+                    "io.netty:netty-codec-http2:jar:sources:4.1.45.Final",
+                    "io.netty:netty-codec-http:jar:sources:4.1.45.Final",
+                    "io.netty:netty-codec:jar:sources:4.1.45.Final",
+                    "io.netty:netty-common:jar:sources:4.1.45.Final",
+                    "io.netty:netty-handler:jar:sources:4.1.45.Final",
+                    "io.netty:netty-resolver:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport-native-epoll:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport-native-unix-common:jar:sources:4.1.45.Final",
+                    "io.netty:netty-transport:jar:sources:4.1.45.Final",
+                    "org.apache.httpcomponents:httpclient:jar:sources:4.5.10",
+                    "org.apache.httpcomponents:httpcore:jar:sources:4.4.13",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:apache-client:jar:sources:2.10.68",
+                    "software.amazon.awssdk:arns:jar:sources:2.10.68",
+                    "software.amazon.awssdk:auth:jar:sources:2.10.68",
+                    "software.amazon.awssdk:aws-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:aws-query-protocol:jar:sources:2.10.68",
+                    "software.amazon.awssdk:aws-xml-protocol:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:netty-nio-client:jar:sources:2.10.68",
+                    "software.amazon.awssdk:profiles:jar:sources:2.10.68",
+                    "software.amazon.awssdk:protocol-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:regions:jar:sources:2.10.68",
+                    "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68",
+                    "software.amazon.eventstream:eventstream:jar:sources:1.0.1"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/s3/2.10.68/s3-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/s3/2.10.68/s3-2.10.68-sources.jar"
+                ],
+                "sha256": "a5b909f7a58a3b5494dc505b28f830cf5566a4fcabb47722bd7e1cf7eb1fd268"
+            },
+            {
+                "coord": "software.amazon.awssdk:sdk-core:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/sdk-core/2.10.68/sdk-core-2.10.68.jar",
+                "directDependencies": [
+                    "com.fasterxml.jackson.core:jackson-core:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:2.10.2",
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:profiles:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:2.10.2",
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:2.10.68",
+                    "software.amazon.awssdk:profiles:2.10.68",
+                    "software.amazon.awssdk:utils:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/sdk-core/2.10.68/sdk-core-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/sdk-core/2.10.68/sdk-core-2.10.68.jar"
+                ],
+                "sha256": "06235e6cf4f836b28264a94015e663fdc332f067e66af8fcb4d5a2918a694754"
+            },
+            {
+                "coord": "software.amazon.awssdk:sdk-core:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/sdk-core/2.10.68/sdk-core-2.10.68-sources.jar",
+                "directDependencies": [
+                    "com.fasterxml.jackson.core:jackson-core:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:jar:sources:2.10.2",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:profiles:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-core:jar:sources:2.10.2",
+                    "com.fasterxml.jackson.core:jackson-databind:jar:sources:2.10.2",
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68",
+                    "software.amazon.awssdk:http-client-spi:jar:sources:2.10.68",
+                    "software.amazon.awssdk:profiles:jar:sources:2.10.68",
+                    "software.amazon.awssdk:utils:jar:sources:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/sdk-core/2.10.68/sdk-core-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/sdk-core/2.10.68/sdk-core-2.10.68-sources.jar"
+                ],
+                "sha256": "3c46d608fa78a311a274da4c14fcd6596fb3e80c8f9cdc308654b0b1b1aba32d"
+            },
+            {
+                "coord": "software.amazon.awssdk:utils:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/utils/2.10.68/utils-2.10.68.jar",
+                "directDependencies": [
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68"
+                ],
+                "dependencies": [
+                    "org.reactivestreams:reactive-streams:1.0.3",
+                    "org.slf4j:slf4j-api:1.7.30",
+                    "software.amazon.awssdk:annotations:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/utils/2.10.68/utils-2.10.68.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/utils/2.10.68/utils-2.10.68.jar"
+                ],
+                "sha256": "1a69993526af6ae7b8e3ceb68074480bd774698925bafe6c2aea9df291f00006"
+            },
+            {
+                "coord": "software.amazon.awssdk:utils:jar:sources:2.10.68",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/awssdk/utils/2.10.68/utils-2.10.68-sources.jar",
+                "directDependencies": [
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68"
+                ],
+                "dependencies": [
+                    "org.reactivestreams:reactive-streams:jar:sources:1.0.3",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30",
+                    "software.amazon.awssdk:annotations:jar:sources:2.10.68"
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/awssdk/utils/2.10.68/utils-2.10.68-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/awssdk/utils/2.10.68/utils-2.10.68-sources.jar"
+                ],
+                "sha256": "b5193375dd53bdc017c4064ccd60f20032914397eb02f9e8609f84e769bbea66"
+            },
+            {
+                "coord": "software.amazon.eventstream:eventstream:1.0.1",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/eventstream/eventstream/1.0.1/eventstream-1.0.1.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/eventstream/eventstream/1.0.1/eventstream-1.0.1.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/eventstream/eventstream/1.0.1/eventstream-1.0.1.jar"
+                ],
+                "sha256": "0c37d8e696117f02c302191b8110b0d0eb20fa412fce34c3a269ec73c16ce822"
+            },
+            {
+                "coord": "software.amazon.eventstream:eventstream:jar:sources:1.0.1",
+                "file": "v1/https/jcenter.bintray.com/software/amazon/eventstream/eventstream/1.0.1/eventstream-1.0.1-sources.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/software/amazon/eventstream/eventstream/1.0.1/eventstream-1.0.1-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/software/amazon/eventstream/eventstream/1.0.1/eventstream-1.0.1-sources.jar"
+                ],
+                "sha256": "8953ddf1af1680008d7ae96877df9fcfff9b8d909998d5c52519dbd583215636"
             }
         ],
         "version": "0.1.0",
-        "__AUTOGENERATED_FILE_DO_NOT_MODIFY_THIS_FILE_MANUALLY": 1111737173
+        "__AUTOGENERATED_FILE_DO_NOT_MODIFY_THIS_FILE_MANUALLY": 356985884
     }
 }

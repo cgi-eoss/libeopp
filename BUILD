@@ -40,6 +40,7 @@ NON_SQ_TARGETS = [
     "//resolver:path-resolver",
     "//resource:okhttp-resource",
     "//resource:path-resource",
+    "//resource:s3-resource",
     "//util:eopp-headers",
     "//util:timestamps",
 ]

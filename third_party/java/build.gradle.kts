@@ -37,6 +37,7 @@ repositories {
     jcenter()
 }
 
+extra.set("aws-sdk-v2.version", "2.10.68")
 extra.set("google-common-protos.version", "1.17.0")
 extra.set("grpc-java.version", "1.26.0")
 extra.set("guava.version", "28.2-jre")
@@ -56,6 +57,7 @@ dependencyManagement {
         mavenBom("com.google.protobuf:protobuf-bom:${extra.get("protobuf-java.version")}")
         mavenBom("io.grpc:grpc-bom:${extra.get("grpc-java.version")}")
         mavenBom("org.jetbrains.kotlin:kotlin-bom:${extra.get("kotlin.version")}")
+        mavenBom("software.amazon.awssdk:bom:${extra.get("aws-sdk-v2.version")}")
     }
     dependencies {
         dependency("com.google.api.grpc:proto-google-common-protos:${extra.get("google-common-protos.version")}")
@@ -103,4 +105,5 @@ dependencies {
     generate("org.slf4j:slf4j-api")
     generate("org.springframework.cloud:spring-cloud-commons")
     generate("org.springframework:spring-core")
+    generate("software.amazon.awssdk:s3")
 }

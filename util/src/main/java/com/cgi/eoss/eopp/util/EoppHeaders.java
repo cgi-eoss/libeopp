@@ -1,5 +1,10 @@
 package com.cgi.eoss.eopp.util;
 
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * <p>Common HTTP headers for working with libeopp-based applications.</p>
  */
@@ -44,5 +49,13 @@ public enum EoppHeaders {
     public String getHeader() {
         return header;
     }
+
+    /**
+     * <p>Function to extract a filename from a standard HTTP Content-Disposition header.</p>
+     */
+    public static final Function<String, Optional<String>> FILENAME_FROM_HTTP_HEADER = s -> {
+        Matcher matcher = Pattern.compile("attachment; filename=\"?(.*)\"?").matcher(s);
+        return matcher.matches() ? Optional.of(matcher.group(1)) : Optional.empty();
+    };
 
 }
