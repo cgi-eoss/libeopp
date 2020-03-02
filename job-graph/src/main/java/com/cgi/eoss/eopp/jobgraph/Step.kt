@@ -3,6 +3,7 @@ package com.cgi.eoss.eopp.jobgraph
 import com.cgi.eoss.eopp.identifier.Identifier
 import com.cgi.eoss.eopp.job.StepDataSet
 import com.cgi.eoss.eopp.job.StepInput
+import com.cgi.eoss.eopp.job.StepInputUriList
 import com.cgi.eoss.eopp.job.StepInstance
 import com.cgi.eoss.eopp.job.StepParameterValue
 import com.cgi.eoss.eopp.workflow.Input
@@ -30,10 +31,14 @@ data class DataConnector(
  * This is used as the node type in the [com.google.common.graph.Network] representing a [JobGraph].
  */
 sealed class Step {
+    abstract val jobId: String
     abstract val identifier: String
     abstract val inputs: List<StepInputOrOutput>
     abstract val outputs: List<StepInputOrOutput>
     abstract fun toProtobuf(inEdges: Iterable<DataConnector>, outEdges: Iterable<DataConnector>): StepInstance
+    // TODO validate min/max count in these functions
+    abstract fun hasValidSinks(successors: Set<Step>): Boolean
+    abstract fun hasValidSources(predecessors: Set<Step>): Boolean
 
     internal fun inputsToProtobuf(inEdges: Iterable<DataConnector>): Iterable<StepDataSet> {
         return inEdges.groupBy { it.destLabel }
@@ -76,13 +81,15 @@ sealed class Step {
  * [JobGraph].
  */
 data class InputStep(
+    override val jobId: String,
     override val identifier: String,
     override val inputs: List<StepInputOrOutput>,
     override val outputs: List<StepInputOrOutput>,
     val inputIdentifier: String,
     val sourceUris: MutableList<URI> = mutableListOf()
 ) : Step() {
-    constructor(input: Input) : this(
+    constructor(jobId: String, input: Input) : this(
+        jobId = jobId,
         identifier = "INPUT-${input.identifier}",
         inputs = emptyList<StepInputOrOutput>(),
         outputs = listOf(StepInputOrOutput(input.identifier, input.minOccurs, input.maxOccurs)),
@@ -91,10 +98,28 @@ data class InputStep(
 
     override fun toProtobuf(inEdges: Iterable<DataConnector>, outEdges: Iterable<DataConnector>): StepInstance {
         return StepInstance.newBuilder()
+            .setJobUuid(jobId)
             .setIdentifier(identifier)
             .setType(StepInstance.Type.INPUT)
+            .addAllInputs(sourceUrisToProtobuf())
             .addAllOutputs(outputsToProtobuf(outEdges))
             .build()
+    }
+
+    override fun hasValidSources(predecessors: Set<Step>): Boolean =
+        true // InputSteps require no validation of sources
+
+    override fun hasValidSinks(successors: Set<Step>): Boolean =
+        successors.isNotEmpty() // InputSteps must be connected to a sink
+
+    private fun sourceUrisToProtobuf(): List<StepDataSet> {
+        return listOf(
+            StepDataSet.newBuilder()
+                .setStepIdentifier(identifier)
+                .setIdentifier(inputIdentifier)
+                .setUriList(StepInputUriList.newBuilder().addAllUris(sourceUris.map { it.toString() }).build())
+                .build()
+        )
     }
 
     override fun toString(): String = super.toString()
@@ -106,6 +131,7 @@ data class InputStep(
  * ProcessSteps are nodes in the [com.google.common.graph.Network] representing a [JobGraph].
  */
 data class ProcessStep(
+    override val jobId: String,
     override val identifier: String,
     override val inputs: List<StepInputOrOutput>,
     override val outputs: List<StepInputOrOutput>,
@@ -117,7 +143,8 @@ data class ProcessStep(
     val resourceRequests: com.cgi.eoss.eopp.workflow.Step.Requests,
     val parameterValues: ListMultimap<String, String> = MultimapBuilder.hashKeys().arrayListValues().build()
 ) : Step() {
-    constructor(stepConfiguration: StepConfiguration) : this(
+    constructor(jobId: String, stepConfiguration: StepConfiguration) : this(
+        jobId = jobId,
         identifier = stepConfiguration.identifier,
         inputs = stepConfiguration.step.inputsList.map {
             StepInputOrOutput(
@@ -157,6 +184,7 @@ data class ProcessStep(
     override fun toProtobuf(inEdges: Iterable<DataConnector>, outEdges: Iterable<DataConnector>): StepInstance {
         return with(
             StepInstance.newBuilder()
+                .setJobUuid(jobId)
                 .setIdentifier(identifier)
                 .setType(StepInstance.Type.PROCESS)
                 .addAllParameters(parameterValuesToProtobuf())
@@ -171,6 +199,12 @@ data class ProcessStep(
             this
         }.build()
     }
+
+    override fun hasValidSources(predecessors: Set<Step>): Boolean =
+        inputs.isEmpty() || predecessors.isNotEmpty() // if inputs is not empty, predecessor steps must exist
+
+    override fun hasValidSinks(successors: Set<Step>): Boolean =
+        outputs.isEmpty() || successors.isNotEmpty() // if outputs is not empty, successor steps must exist
 
     private fun parameterValuesToProtobuf(): Iterable<StepParameterValue> =
         parameters.map {
@@ -190,12 +224,14 @@ data class ProcessStep(
  * [JobGraph].
  */
 data class OutputStep(
+    override val jobId: String,
     override val identifier: String,
     override val inputs: List<StepInputOrOutput>,
     override val outputs: List<StepInputOrOutput>,
     val outputIdentifier: String
 ) : Step() {
-    constructor(output: Output) : this(
+    constructor(jobId: String, output: Output) : this(
+        jobId = jobId,
         identifier = "OUTPUT-${output.identifier}",
         inputs = listOf(StepInputOrOutput(output.identifier, output.minOccurs, output.maxOccurs)),
         outputs = emptyList<StepInputOrOutput>(),
@@ -204,11 +240,18 @@ data class OutputStep(
 
     override fun toProtobuf(inEdges: Iterable<DataConnector>, outEdges: Iterable<DataConnector>): StepInstance {
         return StepInstance.newBuilder()
+            .setJobUuid(jobId)
             .setIdentifier(identifier)
             .setType(StepInstance.Type.OUTPUT)
             .addAllInputs(inputsToProtobuf(inEdges))
             .build()
     }
+
+    override fun hasValidSources(predecessors: Set<Step>): Boolean =
+        predecessors.isNotEmpty() // OutputSteps must be connected to a source
+
+    override fun hasValidSinks(successors: Set<Step>): Boolean =
+        true // OutputSteps require no validation of sinks
 
     override fun toString(): String = super.toString()
 }

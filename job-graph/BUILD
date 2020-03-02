@@ -21,6 +21,7 @@ maven_library(
         "//workflow",
         "@maven//:com_google_guava_guava",
         "@maven//:org_slf4j_slf4j_api",
+        "@maven//:org_springframework_spring_core",
     ],
 )
 
@@ -34,8 +35,8 @@ java_library(
     deps = [
         ":job-graph",
         "//identifier",
-        "//job",
-        "//workflow",
+        "//job:job_java_proto",
+        "//workflow:workflow_java_proto",
         "@maven//:com_google_guava_guava",
         "@maven//:com_google_truth_extensions_truth_proto_extension",
         "@maven//:com_google_truth_truth",
@@ -47,5 +48,19 @@ java_test(
     name = "JobGraphTest",
     size = "small",
     test_class = "com.cgi.eoss.eopp.jobgraph.JobGraphTest",
+    runtime_deps = [":job-graph_java_tests"],
+)
+
+java_test(
+    name = "StepInstanceExpanderNestedWorkflowTest",
+    size = "small",
+    test_class = "com.cgi.eoss.eopp.jobgraph.StepInstanceExpanderNestedWorkflowTest",
+    runtime_deps = [":job-graph_java_tests"],
+)
+
+java_test(
+    name = "StepInstanceExpanderParallelTest",
+    size = "small",
+    test_class = "com.cgi.eoss.eopp.jobgraph.StepInstanceExpanderParallelTest",
     runtime_deps = [":job-graph_java_tests"],
 )

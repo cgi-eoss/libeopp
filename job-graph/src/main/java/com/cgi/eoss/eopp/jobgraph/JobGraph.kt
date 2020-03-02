@@ -54,6 +54,17 @@ class JobGraph private constructor(
 
             return builder.build()
         }
+
+        @JvmStatic
+        fun expandStepInstance(stepInstance: StepInstance): List<StepInstance> =
+            // expand parallel steps first, so we can rename based on the total count (step-01, step-02, etc.)
+            renameExpandedSteps(stepInstance,
+                listOf(stepInstance)
+                    .flatMap { expandParallelInputs(it) }
+                    .flatMap { expandParallelParameters(it) }
+            )
+                // then expand any nested workflows
+                .flatMap { expandNestedWorkflows(it) }
     }
 
     /**
@@ -67,13 +78,17 @@ class JobGraph private constructor(
     }
 
     private data class Builder(
+        val jobId: String,
         val log: Logger,
         val steps: MutableMap<String, Step> = mutableMapOf(),
         val parameterLinks: SetMultimap<String, Pair<ProcessStep, String>> = MultimapBuilder.hashKeys().hashSetValues().build(),
         val dataConnectors: MutableSet<DataConnector> = mutableSetOf()
     ) : JobIdStubbing, WorkflowStubbing, InputStubbing, BuildStubbing {
 
-        constructor(jobId: String) : this(log = LoggerFactory.getLogger(Builder::class.qualifiedName + "." + jobId))
+        constructor(jobId: String) : this(
+            jobId = jobId,
+            log = LoggerFactory.getLogger(Builder::class.qualifiedName + "." + jobId)
+        )
 
         override fun withWorkflow(): WorkflowStubbing = this
         override fun endWorkflow() = this
@@ -85,11 +100,11 @@ class JobGraph private constructor(
         }
 
         override fun withWorkflowInput(input: Input): WorkflowStubbing = apply {
-            steps["INPUT-${input.identifier}"] = InputStep(input)
+            steps["INPUT-${input.identifier}"] = InputStep(jobId, input)
         }
 
         override fun withStepConfiguration(stepConfiguration: StepConfiguration) = apply {
-            val processStep = ProcessStep(stepConfiguration)
+            val processStep = ProcessStep(jobId, stepConfiguration)
             steps[stepConfiguration.identifier] = processStep
             stepConfiguration.parameterLinksList.forEach {
                 if (it.hardcodedValuesCount > 0) {
@@ -121,7 +136,7 @@ class JobGraph private constructor(
         }
 
         override fun withWorkflowOutput(output: Output) = apply {
-            steps["OUTPUT-${output.identifier}"] = OutputStep(output)
+            steps["OUTPUT-${output.identifier}"] = OutputStep(jobId, output)
             output.sources.workflowInputsList.forEach { workflowInput ->
                 dataConnectors.add(
                     DataConnector(
@@ -243,10 +258,10 @@ class JobGraph private constructor(
         }
 
         private fun stepHasNoSinks(network: MutableNetwork<Step, DataConnector>) =
-            network.nodes().filter { network.successors(it).isEmpty() && it !is OutputStep }
+            network.nodes().filter { !it.hasValidSinks(network.successors(it)) }
 
         private fun stepHasNoSources(network: MutableNetwork<Step, DataConnector>) =
-            network.nodes().filter { network.predecessors(it).isEmpty() && it !is InputStep }
+            network.nodes().filter { !it.hasValidSources(network.predecessors(it)) }
     }
 }
 

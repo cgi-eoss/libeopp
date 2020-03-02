@@ -85,22 +85,64 @@ message StepConfiguration {
         // If set, the input value filenames are matched against this pattern,
         // and the step is run once per distinct value of the capturing group.
         //
-        // If empty, the step is run once per value of this input, i.e.
-        // equivalent to a `group_by` of `(.*)`.
+        // If empty, the step is run once per value of this input. To obtain
+        // grouping per unique filename value, use a pattern like `(.*)`.
         //
-        // *NOTE:* The exact implementation of this feature is defined by the
-        // application, and should be documented downstream. Particularly the
-        // application language's level of perl regex compatibility or other
-        // regex quirks may affect interoperability of this flag across
+        // *NOTE:* Filenames not matching the pattern at all are excluded.
+        //
+        // *NOTE:* The exact implementation of this feature may be changed by
+        // the application, and should be documented downstream. Particularly
+        // the application language's level of perl regex compatibility or
+        // other regex quirks may affect interoperability of this flag across
         // libeopp-based platforms.
         string group_by = 4;
         // Filename matching patterns applied to filter the files supplied by
-        // the `sources`. Interaction with `excludes` is defined by the
-        // application.
+        // the `sources`.
+        //
+        // This property operates similarly to ant's patternset element. When
+        // both inclusion and exclusion are used, only files that match at
+        // least one of the include patterns and don't match any of the
+        // exclude patterns are used.
+        //
+        // Ant-compatible patterns are supported:
+        //
+        //    ? matches one character
+        //    * matches zero or more characters
+        //    ** matches zero or more directories in a path
+        //    {spring:[a-z]+} matches the regexp [a-z]+ as a path variable named "spring"
+        //
+        // Examples:
+        //
+        //    com/t?st.jsp — matches com/test.jsp but also com/tast.jsp or com/txst.jsp
+        //    com/*.jsp — matches all .jsp files in the com directory
+        //    com/**/test.jsp — matches all test.jsp files underneath the com path
+        //    org/springframework/**/*.jsp — matches all .jsp files underneath the org/springframework path
+        //    org/**/servlet/bla.jsp — matches org/springframework/servlet/bla.jsp but also org/springframework/testing/servlet/bla.jsp and org/servlet/bla.jsp
+        //    com/{filename:\\w+}.jsp will match com/test.jsp and assign the value test to the filename variable
         repeated string includes = 5;
         // Filename matching patterns applied to filter the files supplied by
-        // the `sources`. Interaction with `includes` is defined by the
-        // application.
+        // the `sources`.
+        //
+        // This property operates similarly to ant's patternset element. When
+        // both inclusion and exclusion are used, only files that match at
+        // least one of the include patterns and don't match any of the
+        // exclude patterns are used.
+        //
+        // Ant-compatible patterns are supported:
+        //
+        //    ? matches one character
+        //    * matches zero or more characters
+        //    ** matches zero or more directories in a path
+        //    {spring:[a-z]+} matches the regexp [a-z]+ as a path variable named "spring"
+        //
+        // Examples:
+        //
+        //    com/t?st.jsp — matches com/test.jsp but also com/tast.jsp or com/txst.jsp
+        //    com/*.jsp — matches all .jsp files in the com directory
+        //    com/**/test.jsp — matches all test.jsp files underneath the com path
+        //    org/springframework/**/*.jsp — matches all .jsp files underneath the org/springframework path
+        //    org/**/servlet/bla.jsp — matches org/springframework/servlet/bla.jsp but also org/springframework/testing/servlet/bla.jsp and org/servlet/bla.jsp
+        //    com/{filename:\\w+}.jsp will match com/test.jsp and assign the value test to the filename variable
         repeated string excludes = 6;
         // If true, and the linked input source is empty after filters are
         // applied, the step should be removed from the execution graph.

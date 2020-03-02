@@ -36,7 +36,9 @@ maven_library(
     exports = [":job_java_proto"],
     deps = [
         ":job_java_proto",
+        "//workflow",
         "@maven//:com_google_guava_guava",
+        "@maven//:org_springframework_spring_web",
     ],
 )
 
@@ -57,4 +59,26 @@ jarjar_library(
         maven_coordinates_tag("job"),
     ],
     visibility = ["//:__pkg__"],
+)
+
+java_library(
+    name = "job_java_tests",
+    testonly = True,
+    srcs = glob(["src/test/java/**/*.java"]),
+    runtime_deps = [
+        "@maven//:ch_qos_logback_logback_classic",
+    ],
+    deps = [
+        ":job",
+        "@maven//:com_google_truth_extensions_truth_proto_extension",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+java_test(
+    name = "StepDataSetsTest",
+    size = "small",
+    test_class = "com.cgi.eoss.eopp.job.StepDataSetsTest",
+    runtime_deps = [":job_java_tests"],
 )

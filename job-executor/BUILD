@@ -11,8 +11,12 @@ maven_library(
     artifact_name = "libeopp :: job-executor",
     deps = [
         "//job",
+        "//job-graph",
+        "//workflow",
         "@maven//:com_google_guava_guava",
+        "@maven//:io_projectreactor_reactor_core",
         "@maven//:org_slf4j_slf4j_api",
+        "@maven//:org_springframework_spring_core",
     ],
 )
 
@@ -25,7 +29,9 @@ java_library(
     ],
     deps = [
         ":job-executor",
+        "//identifier",
         "//job",
+        "//workflow",
         "@maven//:com_google_guava_guava",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",

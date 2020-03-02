@@ -105,5 +105,6 @@ dependencies {
     generate("org.slf4j:slf4j-api")
     generate("org.springframework.cloud:spring-cloud-commons")
     generate("org.springframework:spring-core")
+    generate("org.springframework:spring-web")
     generate("software.amazon.awssdk:s3")
 }

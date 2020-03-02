@@ -19,6 +19,11 @@ package com.cgi.eoss.eopp.executor;
 import com.cgi.eoss.eopp.job.StepInstance;
 import com.cgi.eoss.eopp.job.StepInstanceId;
 import com.cgi.eoss.eopp.job.StepInstances;
+import com.cgi.eoss.eopp.jobgraph.JobGraph;
+import com.cgi.eoss.eopp.workflow.StepConfiguration;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -27,11 +32,15 @@ import com.google.common.util.concurrent.MoreExecutors;
 import org.slf4j.Logger;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -40,39 +49,65 @@ import static org.slf4j.LoggerFactory.getLogger;
  * <p>Provides a fixed size thread pool to limit concurrent execution, includes timeout behaviour, and handles step
  * multiplicity.</p>
  */
+// TODO Dispatch step lifecycle events
 public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor.StepOperator {
     private static final Logger log = getLogger(AbstractStepOperator.class);
 
+    private final StepOperatorEventDispatcher stepOperatorEventDispatcher;
     private final ConcurrentMap<StepInstanceId, ListenableFuture<StepInstance>> stepFutures = new ConcurrentHashMap<>();
     private final ListeningExecutorService stepExecutorService;
     private final ListeningScheduledExecutorService stepTimeoutExecutorService;
+    private final ListeningExecutorService lightweightStepExecutorService;
     private final Duration stepExecutionTimeout;
+    private final EventBus subStepNotificationBus;
 
     /**
      * <p>Create a new StepOperator with a maximum of 8 concurrent steps, with no timeout.</p>
+     *
+     * @param stepOperatorEventDispatcher A handler for events emitted by this operator.
      */
-    public AbstractStepOperator() {
-        this(8, Duration.ofSeconds(-1));
+    public AbstractStepOperator(StepOperatorEventDispatcher stepOperatorEventDispatcher) {
+        this(stepOperatorEventDispatcher, 8, Duration.ofSeconds(-1));
     }
 
     /**
      * <p>Create a new StepOperator for parallel execution.</p>
      *
-     * @param maxConcurrentSteps   The maximum number of concurrent steps to run.
-     * @param stepExecutionTimeout The maximum duration before cancellation for any single step. If this is negative,
-     *                             the timeout is disabled.
+     * @param stepOperatorEventDispatcher A handler for events emitted by this operator.
+     * @param maxConcurrentSteps          The maximum number of concurrent steps to run.
+     * @param stepExecutionTimeout        The maximum duration before cancellation for any single step. If this is negative,
      */
-    public AbstractStepOperator(int maxConcurrentSteps, Duration stepExecutionTimeout) {
-        this.stepExecutorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(maxConcurrentSteps));
+    public AbstractStepOperator(StepOperatorEventDispatcher stepOperatorEventDispatcher, int maxConcurrentSteps, Duration stepExecutionTimeout) {
+        this.stepOperatorEventDispatcher = stepOperatorEventDispatcher;
+        this.stepExecutorService = MoreExecutors.listeningDecorator(Executors.newWorkStealingPool(maxConcurrentSteps));
         this.stepTimeoutExecutorService = MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(maxConcurrentSteps));
+        this.lightweightStepExecutorService = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
         this.stepExecutionTimeout = stepExecutionTimeout;
+        this.subStepNotificationBus = new EventBus("sub-step-event-bus");
     }
 
     @Override
     public ListenableFuture<StepInstance> execute(StepInstance stepInstance) {
-        // TODO Handle step multiplicity
         log.debug("{}::{} executing", stepInstance.getJobUuid(), stepInstance.getIdentifier());
-        ListenableFuture<StepInstance> stepFuture = getStepFuture(stepInstance);
+
+        ListenableFuture<StepInstance> stepExecutionFuture;
+        if (StepInstances.hasMultiplicity(stepInstance)) {
+            stepExecutionFuture = lightweightStepExecutorService.submit(getParentStepCallable(stepInstance));
+        } else {
+            stepExecutionFuture = stepExecutorService.submit(getExecutionCallable(stepInstance));
+        }
+
+        if (!stepInstance.getParentIdentifier().isEmpty()) {
+            Futures.addCallback(stepExecutionFuture, getSubStepCallback(stepInstance), lightweightStepExecutorService);
+        }
+
+        ListenableFuture<StepInstance> stepFuture;
+        if (stepExecutionTimeout.isNegative()) {
+            stepFuture = stepExecutionFuture;
+        } else {
+            stepFuture = Futures.withTimeout(stepExecutionFuture, stepExecutionTimeout, stepTimeoutExecutorService);
+        }
+
         stepFutures.put(StepInstances.getId(stepInstance), stepFuture);
         return stepFuture;
     }
@@ -98,9 +133,10 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
     }
 
     /**
-     * @return A Callable which executes the given StepInstance. This should block until the step has finished
+     * <p>Construct a Callable which executes the given StepInstance. This should block until the step has finished
      * executing, and return the completed StepInstance, i.e. with final results for
-     * {@link StepInstance#getOutputsList()}.
+     * {@link StepInstance#getOutputsList()}.</p>
+     * <p>The Callable should throw {@link StepExecutionException} in the event of non-nominal execution.</p>
      */
     protected abstract Callable<StepInstance> getExecutionCallable(StepInstance stepInstance);
 
@@ -109,15 +145,74 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
      */
     protected abstract void operatorCleanUp(StepInstance stepInstance);
 
+    private List<StepInstance> expandStep(StepInstance step) {
+        log.debug("{}::{} expanding", step.getJobUuid(), step.getIdentifier());
+        List<StepInstance> subSteps = JobGraph.expandStepInstance(step);
+        log.debug("{}::{} expanded to produce {} sub-steps", step.getJobUuid(), step.getIdentifier(), subSteps.size());
+        return subSteps;
+    }
+
+    private Callable<StepInstance> getParentStepCallable(StepInstance stepInstance) {
+        List<StepInstance> subSteps = expandStep(stepInstance);
+        ParentStepMonitor parentStepMonitor = new ParentStepMonitor(stepInstance, subSteps);
+        subStepNotificationBus.register(parentStepMonitor);
+        stepOperatorEventDispatcher.stepExpanded(stepInstance, subSteps);
+        return parentStepMonitor;
+    }
+
+    private FutureCallback<StepInstance> getSubStepCallback(StepInstance stepInstance) {
+        return new FutureCallback<StepInstance>() {
+            @Override
+            public void onSuccess(StepInstance result) {
+                log.debug("{}::{} Notifying parent step listener of completion", stepInstance.getJobUuid(), stepInstance.getIdentifier());
+                subStepNotificationBus.post(result);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                log.debug("{}::{} Notifying parent step listener of error", stepInstance.getJobUuid(), stepInstance.getIdentifier(), throwable);
+                ListenableFuture<StepInstance> parentStepFuture = stepFutures.get(StepInstanceId.newBuilder().setJobUuid(stepInstance.getJobUuid()).setIdentifier(stepInstance.getParentIdentifier()).build());
+                parentStepFuture.cancel(true);
+            }
+        };
+    }
+
     /**
-     * @return The future representing the step execution Callable. May be wrapped with the configured
-     * {@link #stepExecutionTimeout} for this operator.
+     * <p>The 'executable' corresponding to a parent step in the processing graph.</p>
+     * <p>Stores a reference to all expected sub-steps, and waits for StepInstance events signifying their completion.
+     * These events should be posted by the callback in {@link #execute(StepInstance)}.</p>
      */
-    private ListenableFuture<StepInstance> getStepFuture(StepInstance stepInstance) {
-        if (stepExecutionTimeout.isNegative()) {
-            return stepExecutorService.submit(getExecutionCallable(stepInstance));
-        } else {
-            return Futures.withTimeout(stepExecutorService.submit(getExecutionCallable(stepInstance)), stepExecutionTimeout, stepTimeoutExecutorService);
+    private static class ParentStepMonitor implements Callable<StepInstance> {
+        private final StepInstance.Builder step;
+        private final Set<StepInstanceId> subStepIds;
+        private final CountDownLatch subStepsLatch;
+
+        public ParentStepMonitor(StepInstance step, List<StepInstance> subSteps) {
+            this.step = step.toBuilder();
+            this.subStepIds = subSteps.stream().map(StepInstances::getId).collect(Collectors.toSet());
+            this.subStepsLatch = new CountDownLatch(subSteps.size());
+        }
+
+        @Override
+        public StepInstance call() throws Exception {
+            subStepsLatch.await();
+            log.debug("{}::{} all sub-steps completed", step.getJobUuid(), step.getIdentifier());
+            return step.build();
+        }
+
+        @Subscribe
+        public void subStepCompletionEvent(StepInstance subStep) {
+            // avoid collecting events from other parent steps
+            if (subStepIds.contains(StepInstances.getId(subStep))) {
+                // collect sub-step outputs - only NESTED_WORKFLOW OUTPUT steps, or all sub-steps
+                if (step.getConfiguration().getExecuteCase() == StepConfiguration.ExecuteCase.NESTED_WORKFLOW
+                        && subStep.getType() == StepInstance.Type.OUTPUT) {
+                    step.addAllOutputs(subStep.getOutputsList());
+                } else if (step.getConfiguration().getExecuteCase() == StepConfiguration.ExecuteCase.STEP) {
+                    step.addAllOutputs(subStep.getOutputsList());
+                }
+                subStepsLatch.countDown();
+            }
         }
     }
 

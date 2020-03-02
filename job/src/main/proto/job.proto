@@ -221,6 +221,11 @@ message StepInstance {
     eopp.workflow.StepConfiguration configuration = 8;
     // The identifier of the job in which this step is configured.
     string job_uuid = 9;
+    // The identifier of another step in the job which expanded to produce this
+    // step, i.e. this step is a single instance of an expanded parallel
+    // parameter or input from the step configuration, or it is part of a
+    // nested workflow.
+    string parent_identifier = 10;
 }
 
 // Multi-valued map entry for realised step parameter values.
