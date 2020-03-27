@@ -50,13 +50,9 @@ http_archive(
     urls = ["https://github.com/bazelbuild/rules_python/archive/38f86fb55b698c51e8510c807489c9f4e047480e.tar.gz"],
 )
 
-load("//third_party/java:jarjar_repositories.bzl", "jarjar_repositories")
+RULES_JVM_EXTERNAL_TAG = "3.2"
 
-jarjar_repositories()
-
-RULES_JVM_EXTERNAL_TAG = "0a7cc6a0b6764232a0ddd31ad87b489e1d47b166"
-
-RULES_JVM_EXTERNAL_SHA = "f4106ee24334ef35c31e31c66f612e89619efe072d06df840008d516dd3a7a22"
+RULES_JVM_EXTERNAL_SHA = "82262ff4223c5fda6fb7ff8bd63db8131b51b413d26eb49e3131037e79e324af"
 
 http_archive(
     name = "rules_jvm_external",
@@ -65,8 +61,31 @@ http_archive(
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
 
-load("@rules_jvm_external//:defs.bzl", "maven_install")
+rules_kotlin_version = "legacy-1.3.0"
+
+rules_kotlin_sha = "4fd769fb0db5d3c6240df8a9500515775101964eebdf85a3f9f0511130885fde"
+
+http_archive(
+    name = "io_bazel_rules_kotlin",
+    sha256 = rules_kotlin_sha,
+    strip_prefix = "rules_kotlin-%s" % rules_kotlin_version,
+    type = "zip",
+    urls = ["https://github.com/bazelbuild/rules_kotlin/archive/%s.zip" % rules_kotlin_version],
+)
+
+http_archive(
+    name = "bazel_sonarqube",
+    sha256 = "336b9b9953257d927ba74ff9423f21b4d406be48dfcb7dc9ab21adedbc91709d",
+    strip_prefix = "bazel-sonarqube-7b84f80f5d852cab94e8148cbf2255136078e466",
+    urls = ["https://github.com/Zetten/bazel-sonarqube/archive/7b84f80f5d852cab94e8148cbf2255136078e466.zip"],
+)
+
 load("//third_party/java:java_repositories.bzl", "ARTIFACTS", "REPOSITORIES")
+load("//third_party/kotlin:kotlin_repositories.bzl", "kotlin_repositories", "kt_register_toolchains")
+load("//third_party/protobuf:protobuf_repositories.bzl", "COM_GOOGLE_PROTOBUF_JAVA_OVERRIDE_TARGETS", "protobuf_repositories")
+load("//third_party/grpc:grpc_repositories.bzl", "IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS", "grpc_repositories")
+load("//third_party/grpc:grpc_dependency_repositories.bzl", "grpc_dependency_repositories")
+load("@rules_jvm_external//:defs.bzl", "maven_install")
 
 maven_install(
     name = "maven",
@@ -74,18 +93,10 @@ maven_install(
     fetch_sources = True,
     generate_compat_repositories = True,
     maven_install_json = "//third_party/java:maven_install.json",
-    override_targets = {
-        "com.google.protobuf:protobuf-java": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_java",
-        "com.google.protobuf:protobuf-java-util": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_java_util",
-        "com.google.protobuf:protobuf-javalite": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_javalite",
-        "io.grpc:grpc-context": "@com_cgi_eoss_eopp//third_party/grpc:context",
-        "io.grpc:grpc-core": "@com_cgi_eoss_eopp//third_party/grpc:all_core",
-        "io.grpc:grpc-netty": "@com_cgi_eoss_eopp//third_party/grpc:netty",
-        "io.grpc:grpc-protobuf": "@com_cgi_eoss_eopp//third_party/grpc:protobuf",
-        "io.grpc:grpc-protobuf-lite": "@com_cgi_eoss_eopp//third_party/grpc:protobuf_lite",
-        "io.grpc:grpc-services": "@com_cgi_eoss_eopp//third_party/grpc:all_services",
-        "io.grpc:grpc-stub": "@com_cgi_eoss_eopp//third_party/grpc:stub",
-    },
+    override_targets = dict(
+        COM_GOOGLE_PROTOBUF_JAVA_OVERRIDE_TARGETS.items() +
+        IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS.items(),
+    ),
     repositories = REPOSITORIES,
     strict_visibility = True,
     use_unsafe_shared_cache = True,
@@ -100,42 +111,19 @@ load("@maven//:compat.bzl", "compat_repositories")
 
 compat_repositories()
 
-rules_kotlin_version = "legacy-1.3.0-rc3"
-
-rules_kotlin_sha = "54678552125753d9fc0a37736d140f1d2e69778d3e52cf454df41a913b964ede"
-
-http_archive(
-    name = "io_bazel_rules_kotlin",
-    sha256 = rules_kotlin_sha,
-    strip_prefix = "rules_kotlin-%s" % rules_kotlin_version,
-    type = "zip",
-    urls = ["https://github.com/bazelbuild/rules_kotlin/archive/%s.zip" % rules_kotlin_version],
-)
-
-load("//third_party/kotlin:kotlin_repositories.bzl", "kotlin_repositories", "kt_register_toolchains")
-
 kotlin_repositories()
 
 kt_register_toolchains()
 
-load("//third_party/protobuf:protobuf_repositories.bzl", "protobuf_repositories")
-
 protobuf_repositories()
-
-load("//third_party/grpc:grpc_repositories.bzl", "grpc_repositories")
 
 grpc_repositories()
 
-load("//third_party/grpc:grpc_dependency_repositories.bzl", "grpc_dependency_repositories")
-
 grpc_dependency_repositories()
 
-http_archive(
-    name = "bazel_sonarqube",
-    sha256 = "336b9b9953257d927ba74ff9423f21b4d406be48dfcb7dc9ab21adedbc91709d",
-    strip_prefix = "bazel-sonarqube-7b84f80f5d852cab94e8148cbf2255136078e466",
-    urls = ["https://github.com/Zetten/bazel-sonarqube/archive/7b84f80f5d852cab94e8148cbf2255136078e466.zip"],
-)
+load("//third_party/java:jarjar_repositories.bzl", "jarjar_repositories")
+
+jarjar_repositories()
 
 load("@bazel_sonarqube//:repositories.bzl", "bazel_sonarqube_repositories")
 

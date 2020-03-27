@@ -24,7 +24,7 @@ def protobuf_repositories():
         sha256 = "20e55e7dc9ebbb5800072fff25fd56d7c0a168493ef4652e78910566fa6b45f5",
         strip_prefix = "protobuf-%s" % PROTOBUF_VERSION,
         urls = ["https://github.com/google/protobuf/archive/v%s.zip" % PROTOBUF_VERSION],
-        patches = ["//third_party/protobuf:protobuf_drop_java_7_compatibility.patch"],
+        patches = ["@com_cgi_eoss_eopp//third_party/protobuf:protobuf_drop_java_7_compatibility.patch"],
         patch_args = ["-p1"],
     )
 
@@ -33,6 +33,12 @@ def protobuf_repositories():
         sha256 = "e60211a40473f6be95b53f64559f82a3b2971672b11710db2fc9081708e25699",
         strip_prefix = "protobuf-0425fa932ce95a32bb9f88b2c09b995e9ff8207b",
         urls = ["https://github.com/google/protobuf/archive/0425fa932ce95a32bb9f88b2c09b995e9ff8207b.zip"],  # Commit with fixed javalite on 3.11.x branch
-        patches = ["//third_party/protobuf:protobuf_drop_java_7_compatibility.patch"],
+        patches = ["@com_cgi_eoss_eopp//third_party/protobuf:protobuf_drop_java_7_compatibility.patch"],
         patch_args = ["-p1"],
     )
+
+COM_GOOGLE_PROTOBUF_JAVA_OVERRIDE_TARGETS = {
+    "com.google.protobuf:protobuf-java": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_java",
+    "com.google.protobuf:protobuf-java-util": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_java_util",
+    "com.google.protobuf:protobuf-javalite": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_javalite",
+}

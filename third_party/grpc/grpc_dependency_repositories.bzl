@@ -1,50 +1,14 @@
-load("@io_grpc_grpc_java//:repositories.bzl", "grpc_java_repositories")
-load("@com_salesforce_servicelibs_reactive_grpc//bazel:repositories.bzl", reactive_grpc_repositories = "repositories")
-
 def grpc_dependency_repositories():
-    grpc_java_repositories(
-        omit_com_google_android_annotations = True,
-        omit_com_google_api_grpc_google_common_protos = True,
-        omit_com_google_auth_google_auth_library_credentials = True,
-        omit_com_google_auth_google_auth_library_oauth2_http = True,
-        omit_com_google_code_findbugs_jsr305 = True,
-        omit_com_google_code_gson = True,
-        omit_com_google_errorprone_error_prone_annotations = True,
-        omit_com_google_guava = True,
-        omit_com_google_guava_failureaccess = True,
-        omit_com_google_j2objc_j2objc_annotations = True,
-        omit_com_google_protobuf = True,
-        omit_com_google_protobuf_javalite = True,
-        omit_com_google_truth_truth = True,
-        omit_com_squareup_okhttp = True,
-        omit_com_squareup_okio = True,
-        omit_io_grpc_grpc_proto = False,
-        omit_io_netty_buffer = True,
-        omit_io_netty_common = True,
-        omit_io_netty_transport = True,
-        omit_io_netty_transport_native_epoll = True,
-        omit_io_netty_codec = True,
-        omit_io_netty_codec_socks = True,
-        omit_io_netty_codec_http = True,
-        omit_io_netty_codec_http2 = True,
-        omit_io_netty_handler = True,
-        omit_io_netty_handler_proxy = True,
-        omit_io_netty_resolver = True,
-        omit_io_netty_tcnative_boringssl_static = True,
-        omit_io_opencensus_api = True,
-        omit_io_opencensus_grpc_metrics = True,
-        omit_io_perfmark = True,
-        omit_javax_annotation = True,
-        omit_junit_junit = True,
-        omit_org_apache_commons_lang3 = True,
-        omit_org_codehaus_mojo_animal_sniffer_annotations = True,
+    # exported by @io_grpc_grpc_java//:repositories.bzl#grpc_java_repositories
+    native.bind(
+        name = "guava",
+        actual = "@maven//:com_google_guava_guava",
     )
-
-    reactive_grpc_repositories(
-        omit_com_github_spullara_mustache_java_compiler = True,
-        omit_com_salesforce_servicelibs_jprotoc = True,
-        omit_io_grpc_grpc_java = True,
-        omit_io_projectreactor_reactor_core = True,
-        omit_io_reactivex_rxjava2_rxjava = True,
-        omit_org_reactivestreams_reactive_streams = True,
+    native.bind(
+        name = "gson",
+        actual = "@maven//:com_google_code_gson_gson",
+    )
+    native.bind(
+        name = "error_prone_annotations",
+        actual = "@maven//:com_google_errorprone_error_prone_annotations",
     )

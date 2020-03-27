@@ -5,6 +5,16 @@ licenses(["notice"])
 load(":grpc_repositories.bzl", "GRPC_JAVA_VERSION", "REACTOR_GRPC_VERSION")
 
 java_library(
+    name = "api",
+    tags = [
+        "manual",
+        "maven_coordinates=io.grpc:grpc-api:" + GRPC_JAVA_VERSION,
+    ],
+    visibility = ["//visibility:public"],
+    exports = ["@io_grpc_grpc_java//api"],
+)
+
+java_library(
     name = "context",
     tags = [
         "manual",
@@ -101,6 +111,7 @@ java_library(
         "@io_grpc_grpc_java//services:binarylog",
         "@io_grpc_grpc_java//services:channelz",
         "@io_grpc_grpc_java//services:reflection",
+        "@io_grpc_grpc_java//services:health",
     ],
 )
 
@@ -122,6 +133,16 @@ java_library(
     ],
     visibility = ["//visibility:public"],
     exports = ["@io_grpc_grpc_java//services:channelz"],
+)
+
+java_library(
+    name = "services_health",
+    tags = [
+        "manual",
+        "maven_coordinates=io.grpc:grpc-services:" + GRPC_JAVA_VERSION,
+    ],
+    visibility = ["//visibility:public"],
+    exports = ["@io_grpc_grpc_java//services:health"],
 )
 
 java_library(
