@@ -25,7 +25,7 @@ bazelDependencies {
         "com.google.truth.extensions:truth-liteproto-extension:1.0.1",
         "com.google.truth.extensions:truth-proto-extension:1.0.1",
         "com.google.truth:truth:1.0.1",
-        "com.squareup.okhttp3:mockwebserver:4.3.1",
+        "com.squareup.okhttp3:mockwebserver:4.5.0",
         "junit:junit:4.12",
         "org.hamcrest:hamcrest:2.1",
         "org.hamcrest:hamcrest-core:2.1",
@@ -37,14 +37,14 @@ repositories {
     jcenter()
 }
 
-extra.set("aws-sdk-v2.version", "2.11.3")
+extra.set("aws-sdk-v2.version", "2.11.11")
 extra.set("google-common-protos.version", "1.17.0")
-extra.set("grpc-java.version", "1.27.2")
-extra.set("guava.version", "28.2-jre")
+extra.set("grpc-java.version", "1.28.1")
+extra.set("guava.version", "29.0-jre")
 extra.set("j2objc-annotations.version", "1.3")
 extra.set("kotlin.version", "1.3.71")
-extra.set("okhttp.version", "4.3.1")
-extra.set("protobuf-java.version", "3.11.1")
+extra.set("okhttp.version", "4.5.0")
+extra.set("protobuf-java.version", "3.11.4")
 extra.set("reactor-grpc.version", "1.0.0")
 extra.set("spring-boot.version", "2.2.6.RELEASE")
 extra.set("spring-cloud.version", "Hoxton.SR3")
