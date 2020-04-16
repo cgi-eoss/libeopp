@@ -75,9 +75,9 @@ http_archive(
 
 http_archive(
     name = "bazel_sonarqube",
-    sha256 = "336b9b9953257d927ba74ff9423f21b4d406be48dfcb7dc9ab21adedbc91709d",
-    strip_prefix = "bazel-sonarqube-7b84f80f5d852cab94e8148cbf2255136078e466",
-    urls = ["https://github.com/Zetten/bazel-sonarqube/archive/7b84f80f5d852cab94e8148cbf2255136078e466.zip"],
+    sha256 = "2fbb1596fa7ef5e24fa2631f810a116de9513dda7d15ea96fb6f16319cd2e42d",
+    strip_prefix = "bazel-sonarqube-ab1774e5bbcbb602a956fb3b6215c81cbd716127",
+    urls = ["https://github.com/Zetten/bazel-sonarqube/archive/ab1774e5bbcbb602a956fb3b6215c81cbd716127.zip"],
 )
 
 load("//third_party/java:java_repositories.bzl", "ARTIFACTS", "REPOSITORIES")
@@ -127,4 +127,7 @@ jarjar_repositories()
 
 load("@bazel_sonarqube//:repositories.bzl", "bazel_sonarqube_repositories")
 
-bazel_sonarqube_repositories()
+bazel_sonarqube_repositories(
+    sonar_scanner_cli_sha256 = "8c78a2a1af24dfbc564d87ba6826795e6892d3035cb91a98c61d9e33e2b3cd46",
+    sonar_scanner_cli_version = "4.3.0.2102",
+)
