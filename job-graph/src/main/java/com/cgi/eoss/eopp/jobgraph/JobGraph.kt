@@ -2,10 +2,14 @@ package com.cgi.eoss.eopp.jobgraph
 
 import com.cgi.eoss.eopp.job.JobSpecification
 import com.cgi.eoss.eopp.job.StepInstance
+import com.cgi.eoss.eopp.job.StepInstances
 import com.cgi.eoss.eopp.workflow.Input
 import com.cgi.eoss.eopp.workflow.Output
 import com.cgi.eoss.eopp.workflow.StepConfiguration
+import com.cgi.eoss.eopp.workflow.StepConfiguration.InputLink
+import com.cgi.eoss.eopp.workflow.StepConfiguration.ParameterLink
 import com.cgi.eoss.eopp.workflow.Workflow
+import com.google.common.base.Strings
 import com.google.common.collect.ListMultimap
 import com.google.common.collect.MultimapBuilder
 import com.google.common.collect.SetMultimap
@@ -15,6 +19,7 @@ import com.google.common.graph.NetworkBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URI
+import java.util.function.Consumer
 
 /**
  * A reprojection of a [com.cgi.eoss.eopp.job.JobSpecification], describing the steps and their connections as a
@@ -241,16 +246,16 @@ class JobGraph private constructor(
                     parameterValues.addAll(param.defaultValues) // use any defaults from the workflow - might still be empty!
                 }
 
+                // Prune this step from the execution graph if its parameter says it should be skipped - otherwise the step will run with no value
+                if (parameterValues.isEmpty() && param.skipStepIfEmpty) {
+                    return true
+                }
+
                 // Check the constraints
                 if (parameterValues.size < param.minOccurs) {
                     throw GraphBuildFailureException("Parameter '${param.identifier}' for step '${step.identifier}' has too few values: ${parameterValues.size} < ${param.minOccurs}")
-                } else if (parameterValues.size > param.maxOccurs) {
+                } else if (parameterValues.size > param.maxOccurs && !step.parallelParameters.contains(param.identifier)) {
                     throw GraphBuildFailureException("Parameter '${param.identifier}' for step '${step.identifier}' has too many values: ${parameterValues.size} > ${param.maxOccurs}")
-                }
-
-                // Prune this step from the execution graph if its parameter says it can be skipped - otherwise the step will run with no value
-                if (parameterValues.isEmpty() && param.skipStepIfEmpty) {
-                    return true
                 }
 
                 return false

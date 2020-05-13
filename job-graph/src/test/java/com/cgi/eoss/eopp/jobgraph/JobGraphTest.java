@@ -315,6 +315,224 @@ public class JobGraphTest {
     }
 
     @Test
+    public void buildStepsWithParallelParameters() {
+        Step parallelStep = firstStep.toBuilder()
+                .setParameters(0, firstStep.getParameters(0).toBuilder()
+                        .setMinOccurs(1)
+                        .setMaxOccurs(1)
+                        .build())
+                .build();
+
+        // Set first-step's parameter.parallel to true - ensures the parallelStep.maxOccurs does not cause a graph build error
+        StepConfiguration parallelStepConfiguration = workflow.getStepConfigurations(0).toBuilder()
+                .setStep(parallelStep)
+                .setParameterLinks(0, workflow.getStepConfigurations(0).getParameterLinks(0).toBuilder().setParallel(true))
+                .build();
+
+        Workflow parallelWorkflow = workflow.toBuilder()
+                .setStepConfigurations(0, parallelStepConfiguration)
+                .build();
+
+        JobGraph jobGraph = JobGraph.builder("test-job-id")
+                .withWorkflow(parallelWorkflow)
+                .withInput("provided_workflow_input", URI.create("file:///etc/hosts"))
+                .withParameter("sourced_param", "1")
+                .withParameter("sourced_param", "2")
+                .build();
+
+        Network<com.cgi.eoss.eopp.jobgraph.Step, DataConnector> network = jobGraph.getNetwork();
+        assertThat(network.nodes()).hasSize(5);
+
+        ImmutableMap<String, StepInstance> steps = Maps.uniqueIndex(jobGraph.getSteps(), StepInstance::getIdentifier);
+
+        assertThat(steps.get("INPUT-provided_workflow_input")).isEqualTo(StepInstance.newBuilder()
+                .setJobUuid("test-job-id")
+                .setIdentifier("INPUT-provided_workflow_input")
+                .setType(StepInstance.Type.INPUT)
+                .addInputs(StepDataSet.newBuilder()
+                        .setStepIdentifier("INPUT-provided_workflow_input")
+                        .setIdentifier("provided_workflow_input")
+                        .setUriList(StepInputUriList.newBuilder()
+                                .addUris("file:///etc/hosts")
+                                .build())
+                        .build())
+                .addOutputs(StepDataSet.newBuilder()
+                        .setStepIdentifier("INPUT-provided_workflow_input")
+                        .setIdentifier("provided_workflow_input")
+                        .build()).build());
+
+        assertThat(steps.get("first-step")).isEqualTo(StepInstance.newBuilder()
+                .setJobUuid("test-job-id")
+                .setIdentifier("first-step")
+                .setStepIdentifier(Identifiers.parse("first:1.0.0"))
+                .setType(StepInstance.Type.PROCESS)
+                .addParameters(StepParameterValue.newBuilder().setIdentifier("SOURCED_PARAM").addValues("1").addValues("2").build())
+                .addInputs(StepDataSet.newBuilder()
+                        .setStepIdentifier("first-step")
+                        .setIdentifier("in1")
+                        .setStepInput(StepInput.newBuilder()
+                                .addSources(StepDataSet.newBuilder()
+                                        .setStepIdentifier("INPUT-provided_workflow_input")
+                                        .setIdentifier("provided_workflow_input")
+                                        .build()).build()).build())
+                .addOutputs(StepDataSet.newBuilder()
+                        .setStepIdentifier("first-step")
+                        .setIdentifier("out1")
+                        .build()).build());
+
+        assertThat(steps.get("second-step")).isEqualTo(StepInstance.newBuilder()
+                .setJobUuid("test-job-id")
+                .setIdentifier("second-step")
+                .setStepIdentifier(Identifiers.parse("second:1.0.0"))
+                .setType(StepInstance.Type.PROCESS)
+                .addParameters(StepParameterValue.newBuilder().setIdentifier("DEFAULTED_PARAM").addValues("default").build())
+                .addParameters(StepParameterValue.newBuilder().setIdentifier("HARDCODED_PARAM").addAllValues(Arrays.asList("a", "list", "of", "strings")).build())
+                .addInputs(StepDataSet.newBuilder()
+                        .setStepIdentifier("second-step")
+                        .setIdentifier("in1")
+                        .setStepInput(StepInput.newBuilder()
+                                .addSources(StepDataSet.newBuilder()
+                                        .setStepIdentifier("first-step")
+                                        .setIdentifier("out1")
+                                        .build()).build()).build())
+                .addOutputs(StepDataSet.newBuilder()
+                        .setStepIdentifier("second-step")
+                        .setIdentifier("out1")
+                        .build()).build());
+
+        assertThat(steps.get("OUTPUT-workflow_output")).isEqualTo(StepInstance.newBuilder()
+                .setJobUuid("test-job-id")
+                .setIdentifier("OUTPUT-workflow_output")
+                .setType(StepInstance.Type.OUTPUT)
+                .addInputs(StepDataSet.newBuilder()
+                        .setStepIdentifier("OUTPUT-workflow_output")
+                        .setIdentifier("workflow_output")
+                        .setStepInput(StepInput.newBuilder()
+                                .addSources(StepDataSet.newBuilder()
+                                        .setStepIdentifier("skipped-step")
+                                        .setIdentifier("out1").build())
+                                .addSources(StepDataSet.newBuilder()
+                                        .setStepIdentifier("second-step")
+                                        .setIdentifier("out1").build())
+                                .build()).build()).build());
+
+        assertThat(steps.containsKey("INPUT-unprovided_workflow_input")).isFalse(); // no value was supplied to this input
+        assertThat(steps.containsKey("trimmed-step")).isFalse(); // no steps consume this step's output
+    }
+
+    @Test
+    public void buildStepsWithNestedWorkflow() {
+        // A workflow which wraps firstStep
+        Workflow subWorkflow = Workflow.newBuilder()
+                .setIdentifier(Identifiers.parse("sub-workflow:1.0.0"))
+                .addParameters(Parameter.newBuilder().setIdentifier("sourced_param").setMinOccurs(0).build())
+                .addInputs(Input.newBuilder().setIdentifier("provided_workflow_input").setMinOccurs(1).build())
+                .addOutputs(Output.newBuilder().setIdentifier("workflow_output").setMinOccurs(1)
+                        .setSources(DataSources.newBuilder()
+                                .addStepOutputs(DataSources.StepOutput.newBuilder().setStepIdentifier("first-step").setOutputIdentifier("out1").build())
+                                .build())
+                        .build())
+                .addStepConfigurations(StepConfiguration.newBuilder()
+                        .setIdentifier("first-step")
+                        .setStep(firstStep)
+                        .addParameterLinks(StepConfiguration.ParameterLink.newBuilder()
+                                .setIdentifier("SOURCED_PARAM")
+                                .setWorkflowParameter("sourced_param").build()
+                        )
+                        .addInputLinks(StepConfiguration.InputLink.newBuilder()
+                                .setIdentifier("in1")
+                                .setSources(DataSources.newBuilder()
+                                        .addWorkflowInputs("provided_workflow_input").build()).build()
+                        )
+                        .build())
+                .build();
+
+        // A simple parent workflow which wraps subWorkflow
+        Workflow parentWorkflow = Workflow.newBuilder()
+                .setIdentifier(Identifiers.parse("parent-workflow:1.0.0"))
+                .addParameters(Parameter.newBuilder().setIdentifier("sourced_param").setMinOccurs(0).build())
+                .addInputs(Input.newBuilder().setIdentifier("provided_workflow_input").setMinOccurs(1).build())
+                .addOutputs(Output.newBuilder().setIdentifier("workflow_output").setMinOccurs(1)
+                        .setSources(DataSources.newBuilder()
+                                .addStepOutputs(DataSources.StepOutput.newBuilder().setStepIdentifier("call-sub-workflow").setOutputIdentifier("workflow_output").build())
+                                .build())
+                        .build())
+                .addStepConfigurations(StepConfiguration.newBuilder()
+                        .setIdentifier("call-sub-workflow")
+                        .setNestedWorkflow(subWorkflow)
+                        .addParameterLinks(StepConfiguration.ParameterLink.newBuilder()
+                                .setIdentifier("sourced_param")
+                                .setWorkflowParameter("sourced_param").build()
+                        )
+                        .addInputLinks(StepConfiguration.InputLink.newBuilder()
+                                .setIdentifier("provided_workflow_input")
+                                .setSources(DataSources.newBuilder()
+                                        .addWorkflowInputs("provided_workflow_input").build()).build()
+                        )
+                        .build())
+                .build();
+
+        JobGraph jobGraph = JobGraph.builder("test-job-id")
+                .withWorkflow(parentWorkflow)
+                .withInput("provided_workflow_input", URI.create("file:///etc/hosts"))
+                .withParameter("sourced_param", "1")
+                .build();
+
+        Network<com.cgi.eoss.eopp.jobgraph.Step, DataConnector> network = jobGraph.getNetwork();
+        assertThat(network.nodes()).hasSize(3);
+
+        ImmutableMap<String, StepInstance> steps = Maps.uniqueIndex(jobGraph.getSteps(), StepInstance::getIdentifier);
+
+        assertThat(steps.get("INPUT-provided_workflow_input")).isEqualTo(StepInstance.newBuilder()
+                .setJobUuid("test-job-id")
+                .setIdentifier("INPUT-provided_workflow_input")
+                .setType(StepInstance.Type.INPUT)
+                .addInputs(StepDataSet.newBuilder()
+                        .setStepIdentifier("INPUT-provided_workflow_input")
+                        .setIdentifier("provided_workflow_input")
+                        .setUriList(StepInputUriList.newBuilder()
+                                .addUris("file:///etc/hosts")
+                                .build())
+                        .build())
+                .addOutputs(StepDataSet.newBuilder()
+                        .setStepIdentifier("INPUT-provided_workflow_input")
+                        .setIdentifier("provided_workflow_input")
+                        .build()).build());
+
+        assertThat(steps.get("call-sub-workflow")).isEqualTo(StepInstance.newBuilder()
+                .setJobUuid("test-job-id")
+                .setIdentifier("call-sub-workflow")
+                .setWorkflowIdentifier(Identifiers.parse("sub-workflow:1.0.0"))
+                .setType(StepInstance.Type.PROCESS)
+                .addParameters(StepParameterValue.newBuilder().setIdentifier("sourced_param").addValues("1").build())
+                .addInputs(StepDataSet.newBuilder()
+                        .setStepIdentifier("call-sub-workflow")
+                        .setIdentifier("provided_workflow_input")
+                        .setStepInput(StepInput.newBuilder()
+                                .addSources(StepDataSet.newBuilder()
+                                        .setStepIdentifier("INPUT-provided_workflow_input")
+                                        .setIdentifier("provided_workflow_input")
+                                        .build()).build()).build())
+                .addOutputs(StepDataSet.newBuilder()
+                        .setStepIdentifier("call-sub-workflow")
+                        .setIdentifier("workflow_output")
+                        .build()).build());
+
+        assertThat(steps.get("OUTPUT-workflow_output")).isEqualTo(StepInstance.newBuilder()
+                .setJobUuid("test-job-id")
+                .setIdentifier("OUTPUT-workflow_output")
+                .setType(StepInstance.Type.OUTPUT)
+                .addInputs(StepDataSet.newBuilder()
+                        .setStepIdentifier("OUTPUT-workflow_output")
+                        .setIdentifier("workflow_output")
+                        .setStepInput(StepInput.newBuilder()
+                                .addSources(StepDataSet.newBuilder()
+                                        .setStepIdentifier("call-sub-workflow")
+                                        .setIdentifier("workflow_output").build())
+                                .build()).build()).build());
+    }
+
+    @Test
     public void buildEmpty() {
         // A workflow with inputs having minOccurs > 0
         Workflow workflow = Workflow.newBuilder()

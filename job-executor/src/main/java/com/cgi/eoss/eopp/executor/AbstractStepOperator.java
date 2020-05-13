@@ -21,6 +21,7 @@ import com.cgi.eoss.eopp.job.StepInstanceId;
 import com.cgi.eoss.eopp.job.StepInstances;
 import com.cgi.eoss.eopp.jobgraph.JobGraph;
 import com.cgi.eoss.eopp.workflow.StepConfiguration;
+import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.FutureCallback;
@@ -48,10 +49,14 @@ import static org.slf4j.LoggerFactory.getLogger;
  * <p>Convenience base class for {@link StepOperator} implementations supporting parallel step execution.</p>
  * <p>Provides a fixed size thread pool to limit concurrent execution, includes timeout behaviour, and handles step
  * multiplicity.</p>
+ * <p>Recursive multiplicity is not supported by this operator; e.g. a nested workflow with parallel step configurations
+ * will not execute those sub-steps in parallel.</p>
  */
-// TODO Dispatch step lifecycle events
 public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor.StepOperator {
     private static final Logger log = getLogger(AbstractStepOperator.class);
+
+    // This needs to be constant as sub-steps may run on different extensions of this class
+    private static final EventBus SUB_STEP_NOTIFICATION_BUS = new EventBus("sub-step-event-bus");
 
     private final StepOperatorEventDispatcher stepOperatorEventDispatcher;
     private final ConcurrentMap<StepInstanceId, ListenableFuture<StepInstance>> stepFutures = new ConcurrentHashMap<>();
@@ -59,7 +64,6 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
     private final ListeningScheduledExecutorService stepTimeoutExecutorService;
     private final ListeningExecutorService lightweightStepExecutorService;
     private final Duration stepExecutionTimeout;
-    private final EventBus subStepNotificationBus;
 
     /**
      * <p>Create a new StepOperator with a maximum of 8 concurrent steps, with no timeout.</p>
@@ -83,7 +87,6 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
         this.stepTimeoutExecutorService = MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(maxConcurrentSteps));
         this.lightweightStepExecutorService = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
         this.stepExecutionTimeout = stepExecutionTimeout;
-        this.subStepNotificationBus = new EventBus("sub-step-event-bus");
     }
 
     @Override
@@ -91,9 +94,13 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
         log.debug("{}::{} executing", stepInstance.getJobUuid(), stepInstance.getIdentifier());
 
         ListenableFuture<StepInstance> stepExecutionFuture;
-        if (StepInstances.hasMultiplicity(stepInstance)) {
+        if (StepInstances.hasMultiplicity(stepInstance) && Strings.isNullOrEmpty(stepInstance.getParentIdentifier())) {
             stepExecutionFuture = lightweightStepExecutorService.submit(getParentStepCallable(stepInstance));
         } else {
+            if (!Strings.isNullOrEmpty(stepInstance.getParentIdentifier())) {
+                // TODO Enable recursive multiplicity
+                log.debug("{}::{} has multiplicity, but expansion is skipped as it is already a sub-step", stepInstance.getJobUuid(), stepInstance.getIdentifier());
+            }
             stepExecutionFuture = stepExecutorService.submit(getExecutionCallable(stepInstance));
         }
 
@@ -155,7 +162,7 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
     private Callable<StepInstance> getParentStepCallable(StepInstance stepInstance) {
         List<StepInstance> subSteps = expandStep(stepInstance);
         ParentStepMonitor parentStepMonitor = new ParentStepMonitor(stepInstance, subSteps);
-        subStepNotificationBus.register(parentStepMonitor);
+        SUB_STEP_NOTIFICATION_BUS.register(parentStepMonitor);
         stepOperatorEventDispatcher.stepExpanded(stepInstance, subSteps);
         return parentStepMonitor;
     }
@@ -165,7 +172,7 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
             @Override
             public void onSuccess(StepInstance result) {
                 log.debug("{}::{} Notifying parent step listener of completion", stepInstance.getJobUuid(), stepInstance.getIdentifier());
-                subStepNotificationBus.post(result);
+                SUB_STEP_NOTIFICATION_BUS.post(result);
             }
 
             @Override

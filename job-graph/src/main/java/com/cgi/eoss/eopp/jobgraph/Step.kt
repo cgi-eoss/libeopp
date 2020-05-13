@@ -36,6 +36,7 @@ sealed class Step {
     abstract val inputs: List<StepInputOrOutput>
     abstract val outputs: List<StepInputOrOutput>
     abstract fun toProtobuf(inEdges: Iterable<DataConnector>, outEdges: Iterable<DataConnector>): StepInstance
+
     // TODO validate min/max count in these functions
     abstract fun hasValidSinks(successors: Set<Step>): Boolean
     abstract fun hasValidSources(predecessors: Set<Step>): Boolean
@@ -146,21 +147,33 @@ data class ProcessStep(
     constructor(jobId: String, stepConfiguration: StepConfiguration) : this(
         jobId = jobId,
         identifier = stepConfiguration.identifier,
-        inputs = stepConfiguration.step.inputsList.map {
+        inputs = when (stepConfiguration.executeCase) {
+            StepConfiguration.ExecuteCase.STEP -> stepConfiguration.step.inputsList
+            StepConfiguration.ExecuteCase.NESTED_WORKFLOW -> stepConfiguration.nestedWorkflow.inputsList
+            else -> throw IllegalStateException("stepConfiguration.executeCase must be STEP or NESTED_WORKFLOW")
+        }.map {
             StepInputOrOutput(
                 it.identifier,
                 it.minOccurs,
                 it.maxOccurs
             )
         },
-        outputs = stepConfiguration.step.outputsList.map {
+        outputs = when (stepConfiguration.executeCase) {
+            StepConfiguration.ExecuteCase.STEP -> stepConfiguration.step.outputsList
+            StepConfiguration.ExecuteCase.NESTED_WORKFLOW -> stepConfiguration.nestedWorkflow.outputsList
+            else -> throw IllegalStateException("stepConfiguration.executeCase must be STEP or NESTED_WORKFLOW")
+        }.map {
             StepInputOrOutput(
                 it.identifier,
                 it.minOccurs,
                 it.maxOccurs
             )
         },
-        parameters = stepConfiguration.step.parametersList.map {
+        parameters = when (stepConfiguration.executeCase) {
+            StepConfiguration.ExecuteCase.STEP -> stepConfiguration.step.parametersList
+            StepConfiguration.ExecuteCase.NESTED_WORKFLOW -> stepConfiguration.nestedWorkflow.parametersList
+            else -> throw IllegalStateException("stepConfiguration.executeCase must be STEP or NESTED_WORKFLOW")
+        }.map {
             StepParameter(
                 it.identifier,
                 it.minOccurs,

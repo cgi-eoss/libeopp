@@ -60,6 +60,7 @@ internal fun expandParallelInputs(step: StepInstance): List<StepInstance> = sequ
                     // apply grouping
                     .groupBy { applyStepInputLinkGroup(stepInputLink, it.filePath) }
                     .map { replaceExpandedStepInput(step, stepInput, it.value) }
+//                    .map { unmarkParallelInputLink(it, stepInputLink) }
                     .asSequence()
             }
     }
@@ -97,6 +98,7 @@ internal fun expandParallelParameters(step: StepInstance): List<StepInstance> = 
                             .build()
                     }
             }
+//            .map { unmarkParallelParameterLink(it, stepParamLink) }
     }
     .toList()
     .ifEmpty { listOf(step) }
@@ -163,6 +165,33 @@ private fun replaceExpandedStepInput(
     )
     .build()
 
+//private fun unmarkParallelInputLink(stepInstance: StepInstance, stepInputLink: InputLink): StepInstance =
+//    stepInstance.toBuilder()
+//        .setConfiguration(
+//            stepInstance.configuration.toBuilder()
+//                .setInputLinks(
+//                    stepInstance.configuration.inputLinksList.indexOf(stepInputLink),
+//                    stepInputLink.toBuilder().setParallel(false).build()
+//                )
+//                .build()
+//        )
+//        .build()
+//
+//private fun unmarkParallelParameterLink(
+//    stepInstance: StepInstance,
+//    stepParameterLink: StepConfiguration.ParameterLink
+//): StepInstance =
+//    stepInstance.toBuilder()
+//        .setConfiguration(
+//            stepInstance.configuration.toBuilder()
+//                .setParameterLinks(
+//                    stepInstance.configuration.parameterLinksList.indexOf(stepParameterLink),
+//                    stepParameterLink.toBuilder().setParallel(false).build()
+//                )
+//                .build()
+//        )
+//        .build()
+
 /**
  * Find all steps which are configured as nested workflows, and expand them to their constituent steps.
  */
@@ -185,6 +214,15 @@ internal fun expandNestedWorkflows(step: StepInstance): List<StepInstance> = seq
                 subStep.toBuilder()
                     .setIdentifier("${step.identifier}-${subStep.identifier}")
                     .setParentIdentifier(step.identifier)
+                    .setConfiguration(
+                        StepConfiguration.newBuilder()
+                            .setIdentifier(subStep.identifier)
+                            .setNestedWorkflow(
+                                Workflow.newBuilder().setIdentifier(step.configuration.nestedWorkflow.identifier)
+                                    .build()
+                            )
+                            .build()
+                    )
                     .clearInputs()
                     .addAllInputs(subStep.inputsList.filter { it.hasStepInput() }.map { stepInput ->
                         stepInput.toBuilder()

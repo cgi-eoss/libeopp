@@ -22,6 +22,7 @@ import com.cgi.eoss.eopp.job.StepInstance;
 import com.cgi.eoss.eopp.job.StepOutput;
 import com.cgi.eoss.eopp.job.StepParameterValue;
 import com.cgi.eoss.eopp.workflow.StepConfiguration;
+import com.cgi.eoss.eopp.workflow.Workflow;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.junit.Test;
@@ -121,6 +122,10 @@ public class StepInstanceExpanderNestedWorkflowTest {
                 .addValues("param-value1")
                 .addValues("param-value2")
                 .addValues("param-value3")
+                .build());
+        assertThat(steps.get("test-step-first-step").getConfiguration()).isEqualTo(StepConfiguration.newBuilder()
+                .setIdentifier("first-step")
+                .setNestedWorkflow(Workflow.newBuilder().setIdentifier(JobGraphTest.workflow.getIdentifier()).build())
                 .build());
 
         assertThat(steps.get("test-step-second-step").getInputsList()).containsExactly(
