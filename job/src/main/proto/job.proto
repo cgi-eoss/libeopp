@@ -198,6 +198,10 @@ message StepInstance {
         // A standard node in the processing graph.
         PROCESS = 2;
     }
+    // Unique identifier of this step instance in the application. Note that
+    // the unique tuple of (job_uuid, identifier) can also be used for
+    // locating a step instance.
+    string uuid = 11;
     // The identifier of this step instance, unique in the workflow.
     string identifier = 1;
     // The type of step.
