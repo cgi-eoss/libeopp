@@ -2,6 +2,8 @@ package com.cgi.eoss.eopp.jobgraph;
 
 import com.cgi.eoss.eopp.identifier.Identifier;
 import com.cgi.eoss.eopp.identifier.Identifiers;
+import com.cgi.eoss.eopp.job.JobSpecification;
+import com.cgi.eoss.eopp.job.JobSpecificationInput;
 import com.cgi.eoss.eopp.job.StepDataSet;
 import com.cgi.eoss.eopp.job.StepInput;
 import com.cgi.eoss.eopp.job.StepInputUriList;
@@ -473,9 +475,17 @@ public class JobGraphTest {
                 .build();
 
         JobGraph jobGraph = JobGraph.builder("test-job-id")
-                .withWorkflow(parentWorkflow)
-                .withInput("provided_workflow_input", URI.create("file:///etc/hosts"))
-                .withParameter("sourced_param", "1")
+                .with(JobSpecification.newBuilder()
+                        .setWorkflow(parentWorkflow)
+                        .addInputs(JobSpecificationInput.newBuilder()
+                                .setIdentifier("provided_workflow_input")
+                                .addValues("file:///etc/hosts")
+                                .build())
+                        .addParameters(JobSpecificationInput.newBuilder()
+                                .setIdentifier("sourced_param")
+                                .addValues("1")
+                                .build())
+                        .build())
                 .build();
 
         Network<com.cgi.eoss.eopp.jobgraph.Step, DataConnector> network = jobGraph.getNetwork();

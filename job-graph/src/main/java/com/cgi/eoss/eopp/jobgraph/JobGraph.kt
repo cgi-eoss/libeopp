@@ -2,14 +2,10 @@ package com.cgi.eoss.eopp.jobgraph
 
 import com.cgi.eoss.eopp.job.JobSpecification
 import com.cgi.eoss.eopp.job.StepInstance
-import com.cgi.eoss.eopp.job.StepInstances
 import com.cgi.eoss.eopp.workflow.Input
 import com.cgi.eoss.eopp.workflow.Output
 import com.cgi.eoss.eopp.workflow.StepConfiguration
-import com.cgi.eoss.eopp.workflow.StepConfiguration.InputLink
-import com.cgi.eoss.eopp.workflow.StepConfiguration.ParameterLink
 import com.cgi.eoss.eopp.workflow.Workflow
-import com.google.common.base.Strings
 import com.google.common.collect.ListMultimap
 import com.google.common.collect.MultimapBuilder
 import com.google.common.collect.SetMultimap
@@ -19,7 +15,6 @@ import com.google.common.graph.NetworkBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URI
-import java.util.function.Consumer
 
 /**
  * A reprojection of a [com.cgi.eoss.eopp.job.JobSpecification], describing the steps and their connections as a
@@ -37,28 +32,6 @@ class JobGraph private constructor(
          */
         @JvmStatic
         fun builder(jobId: String): JobIdStubbing = Builder(jobId)
-
-        /**
-         * Create a new [JobGraph] from the given job spec.
-         *
-         * Note: The JobSpecification must include the full Workflow object.
-         */
-        @JvmStatic
-        fun from(jobSpec: JobSpecification): JobGraph {
-            checkNotNull(jobSpec.workflow)
-
-            val builder = builder(jobSpec.uuid)
-                .withWorkflow(jobSpec.workflow)
-
-            jobSpec.parametersList.forEach {
-                builder.withParameter(it.identifier, it.valuesList)
-            }
-            jobSpec.inputsList.forEach {
-                builder.withInput(it.identifier, it.valuesList.map { uri -> URI.create(uri) })
-            }
-
-            return builder.build()
-        }
 
         @JvmStatic
         fun expandStepInstance(stepInstance: StepInstance): List<StepInstance> =
@@ -86,7 +59,8 @@ class JobGraph private constructor(
         val jobId: String,
         val log: Logger,
         val steps: MutableMap<String, Step> = mutableMapOf(),
-        val parameterLinks: SetMultimap<String, Pair<ProcessStep, String>> = MultimapBuilder.hashKeys().hashSetValues().build(),
+        val parameterLinks: SetMultimap<String, Pair<ProcessStep, String>> = MultimapBuilder.hashKeys().hashSetValues()
+            .build(),
         val dataConnectors: MutableSet<DataConnector> = mutableSetOf()
     ) : JobIdStubbing, WorkflowStubbing, InputStubbing, BuildStubbing {
 
@@ -94,6 +68,21 @@ class JobGraph private constructor(
             jobId = jobId,
             log = LoggerFactory.getLogger(Builder::class.qualifiedName + "." + jobId)
         )
+
+        override fun with(jobSpec: JobSpecification): BuildStubbing {
+            checkNotNull(jobSpec.workflow)
+
+            withWorkflow(jobSpec.workflow)
+
+            jobSpec.parametersList.forEach {
+                withParameter(it.identifier, it.valuesList)
+            }
+            jobSpec.inputsList.forEach {
+                withInput(it.identifier, it.valuesList.map { uri -> URI.create(uri) })
+            }
+
+            return this
+        }
 
         override fun withWorkflow(): WorkflowStubbing = this
         override fun endWorkflow() = this
@@ -271,6 +260,13 @@ class JobGraph private constructor(
 }
 
 interface JobIdStubbing {
+    /**
+     * Populate a [JobGraph] from the given job spec.
+     *
+     * Note: The JobSpecification must include the full Workflow object.
+     */
+    fun with(jobSpec: JobSpecification): BuildStubbing
+
     /**
      * Begin describing a new Workflow configuration for the JobGraph under construction. Call
      * [WorkflowStubbing#withWorkflowInput], [WorkflowStubbing#withStepConfiguration] and
