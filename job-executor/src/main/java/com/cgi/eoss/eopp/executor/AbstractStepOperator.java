@@ -61,8 +61,8 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
     private final StepOperatorEventDispatcher stepOperatorEventDispatcher;
     private final ConcurrentMap<StepInstanceId, ListenableFuture<StepInstance>> stepFutures = new ConcurrentHashMap<>();
     private final ListeningExecutorService stepExecutorService;
-    private final ListeningScheduledExecutorService stepTimeoutExecutorService;
     private final ListeningExecutorService lightweightStepExecutorService;
+    private final ListeningScheduledExecutorService stepTimeoutExecutorService;
     private final Duration stepExecutionTimeout;
 
     /**
@@ -92,30 +92,23 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
     @Override
     public ListenableFuture<StepInstance> execute(StepInstance stepInstance) {
         log.debug("{}::{} executing", stepInstance.getJobUuid(), stepInstance.getIdentifier());
+        StepInstanceId stepInstanceId = StepInstances.getId(stepInstance);
 
-        ListenableFuture<StepInstance> stepExecutionFuture;
+        ListenableFuture<StepInstance> stepFuture;
         if (StepInstances.hasMultiplicity(stepInstance) && Strings.isNullOrEmpty(stepInstance.getParentIdentifier())) {
-            stepExecutionFuture = lightweightStepExecutorService.submit(getParentStepCallable(stepInstance));
+            stepFuture = submitLightweight(stepInstanceId, getParentStepCallable(stepInstance));
         } else {
             if (!Strings.isNullOrEmpty(stepInstance.getParentIdentifier())) {
                 // TODO Enable recursive multiplicity
                 log.debug("{}::{} has multiplicity, but expansion is skipped as it is already a sub-step", stepInstance.getJobUuid(), stepInstance.getIdentifier());
             }
-            stepExecutionFuture = stepExecutorService.submit(getExecutionCallable(stepInstance));
+            stepFuture = submit(stepInstanceId, getExecutionCallable(stepInstance));
         }
 
         if (!stepInstance.getParentIdentifier().isEmpty()) {
-            Futures.addCallback(stepExecutionFuture, getSubStepCallback(stepInstance), lightweightStepExecutorService);
+            Futures.addCallback(stepFuture, getSubStepCallback(stepInstance), lightweightStepExecutorService);
         }
 
-        ListenableFuture<StepInstance> stepFuture;
-        if (stepExecutionTimeout.isNegative()) {
-            stepFuture = stepExecutionFuture;
-        } else {
-            stepFuture = Futures.withTimeout(stepExecutionFuture, stepExecutionTimeout, stepTimeoutExecutorService);
-        }
-
-        stepFutures.put(StepInstances.getId(stepInstance), stepFuture);
         return stepFuture;
     }
 
@@ -137,6 +130,57 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
                     cleanUp(stepInstance);
                     return execute(stepInstance);
                 });
+    }
+
+    /**
+     * <p>Execute the given StepInstance callable on the default executor.</p>
+     * <p>This may be used by subclasses to reattach during {@link #ensureScheduled(StepInstance)} so that the new call
+     * shares the configured timeout and concurrency parameters of this base class.</p>
+     *
+     * @param stepInstanceId The identifier of the step instance being returned by the task.
+     * @param task           The callable to return a completed step instance.
+     * @return The given callable as a {@link ListenableFuture}, with a timeout if configured.
+     */
+    protected ListenableFuture<StepInstance> submit(StepInstanceId stepInstanceId, Callable<StepInstance> task) {
+        return submit(stepInstanceId, task, stepExecutorService);
+    }
+
+    /**
+     * <p>Execute the given StepInstance callable on the 'lightweight' executor, not counting towards maximum step concurrency.</p>
+     * <p>This may be used by subclasses to reattach during {@link #ensureScheduled(StepInstance)} so that the new call
+     * shares the configured timeout of this base class.</p>
+     *
+     * @param stepInstanceId The identifier of the step instance being returned by the task.
+     * @param task           The callable to return a completed step instance.
+     * @return The given callable as a {@link ListenableFuture}, with a timeout if configured.
+     */
+    protected ListenableFuture<StepInstance> submitLightweight(StepInstanceId stepInstanceId, Callable<StepInstance> task) {
+        return submit(stepInstanceId, task, lightweightStepExecutorService);
+    }
+
+    private ListenableFuture<StepInstance> submit(StepInstanceId stepInstanceId, Callable<StepInstance> task, ListeningExecutorService stepExecutorService) {
+        ListenableFuture<StepInstance> stepExecutionFuture = stepExecutorService.submit(task);
+        return executeWithTimeout(stepInstanceId, stepExecutionFuture, stepExecutionTimeout);
+    }
+
+    /**
+     * <p>Execute the given StepInstance with a timeout. If the timeout parameter is negative, the step is executed with
+     * no timeout.</p>
+     *
+     * @param stepExecutionFuture The executing StepInstance.
+     * @param timeout             The timeout after which the executing stepExecutionFuture will be cancelled. Ignored
+     *                            if negative.
+     * @return The given stepExecutionFuture, wrapped with the given timeout.
+     */
+    private ListenableFuture<StepInstance> executeWithTimeout(StepInstanceId stepInstanceId, ListenableFuture<StepInstance> stepExecutionFuture, Duration timeout) {
+        ListenableFuture<StepInstance> stepFuture;
+        if (timeout.isNegative()) {
+            stepFuture = stepExecutionFuture;
+        } else {
+            stepFuture = Futures.withTimeout(stepExecutionFuture, timeout, stepTimeoutExecutorService);
+        }
+        stepFutures.put(stepInstanceId, stepFuture);
+        return stepFuture;
     }
 
     /**
