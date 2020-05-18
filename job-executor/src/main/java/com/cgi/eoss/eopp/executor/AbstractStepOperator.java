@@ -124,7 +124,7 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
     @Override
     public ListenableFuture<StepInstance> ensureScheduled(StepInstance stepInstance) {
         log.debug("{}::{} ensuring scheduled", stepInstance.getJobUuid(), stepInstance.getIdentifier());
-        return Optional.ofNullable(stepFutures.get(StepInstances.getId(stepInstance)))
+        return getStepFuture(StepInstances.getId(stepInstance))
                 .orElseGet(() -> {
                     // We have no knowledge of this step; clean up and run again
                     cleanUp(stepInstance);
@@ -156,6 +156,13 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
      */
     protected ListenableFuture<StepInstance> submitLightweight(StepInstanceId stepInstanceId, Callable<StepInstance> task) {
         return submit(stepInstanceId, task, lightweightStepExecutorService);
+    }
+
+    /**
+     * @return The ListenableFuture representing the given step instance, if an execution has been submitted.
+     */
+    protected Optional<ListenableFuture<StepInstance>> getStepFuture(StepInstanceId stepInstanceId) {
+        return Optional.ofNullable(stepFutures.get(stepInstanceId));
     }
 
     private ListenableFuture<StepInstance> submit(StepInstanceId stepInstanceId, Callable<StepInstance> task, ListeningExecutorService stepExecutorService) {
