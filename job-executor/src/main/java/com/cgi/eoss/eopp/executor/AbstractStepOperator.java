@@ -91,25 +91,30 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
 
     @Override
     public ListenableFuture<StepInstance> execute(StepInstance stepInstance) {
-        log.debug("{}::{} executing", stepInstance.getJobUuid(), stepInstance.getIdentifier());
-        StepInstanceId stepInstanceId = StepInstances.getId(stepInstance);
+        try {
+            log.debug("{}::{} executing", stepInstance.getJobUuid(), stepInstance.getIdentifier());
+            StepInstanceId stepInstanceId = StepInstances.getId(stepInstance);
 
-        ListenableFuture<StepInstance> stepFuture;
-        if (StepInstances.hasMultiplicity(stepInstance) && Strings.isNullOrEmpty(stepInstance.getParentIdentifier())) {
-            stepFuture = submitLightweight(stepInstanceId, getParentStepCallable(stepInstance));
-        } else {
-            if (!Strings.isNullOrEmpty(stepInstance.getParentIdentifier())) {
-                // TODO Enable recursive multiplicity
-                log.debug("{}::{} has multiplicity, but expansion is skipped as it is already a sub-step", stepInstance.getJobUuid(), stepInstance.getIdentifier());
+            ListenableFuture<StepInstance> stepFuture;
+            if (StepInstances.hasMultiplicity(stepInstance) && Strings.isNullOrEmpty(stepInstance.getParentIdentifier())) {
+                stepFuture = submitLightweight(stepInstanceId, getParentStepCallable(stepInstance));
+            } else {
+                if (!Strings.isNullOrEmpty(stepInstance.getParentIdentifier())) {
+                    // TODO Enable recursive multiplicity
+                    log.debug("{}::{} has multiplicity, but expansion is skipped as it is already a sub-step", stepInstance.getJobUuid(), stepInstance.getIdentifier());
+                }
+                stepFuture = submit(stepInstanceId, getExecutionCallable(stepInstance));
             }
-            stepFuture = submit(stepInstanceId, getExecutionCallable(stepInstance));
-        }
 
-        if (!stepInstance.getParentIdentifier().isEmpty()) {
-            Futures.addCallback(stepFuture, getSubStepCallback(stepInstance), lightweightStepExecutorService);
-        }
+            if (!stepInstance.getParentIdentifier().isEmpty()) {
+                Futures.addCallback(stepFuture, getSubStepCallback(stepInstance), lightweightStepExecutorService);
+            }
 
-        return stepFuture;
+            return stepFuture;
+        } catch (Exception e) {
+            log.error("{}::{} execution failed to start", stepInstance.getJobUuid(), stepInstance.getIdentifier(), e);
+            return Futures.immediateFailedFuture(new StepExecutionException(String.format("%s::%s execution failed to start", stepInstance.getJobUuid(), stepInstance.getIdentifier()), stepInstance, StepInstance.Status.FAILED));
+        }
     }
 
     @Override
