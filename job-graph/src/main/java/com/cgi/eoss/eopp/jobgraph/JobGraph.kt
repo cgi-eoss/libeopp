@@ -4,6 +4,7 @@ import com.cgi.eoss.eopp.job.JobSpecification
 import com.cgi.eoss.eopp.job.StepInstance
 import com.cgi.eoss.eopp.workflow.Input
 import com.cgi.eoss.eopp.workflow.Output
+import com.cgi.eoss.eopp.workflow.Parameter
 import com.cgi.eoss.eopp.workflow.StepConfiguration
 import com.cgi.eoss.eopp.workflow.Workflow
 import com.google.common.collect.ListMultimap
@@ -59,6 +60,7 @@ class JobGraph private constructor(
         val jobId: String,
         val log: Logger,
         val steps: MutableMap<String, Step> = mutableMapOf(),
+        val workflowParameters: MutableMap<String, Parameter> = mutableMapOf(),
         val parameterLinks: SetMultimap<String, Pair<ProcessStep, String>> = MultimapBuilder.hashKeys().hashSetValues()
             .build(),
         val dataConnectors: MutableSet<DataConnector> = mutableSetOf()
@@ -91,6 +93,7 @@ class JobGraph private constructor(
             workflow.inputsList.forEach { withWorkflowInput(it) }
             workflow.stepConfigurationsList.forEach { withStepConfiguration(it) }
             workflow.outputsList.forEach { withWorkflowOutput(it) }
+            workflow.parametersList.forEach { workflowParameters[it.identifier] = it }
         }
 
         override fun withWorkflowInput(input: Input): WorkflowStubbing = apply {
@@ -194,14 +197,36 @@ class JobGraph private constructor(
                 network.addEdge(steps[it.sourceStep]!!, steps[it.destStep]!!, it)
             }
 
+            populateDefaultParameters(network)
             pruneSkippableSteps(network)
+            validateParameterConstraints(network)
 
             return JobGraph(network)
         }
 
+        private fun populateDefaultParameters(network: MutableNetwork<Step, DataConnector>) {
+            network.nodes().filterIsInstance<ProcessStep>().forEach { step ->
+                step.parameters.forEach { param ->
+                    if (step.parameterValues[param.identifier].isEmpty()) {
+                        // prefer workflow default parameters
+                        val parameterLink = parameterLinks.entries().find { it.value == Pair(step, param.identifier) }
+                        if (parameterLink != null) {
+                            // TODO if (workflowParameters[parameterLink.key] == null) throw GraphBuildFailureException("Step ${step.identifier} tries to link to non-existent Workflow parameter ${parameterLink.key}")
+                            step.parameterValues[param.identifier].addAll(workflowParameters[parameterLink.key]?.defaultValuesList.orEmpty())
+                        }
+
+                        // fall back on step default parameters if nothing was added above
+                        if (step.parameterValues[param.identifier].isEmpty()) {
+                            step.parameterValues[param.identifier].addAll(step.parameters.find { it.identifier == param.identifier }!!.defaultValues)
+                        }
+                    }
+                }
+            }
+        }
+
         private fun pruneSkippableSteps(network: MutableNetwork<Step, DataConnector>) {
             // Prune steps which have unsatisfied parameters, if skippable, or fail accordingly
-            steps.values
+            network.nodes()
                 .filterIsInstance<ProcessStep>()
                 .filter { stepIsSkippableBasedOnParameters(it) }
                 .forEach { network.removeNode(it) }
@@ -227,27 +252,22 @@ class JobGraph private constructor(
             }
         }
 
-        private fun stepIsSkippableBasedOnParameters(step: ProcessStep): Boolean {
-            return step.parameters.any { param ->
-                val parameterValues = step.parameterValues.get(param.identifier)
+        private fun stepIsSkippableBasedOnParameters(step: ProcessStep): Boolean = step.parameters.any { param ->
+            step.parameterValues.get(param.identifier).isEmpty() && param.skipStepIfEmpty
+        }
 
-                if (parameterValues.isEmpty()) { // the job configuration contained no values
-                    parameterValues.addAll(param.defaultValues) // use any defaults from the workflow - might still be empty!
+        private fun validateParameterConstraints(network: MutableNetwork<Step, DataConnector>) {
+            network.nodes().forEach { step ->
+                if (step is ProcessStep) {
+                    step.parameters.forEach { param ->
+                        val parameterValues = step.parameterValues[param.identifier]
+                        if (parameterValues.size < param.minOccurs) {
+                            throw GraphBuildFailureException("Parameter '${param.identifier}' for step '${step.identifier}' has too few values: ${parameterValues.size} < ${param.minOccurs}")
+                        } else if (parameterValues.size > param.maxOccurs && !step.parallelParameters.contains(param.identifier)) {
+                            throw GraphBuildFailureException("Parameter '${param.identifier}' for step '${step.identifier}' has too many values: ${parameterValues.size} > ${param.maxOccurs}")
+                        }
+                    }
                 }
-
-                // Prune this step from the execution graph if its parameter says it should be skipped - otherwise the step will run with no value
-                if (parameterValues.isEmpty() && param.skipStepIfEmpty) {
-                    return true
-                }
-
-                // Check the constraints
-                if (parameterValues.size < param.minOccurs) {
-                    throw GraphBuildFailureException("Parameter '${param.identifier}' for step '${step.identifier}' has too few values: ${parameterValues.size} < ${param.minOccurs}")
-                } else if (parameterValues.size > param.maxOccurs && !step.parallelParameters.contains(param.identifier)) {
-                    throw GraphBuildFailureException("Parameter '${param.identifier}' for step '${step.identifier}' has too many values: ${parameterValues.size} > ${param.maxOccurs}")
-                }
-
-                return false
             }
         }
 
