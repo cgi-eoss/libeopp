@@ -60,7 +60,6 @@ internal fun expandParallelInputs(step: StepInstance): List<StepInstance> = sequ
                     // apply grouping
                     .groupBy { applyStepInputLinkGroup(stepInputLink, it.filePath) }
                     .map { replaceExpandedStepInput(step, stepInput, it.value) }
-//                    .map { unmarkParallelInputLink(it, stepInputLink) }
                     .asSequence()
             }
     }
@@ -94,11 +93,11 @@ internal fun expandParallelParameters(step: StepInstance): List<StepInstance> = 
                     }
                     .map { newParamValue ->
                         step.toBuilder()
+                            .clearUuid()
                             .setParameters(getStepParameterIdx(step, stepParameter.identifier), newParamValue)
                             .build()
                     }
             }
-//            .map { unmarkParallelParameterLink(it, stepParamLink) }
     }
     .toList()
     .ifEmpty { listOf(step) }
@@ -144,6 +143,7 @@ private fun replaceExpandedStepInput(
     stepInput: StepDataSet,
     sourceData: List<StepInstanceDataSource>
 ): StepInstance = stepInstance.toBuilder()
+    .clearUuid()
     .setInputs(
         StepInstances.getStepInputIdx(stepInstance, stepInput.identifier),
         StepInstances.getStepInput(stepInstance, stepInput.identifier)
@@ -164,33 +164,6 @@ private fun replaceExpandedStepInput(
             )
     )
     .build()
-
-//private fun unmarkParallelInputLink(stepInstance: StepInstance, stepInputLink: InputLink): StepInstance =
-//    stepInstance.toBuilder()
-//        .setConfiguration(
-//            stepInstance.configuration.toBuilder()
-//                .setInputLinks(
-//                    stepInstance.configuration.inputLinksList.indexOf(stepInputLink),
-//                    stepInputLink.toBuilder().setParallel(false).build()
-//                )
-//                .build()
-//        )
-//        .build()
-//
-//private fun unmarkParallelParameterLink(
-//    stepInstance: StepInstance,
-//    stepParameterLink: StepConfiguration.ParameterLink
-//): StepInstance =
-//    stepInstance.toBuilder()
-//        .setConfiguration(
-//            stepInstance.configuration.toBuilder()
-//                .setParameterLinks(
-//                    stepInstance.configuration.parameterLinksList.indexOf(stepParameterLink),
-//                    stepParameterLink.toBuilder().setParallel(false).build()
-//                )
-//                .build()
-//        )
-//        .build()
 
 /**
  * Find all steps which are configured as nested workflows, and expand them to their constituent steps.
