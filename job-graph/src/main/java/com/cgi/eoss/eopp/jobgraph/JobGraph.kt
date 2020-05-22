@@ -137,7 +137,7 @@ class JobGraph private constructor(
             output.sources.workflowInputsList.forEach { workflowInput ->
                 dataConnectors.add(
                     DataConnector(
-                        workflowInput, workflowInput,
+                        "INPUT-$workflowInput", workflowInput,
                         "OUTPUT-${output.identifier}", output.identifier
                     )
                 )
