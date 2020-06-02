@@ -30,6 +30,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.ListeningScheduledExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.common.util.concurrent.Striped;
 import org.slf4j.Logger;
 
 import java.time.Duration;
@@ -41,6 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -64,6 +66,7 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
     private final ListeningExecutorService lightweightStepExecutorService;
     private final ListeningScheduledExecutorService stepTimeoutExecutorService;
     private final Duration stepExecutionTimeout;
+    private final Striped<Lock> stepExecuteLock;
 
     /**
      * <p>Create a new StepOperator with a maximum of 8 concurrent steps, with no timeout.</p>
@@ -87,13 +90,28 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
         this.stepTimeoutExecutorService = MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(maxConcurrentSteps));
         this.lightweightStepExecutorService = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
         this.stepExecutionTimeout = stepExecutionTimeout;
+        this.stepExecuteLock = Striped.lazyWeakLock(1);
     }
 
     @Override
     public ListenableFuture<StepInstance> execute(StepInstance stepInstance) {
+        StepInstanceId stepInstanceId = StepInstances.getId(stepInstance);
+        Lock lock = stepExecuteLock.get(stepInstanceId);
+
+        // If the step is already executing, or we can't get a lock for execution,
+        // wait until the other thread releases, then return the same future
+        if (stepFutures.containsKey(stepInstanceId) || !lock.tryLock()) {
+            log.debug("{}::{} is already executing, preventing duplication", stepInstance.getJobUuid(), stepInstance.getIdentifier());
+            lock.lock();
+            try {
+                return stepFutures.get(stepInstanceId);
+            } finally {
+                lock.unlock();
+            }
+        }
+
         try {
             log.debug("{}::{} executing", stepInstance.getJobUuid(), stepInstance.getIdentifier());
-            StepInstanceId stepInstanceId = StepInstances.getId(stepInstance);
 
             ListenableFuture<StepInstance> stepFuture;
             if (StepInstances.hasMultiplicity(stepInstance) && Strings.isNullOrEmpty(stepInstance.getParentIdentifier())) {
@@ -114,6 +132,8 @@ public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor
         } catch (Exception e) {
             log.error("{}::{} execution failed to start", stepInstance.getJobUuid(), stepInstance.getIdentifier(), e);
             return Futures.immediateFailedFuture(new StepExecutionException(String.format("%s::%s execution failed to start", stepInstance.getJobUuid(), stepInstance.getIdentifier()), stepInstance, StepInstance.Status.FAILED));
+        } finally {
+            lock.unlock();
         }
     }
 
