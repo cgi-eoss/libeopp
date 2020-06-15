@@ -1,5 +1,7 @@
 licenses(["notice"])
 
+exports_files(["protobuf_drop_java_7_compatibility.patch"])
+
 # Re-exports with Maven coordinates for POM generation
 load(":protobuf_repositories.bzl", "PROTOBUF_VERSION")
 

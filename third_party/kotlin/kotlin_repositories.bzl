@@ -4,8 +4,8 @@ load(
     _kt_register_toolchains = "kt_register_toolchains",
 )
 
-KOTLIN_VERSION = "1.3.71"
-KOTLINC_RELEASE_SHA = "7adb77dad99c6d2f7bde9f8bafe4c6244a04587a8e36e62b074d00eda9f8e74a"
+KOTLIN_VERSION = "1.3.72"
+KOTLINC_RELEASE_SHA = "ccd0db87981f1c0e3f209a1a4acb6778f14e63fe3e561a98948b5317e526cc6c"
 
 KOTLINC_RELEASE = {
     "urls": [

@@ -6,11 +6,16 @@ build --action_env=HTTPS_PROXY
 build --action_env=NO_PROXY
 build --action_env=NPM_CONFIG_REGISTRY
 
-# Build with the host system JDK 8 by default
-build --javabase=@local_jdk//:jdk
-build --host_javabase=@local_jdk//:jdk
-build --java_toolchain=@bazel_tools//tools/jdk:toolchain_hostjdk8
-build --host_java_toolchain=@bazel_tools//tools/jdk:toolchain_hostjdk8
+build --java_toolchain=@bazel_tools//tools/jdk:toolchain_java11
+build --host_java_toolchain=@bazel_tools//tools/jdk:toolchain_java11
+
+# Download a bazel-defined jdk11 for reproducible builds
+build --javabase=@bazel_tools//tools/jdk:remote_jdk11
+build --host_javabase=@bazel_tools//tools/jdk:remote_jdk11
+
+# To use a local jdk11 from $JAVA_HOME, uncomment and add to .bazelrc.local:
+#build --javabase=@local_jdk//:jdk
+#build --host_javabase=@local_jdk//:jdk
 
 test --test_env=http_proxy
 test --test_env=https_proxy

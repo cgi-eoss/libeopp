@@ -4,9 +4,9 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "google_bazel_common",
-    sha256 = "090d1f394c2bbeae37f091a9d7853bafc7a9b3174d1e100d762fdd07767a2269",
-    strip_prefix = "bazel-common-1c8dcb31eed0713306cb6dc07f8334d84c925a01",
-    urls = ["https://github.com/google/bazel-common/archive/1c8dcb31eed0713306cb6dc07f8334d84c925a01.zip"],
+    sha256 = "af494f72366fc9127a756d57042098b9f27b9d01f38f791d3de8a006f88d1271",
+    strip_prefix = "bazel-common-53d2b4f9143ebe0ec7315e32bc66b63d72fc0307",
+    urls = ["https://github.com/google/bazel-common/archive/53d2b4f9143ebe0ec7315e32bc66b63d72fc0307.zip"],
 )
 
 http_archive(
@@ -24,9 +24,9 @@ bazel_skylib_workspace()
 
 http_archive(
     name = "rules_cc",
-    sha256 = "dafda2ff2a913028ce1718253b6b2f353b2d2163470f3069ca810a0d8d55a5a9",
-    strip_prefix = "rules_cc-cd7e8a690caf526e0634e3ca55b10308ee23182d",
-    urls = ["https://github.com/bazelbuild/rules_cc/archive/cd7e8a690caf526e0634e3ca55b10308ee23182d.tar.gz"],
+    sha256 = "ce19fea12ee666a0d399e6e15b5a77264f6da2b70f2759adea767c9a7f79b17c",
+    strip_prefix = "rules_cc-5cbd3dfbd1613f71ef29bbb7b10310b81e272975",
+    urls = ["https://github.com/bazelbuild/rules_cc/archive/5cbd3dfbd1613f71ef29bbb7b10310b81e272975.tar.gz"],
 )
 
 http_archive(
@@ -38,16 +38,16 @@ http_archive(
 
 http_archive(
     name = "rules_proto",
-    sha256 = "73ebe9d15ba42401c785f9d0aeebccd73bd80bf6b8ac78f74996d31f2c0ad7a6",
-    strip_prefix = "rules_proto-2c0468366367d7ed97a1f702f9cd7155ab3f73c5",
-    urls = ["https://github.com/bazelbuild/rules_proto/archive/2c0468366367d7ed97a1f702f9cd7155ab3f73c5.tar.gz"],
+    sha256 = "dedb72afb9476b2f75da2f661a00d6ad27dfab5d97c0460cf3265894adfaf467",
+    strip_prefix = "rules_proto-486aaf1808a15b87f1b6778be6d30a17a87e491a",
+    urls = ["https://github.com/bazelbuild/rules_proto/archive/486aaf1808a15b87f1b6778be6d30a17a87e491a.tar.gz"],
 )
 
 http_archive(
     name = "rules_python",
-    sha256 = "c911dc70f62f507f3a361cbc21d6e0d502b91254382255309bc60b7a0f48de28",
-    strip_prefix = "rules_python-38f86fb55b698c51e8510c807489c9f4e047480e",
-    urls = ["https://github.com/bazelbuild/rules_python/archive/38f86fb55b698c51e8510c807489c9f4e047480e.tar.gz"],
+    sha256 = "8a4c48ffc3f85b1ee03438d1dc0de0935fa055144c3535df1c07061515d036d4",
+    strip_prefix = "rules_python-c82a8cc1f44ba6e81c65e801b1ec3e4f3852359e",
+    urls = ["https://github.com/bazelbuild/rules_python/archive/c82a8cc1f44ba6e81c65e801b1ec3e4f3852359e.tar.gz"],
 )
 
 RULES_JVM_EXTERNAL_TAG = "3.2"
@@ -61,16 +61,14 @@ http_archive(
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
 
-rules_kotlin_version = "legacy-1.3.0"
+rules_kotlin_version = "legacy-1.4.0-rc3"
 
-rules_kotlin_sha = "4fd769fb0db5d3c6240df8a9500515775101964eebdf85a3f9f0511130885fde"
+rules_kotlin_sha = "da0e6e1543fcc79e93d4d93c3333378f3bd5d29e82c1bc2518de0dbe048e6598"
 
 http_archive(
     name = "io_bazel_rules_kotlin",
     sha256 = rules_kotlin_sha,
-    strip_prefix = "rules_kotlin-%s" % rules_kotlin_version,
-    type = "zip",
-    urls = ["https://github.com/bazelbuild/rules_kotlin/archive/%s.zip" % rules_kotlin_version],
+    urls = ["https://github.com/bazelbuild/rules_kotlin/releases/download/%s/rules_kotlin_release.tgz" % rules_kotlin_version],
 )
 
 http_archive(

@@ -1,6 +1,6 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-PROTOBUF_VERSION = "3.11.4"
+PROTOBUF_VERSION = "3.12.2"
 
 def protobuf_repositories():
     #    # Protobuf expects an //external:python_headers label which would contain the
@@ -21,20 +21,20 @@ def protobuf_repositories():
 
     http_archive(
         name = "com_google_protobuf",
-        sha256 = "9748c0d90e54ea09e5e75fb7fac16edce15d2028d4356f32211cfa3c0e956564",
+        sha256 = "b0a1da830747a2ffc1125fc84dbd3fe32a876396592d4580501749a2d0d0cb15",
         strip_prefix = "protobuf-%s" % PROTOBUF_VERSION,
-        urls = ["https://github.com/google/protobuf/archive/v%s.zip" % PROTOBUF_VERSION],
         patches = ["@com_cgi_eoss_eopp//third_party/protobuf:protobuf_drop_java_7_compatibility.patch"],
         patch_args = ["-p1"],
+        urls = ["https://github.com/google/protobuf/archive/v%s.zip" % PROTOBUF_VERSION],
     )
 
     http_archive(
         name = "com_google_protobuf_javalite",
-        sha256 = "e60211a40473f6be95b53f64559f82a3b2971672b11710db2fc9081708e25699",
-        strip_prefix = "protobuf-0425fa932ce95a32bb9f88b2c09b995e9ff8207b",
-        urls = ["https://github.com/google/protobuf/archive/0425fa932ce95a32bb9f88b2c09b995e9ff8207b.zip"],  # Commit with fixed javalite on 3.11.x branch
+        sha256 = "b0a1da830747a2ffc1125fc84dbd3fe32a876396592d4580501749a2d0d0cb15",
+        strip_prefix = "protobuf-%s" % PROTOBUF_VERSION,
         patches = ["@com_cgi_eoss_eopp//third_party/protobuf:protobuf_drop_java_7_compatibility.patch"],
         patch_args = ["-p1"],
+        urls = ["https://github.com/google/protobuf/archive/v%s.zip" % PROTOBUF_VERSION],
     )
 
 COM_GOOGLE_PROTOBUF_JAVA_OVERRIDE_TARGETS = {
