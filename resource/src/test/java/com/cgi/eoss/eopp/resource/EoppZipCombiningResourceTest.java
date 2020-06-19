@@ -39,6 +39,7 @@ public class EoppZipCombiningResourceTest {
         ), true);
         assertThat(zipResource.getDescription()).isEqualTo("ZipFile [ " + resource.getDescription() + "," + resource2.getDescription() + " ]");
         assertThat(zipResource.getFileMeta().getChecksum()).isNotEmpty();
+        assertThat(zipResource.getFileMeta().getFilename()).isEmpty();
         assertThat(zipResource.getOriginalSize()).isEqualTo(resource.contentLength() + resource2.contentLength());
 
         try (ZipInputStream zis = new ZipInputStream(zipResource.getInputStream())) {

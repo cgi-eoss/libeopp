@@ -222,13 +222,13 @@ public class EoppS3ObjectResource implements EoppResource {
 
         @Override
         public void onResponse(GetObjectResponse getObjectResponse) {
-            log.debug("Received GetObjectResponse: {}", getObjectResponse);
+            log.trace("Received GetObjectResponse: {}", getObjectResponse);
         }
 
         @Override
         public void onStream(SdkPublisher<ByteBuffer> publisher) {
             Flux<DataBuffer> dataBufferFlux = Flux.from(publisher)
-                    .doOnSubscribe(subscription -> log.debug("Subscribing to GetObjectResponse data stream"))
+                    .doOnSubscribe(subscription -> log.trace("Subscribing to GetObjectResponse data stream"))
                     .map(dataBufferFactory::wrap);
             DataBufferUtils
                     .write(dataBufferFlux, pipedOutputStream)

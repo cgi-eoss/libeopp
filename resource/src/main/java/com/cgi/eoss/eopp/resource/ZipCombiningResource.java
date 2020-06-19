@@ -41,16 +41,33 @@ import java.util.zip.ZipOutputStream;
  */
 public class ZipCombiningResource extends AbstractResource {
 
+    public static final int DEFAULT_BUFFER_SIZE = Math.toIntExact(DataSize.ofMegabytes(1).toBytes());
+    public static final int DEFAULT_COMPRESSION_LEVEL = Deflater.DEFAULT_COMPRESSION;
+
     private final List<ZipResourceEntry> contents;
     private final int zipBufferSize;
+    private final int compressionLevel;
 
+    /**
+     * <p>Create a ZipCombiningResource with the given contents and default buffering and compression parameters.</p>
+     *
+     * @param contents The zip resource entries.
+     */
     public ZipCombiningResource(List<ZipResourceEntry> contents) {
-        this(contents, Math.toIntExact(DataSize.ofMegabytes(1).toBytes()));
+        this(contents, DEFAULT_BUFFER_SIZE, DEFAULT_COMPRESSION_LEVEL);
     }
 
-    public ZipCombiningResource(List<ZipResourceEntry> contents, int zipBufferSize) {
+    /**
+     * <p>Create a ZipCombiningResource with the given contents and buffering and compression parameters.</p>
+     *
+     * @param contents         The zip resource entries.
+     * @param zipBufferSize    The buffer size used for the piped ZipOutputStream.
+     * @param compressionLevel The zip compression level. See {@link Deflater} for valid values.
+     */
+    public ZipCombiningResource(List<ZipResourceEntry> contents, int zipBufferSize, int compressionLevel) {
         this.contents = contents;
         this.zipBufferSize = zipBufferSize;
+        this.compressionLevel = compressionLevel;
     }
 
     @Override
@@ -71,7 +88,7 @@ public class ZipCombiningResource extends AbstractResource {
         // output size is smaller than the buffer, but this is not guaranteed.
         CompletableFuture.runAsync(() -> {
             try (ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(pos, zipBufferSize))) {
-                zos.setLevel(Deflater.BEST_SPEED);
+                zos.setLevel(compressionLevel);
 
                 for (ZipResourceEntry fe : contents) {
                     ZipEntry ze = new ZipEntry(fe.path);
@@ -80,6 +97,7 @@ public class ZipCombiningResource extends AbstractResource {
                     if (fe.resource != null) {
                         try (InputStream inputStream = fe.resource.getInputStream()) {
                             ByteStreams.copy(inputStream, zos);
+                        } finally {
                             zos.closeEntry();
                         }
                     }
