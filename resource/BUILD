@@ -24,6 +24,7 @@ maven_library(
         "@maven//:com_google_guava_guava",
         "@maven//:org_springframework_spring_core",
     ],
+    root_packages = ["com.cgi.eoss.eopp.resource"],
 )
 
 maven_library(
@@ -36,6 +37,7 @@ maven_library(
         "//file",
         "@maven//:org_springframework_spring_core",
     ],
+    root_packages = ["com.cgi.eoss.eopp.resource"],
 )
 
 maven_library(
@@ -54,6 +56,7 @@ maven_library(
         "@maven//:org_slf4j_slf4j_api",
         "@maven//:org_springframework_spring_core",
     ],
+    root_packages = ["com.cgi.eoss.eopp.resource"],
 )
 
 maven_library(
@@ -73,6 +76,7 @@ maven_library(
         "@maven//:software_amazon_awssdk_s3",
         "@maven//:software_amazon_awssdk_sdk_core",
     ],
+    root_packages = ["com.cgi.eoss.eopp.resource"],
 )
 
 java_library(

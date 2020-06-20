@@ -40,6 +40,7 @@ maven_library(
         "@maven//:com_google_guava_guava",
         "@maven//:org_springframework_spring_web",
     ],
+    root_packages = ["com.cgi.eoss.eopp.job"],
 )
 
 load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")

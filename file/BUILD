@@ -38,6 +38,7 @@ maven_library(
         "//util:timestamps",
         "@maven//:com_google_guava_guava",
     ],
+    root_packages = ["com.cgi.eoss.eopp.file"],
 )
 
 load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")

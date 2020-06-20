@@ -39,6 +39,7 @@ spec:
         container('libeopp-build') {
           gerritReview message: "Starting build: ${env.BUILD_URL}"
           sh "bazel build //..."
+          sh "./scripts/deploy/install-local-snapshot.sh"
         }
       }
     }

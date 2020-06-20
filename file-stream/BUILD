@@ -22,6 +22,7 @@ maven_library(
         "@maven//:org_slf4j_slf4j_api",
         "@maven//:org_springframework_spring_core",
     ],
+    root_packages = ["com.cgi.eoss.eopp.filestream"],
 )
 
 java_library(

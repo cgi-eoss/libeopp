@@ -36,6 +36,7 @@ maven_library(
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
         "@maven//:com_fasterxml_jackson_dataformat_jackson_dataformat_yaml",
     ],
+    root_packages = ["com.cgi.eoss.eopp.workflow"],
 )
 
 load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")

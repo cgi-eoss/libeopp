@@ -18,6 +18,7 @@ maven_library(
         "//resource",
         "@org_slf4j_slf4j_api",
     ],
+    root_packages = ["com.cgi.eoss.eopp.resolver"],
 )
 
 maven_library(
@@ -31,6 +32,7 @@ maven_library(
         "//resource:path-resource",
         "@maven//:com_google_guava_guava",
     ],
+    root_packages = ["com.cgi.eoss.eopp.resolver"],
 )
 
 maven_library(
@@ -45,6 +47,7 @@ maven_library(
         "@maven//:com_google_guava_guava",
         "@maven//:com_squareup_okhttp3_okhttp",
     ],
+    root_packages = ["com.cgi.eoss.eopp.resolver"],
 )
 
 java_library(

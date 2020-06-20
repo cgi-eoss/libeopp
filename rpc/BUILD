@@ -26,6 +26,7 @@ maven_library(
         "@maven//:org_springframework_cloud_spring_cloud_commons",
         "@maven//:org_springframework_spring_core",
     ],
+    root_packages = ["com.cgi.eoss.eopp.rpc"],
 )
 
 java_library(

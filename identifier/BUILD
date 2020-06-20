@@ -32,6 +32,7 @@ maven_library(
         ":identifier_java_proto",
         "//third_party/protobuf:protobuf_java",
     ],
+    root_packages = ["com.cgi.eoss.eopp.identifier"],
 )
 
 load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
