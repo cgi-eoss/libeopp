@@ -54,7 +54,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * <p>Recursive multiplicity is not supported by this operator; e.g. a nested workflow with parallel step configurations
  * will not execute those sub-steps in parallel.</p>
  */
-public abstract class AbstractStepOperator implements com.cgi.eoss.eopp.executor.StepOperator {
+public abstract class AbstractStepOperator implements StepOperator {
     private static final Logger log = getLogger(AbstractStepOperator.class);
 
     // This needs to be constant as sub-steps may run on different extensions of this class

@@ -16,26 +16,33 @@
 
 package com.cgi.eoss.eopp.resource;
 
+import com.cgi.eoss.eopp.file.FileMeta;
+import com.cgi.eoss.eopp.util.Timestamps;
+
+import java.time.Instant;
 import java.util.Optional;
 
 /**
- * <p>Internal convenience wrapper for common metadata fields which can be calculated from a resource supplier.</p>
+ * <p>Convenience wrapper for common metadata fields which can be calculated from a resource supplier.</p>
+ * <p>The FileMeta object may contain arbitrary properties in addition to resource metadata, so it is included here.</p>
  */
-final class ResourceMetadataWrapper {
+public final class ResourceMetadataWrapper {
     private final boolean exists;
     private final boolean readable;
     private final long lastModified;
     private final String filename;
     private final long contentLength;
     private final Optional<String> checksum;
+    private final FileMeta fileMeta;
 
-    ResourceMetadataWrapper(boolean exists, boolean readable, long lastModified, String filename, long contentLength, Optional<String> checksum) {
+    ResourceMetadataWrapper(boolean exists, boolean readable, long lastModified, String filename, long contentLength, Optional<String> checksum, FileMeta fileMeta) {
         this.exists = exists;
         this.readable = readable;
         this.lastModified = lastModified;
         this.filename = filename;
         this.contentLength = contentLength;
         this.checksum = checksum;
+        this.fileMeta = fileMeta;
     }
 
     public static ResourceMetadataWrapperBuilder builder() {
@@ -66,13 +73,18 @@ final class ResourceMetadataWrapper {
         return this.checksum;
     }
 
+    public FileMeta getFileMeta() {
+        return this.fileMeta;
+    }
+
     public static class ResourceMetadataWrapperBuilder {
         private boolean exists = false;
         private boolean readable = false;
         private long lastModified = 0L;
-        private long contentLength = 0L;
+        private long contentLength = -1L;
         private String filename = null;
         private String checksum = null;
+        private FileMeta fileMeta = null;
 
         ResourceMetadataWrapperBuilder() {
         }
@@ -107,8 +119,22 @@ final class ResourceMetadataWrapper {
             return this;
         }
 
+        public ResourceMetadataWrapper.ResourceMetadataWrapperBuilder fileMeta(FileMeta fileMeta) {
+            this.fileMeta = fileMeta;
+            return this;
+        }
+
         public ResourceMetadataWrapper build() {
-            return new ResourceMetadataWrapper(exists, readable, lastModified, filename, contentLength, Optional.ofNullable(checksum));
+            if (fileMeta == null) {
+                FileMeta.Builder fileMetaBuilder = FileMeta.newBuilder()
+                        .setFilename(filename)
+                        .setSize(contentLength)
+                        .setLastModified(Timestamps.timestampFromInstant(Instant.ofEpochMilli(lastModified)))
+                        .setExecutable(false);
+                Optional.ofNullable(checksum).ifPresent(fileMetaBuilder::setChecksum);
+                fileMeta = fileMetaBuilder.build();
+            }
+            return new ResourceMetadataWrapper(exists, readable, lastModified, filename, contentLength, Optional.ofNullable(checksum), fileMeta);
         }
     }
 }

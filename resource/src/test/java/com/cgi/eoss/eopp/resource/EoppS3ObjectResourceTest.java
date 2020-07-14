@@ -98,20 +98,6 @@ public class EoppS3ObjectResourceTest {
         } catch (FileNotFoundException e) {
             assertThat(e.getMessage()).isEqualTo("S3 resources may not be resolved as Files");
         }
-//
-//        EoppS3ObjectResource resource = new EoppS3ObjectResource(asyncS3Client, "EODATA", "Sentinel-1/SAR/SLC/2018/11/06/S1A_IW_SLC__1SDV_20181106T081501_20181106T081527_024464_02AE99_0F73.SAFE/manifest.safe");
-//
-//        assertThat(resource.exists()).isTrue();
-//
-//        InputStream in = resource.getInputStream();
-//        HashingCountingOutputStream out = new HashingCountingOutputStream(ByteStreams.nullOutputStream());
-//        try {
-//            ByteStreams.copy(in, out);
-//        } finally {
-//            in.close();
-//            out.close();
-//        }
-//        assertThat(out.getCount()).isEqualTo(36536);
     }
 
 }

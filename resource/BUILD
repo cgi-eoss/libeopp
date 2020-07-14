@@ -10,6 +10,7 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/resource/ZipCombiningResource.java",
     ],
     artifact_name = "libeopp :: resource",
+    root_packages = ["com.cgi.eoss.eopp.resource"],
     sq_srcs = glob(["src/main/java/**"]),
     sq_targets = [
         ":okhttp-resource",
@@ -24,7 +25,6 @@ maven_library(
         "@maven//:com_google_guava_guava",
         "@maven//:org_springframework_spring_core",
     ],
-    root_packages = ["com.cgi.eoss.eopp.resource"],
 )
 
 maven_library(
@@ -32,12 +32,12 @@ maven_library(
     srcs = ["src/main/java/com/cgi/eoss/eopp/resource/EoppPathResource.java"],
     artifact_name = "libeopp :: resource :: path",
     generate_sonarqube_project = False,
+    root_packages = ["com.cgi.eoss.eopp.resource"],
     deps = [
         ":resource",
         "//file",
         "@maven//:org_springframework_spring_core",
     ],
-    root_packages = ["com.cgi.eoss.eopp.resource"],
 )
 
 maven_library(
@@ -45,6 +45,7 @@ maven_library(
     srcs = ["src/main/java/com/cgi/eoss/eopp/resource/EoppOkHttpResource.java"],
     artifact_name = "libeopp :: resource :: okhttp",
     generate_sonarqube_project = False,
+    root_packages = ["com.cgi.eoss.eopp.resource"],
     deps = [
         ":resource",
         "//file",
@@ -56,7 +57,6 @@ maven_library(
         "@maven//:org_slf4j_slf4j_api",
         "@maven//:org_springframework_spring_core",
     ],
-    root_packages = ["com.cgi.eoss.eopp.resource"],
 )
 
 maven_library(
@@ -64,6 +64,7 @@ maven_library(
     srcs = ["src/main/java/com/cgi/eoss/eopp/resource/EoppS3ObjectResource.java"],
     artifact_name = "libeopp :: resource :: s3",
     generate_sonarqube_project = False,
+    root_packages = ["com.cgi.eoss.eopp.resource"],
     deps = [
         ":resource",
         "//file",
@@ -76,7 +77,6 @@ maven_library(
         "@maven//:software_amazon_awssdk_s3",
         "@maven//:software_amazon_awssdk_sdk_core",
     ],
-    root_packages = ["com.cgi.eoss.eopp.resource"],
 )
 
 java_library(
@@ -95,6 +95,7 @@ java_library(
         "//util:eopp-headers",
         "@com_google_protobuf//:protobuf_java",
         "@maven//:com_google_guava_guava",
+        "@maven//:com_google_jimfs_jimfs",
         "@maven//:com_google_truth_extensions_truth_proto_extension",
         "@maven//:com_google_truth_truth",
         "@maven//:com_squareup_okhttp3_mockwebserver",

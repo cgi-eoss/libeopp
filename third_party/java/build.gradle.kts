@@ -22,6 +22,7 @@ bazelDependencies {
         "org.apache.tomcat:annotations-api:6.0.53"
     )
     testOnly = setOf(
+        "com.google.jimfs:jimfs:1.1",
         "com.google.truth.extensions:truth-java8-extension:1.0.1",
         "com.google.truth.extensions:truth-liteproto-extension:1.0.1",
         "com.google.truth.extensions:truth-proto-extension:1.0.1",
@@ -43,6 +44,7 @@ extra["google-common-protos.version"] = "1.18.0"
 extra["grpc-java.version"] = "1.30.0" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
 extra["guava.version"] = "29.0-jre"
 extra["j2objc-annotations.version"] = "1.3"
+extra["jimfs.version"] = "1.1"
 extra["kotlin.version"] = "1.3.72"
 extra["okhttp.version"] = "4.7.2"
 extra["protobuf-java.version"] = "3.12.2"
@@ -65,6 +67,7 @@ dependencyManagement {
         dependency("com.google.api.grpc:proto-google-common-protos:${property("google-common-protos.version")}")
         dependency("com.google.guava:guava:${property("guava.version")}")
         dependency("com.google.j2objc:j2objc-annotations:${property("j2objc-annotations.version")}")
+        dependency("com.google.jimfs:jimfs:${property("jimfs.version")}")
         dependency("com.google.protobuf:protobuf-javalite:${property("protobuf-java.version")}")
         dependency("com.google.truth.extensions:truth-java8-extension:${property("truth.version")}")
         dependency("com.google.truth.extensions:truth-proto-extension:${property("truth.version")}")
@@ -83,6 +86,7 @@ dependencies {
     generate("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     generate("com.google.api.grpc:proto-google-common-protos")
     generate("com.google.guava:guava")
+    generate("com.google.jimfs:jimfs")
     generate("com.google.protobuf:protobuf-java")
     generate("com.google.protobuf:protobuf-javalite")
     generate("com.google.truth.extensions:truth-java8-extension")

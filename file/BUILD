@@ -36,6 +36,7 @@ maven_library(
         ":file_java_proto",
         "//third_party/protobuf:protobuf_java",
         "//util:timestamps",
+        "//util:eopp-headers",
         "@maven//:com_google_guava_guava",
     ],
     root_packages = ["com.cgi.eoss.eopp.file"],

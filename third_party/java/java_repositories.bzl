@@ -22,6 +22,7 @@ ARTIFACTS = [
     maven.artifact("com.google.guava", "guava", "29.0-jre"),
     maven.artifact("com.google.guava", "listenablefuture", "9999.0-empty-to-avoid-conflict-with-guava"),
     maven.artifact("com.google.j2objc", "j2objc-annotations", "1.3"),
+    maven.artifact("com.google.jimfs", "jimfs", "1.1", testonly = True),
     maven.artifact("com.google.protobuf", "protobuf-java", "3.12.2"),
     maven.artifact("com.google.protobuf", "protobuf-java-util", "3.12.2"),
     maven.artifact("com.google.protobuf", "protobuf-javalite", "3.12.2"),

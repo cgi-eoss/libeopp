@@ -17,6 +17,7 @@
 package com.cgi.eoss.eopp.resource;
 
 import com.cgi.eoss.eopp.file.FileMeta;
+import com.cgi.eoss.eopp.file.FileMetas;
 import com.cgi.eoss.eopp.util.EoppHeaders;
 import com.cgi.eoss.eopp.util.Lazy;
 import com.cgi.eoss.eopp.util.Timestamps;
@@ -37,6 +38,7 @@ import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
 import java.io.File;
@@ -69,7 +71,7 @@ public class EoppS3ObjectResource implements EoppResource {
     private final String bucket;
     private final String key;
     private final DataBufferFactory dataBufferFactory;
-    private Supplier<ResourceMetadataWrapper> metadata = Lazy.lazily(this::getS3ObjectMetadata);
+    private final Supplier<ResourceMetadataWrapper> metadata = Lazy.lazily(this::getS3ObjectMetadata);
 
     public EoppS3ObjectResource(S3AsyncClient s3AsyncClient, String bucket, String key) {
         this.s3AsyncClient = s3AsyncClient;
@@ -105,13 +107,7 @@ public class EoppS3ObjectResource implements EoppResource {
 
     @Override
     public FileMeta getFileMeta() {
-        FileMeta.Builder fileMeta = FileMeta.newBuilder()
-                .setFilename(this.getFilename())
-                .setSize(this.contentLength())
-                .setLastModified(Timestamps.timestampFromInstant(Instant.ofEpochMilli(this.lastModified())))
-                .setExecutable(false);
-        metadata.get().getChecksum().ifPresent(fileMeta::setChecksum);
-        return fileMeta.build();
+        return metadata.get().getFileMeta();
     }
 
     @Override
@@ -160,7 +156,7 @@ public class EoppS3ObjectResource implements EoppResource {
         }
     }
 
-    private ResourceMetadataWrapper getS3ObjectMetadata() {
+    protected ResourceMetadataWrapper getS3ObjectMetadata() {
         return Mono.fromFuture(s3AsyncClient.headObject(HeadObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
@@ -171,19 +167,40 @@ public class EoppS3ObjectResource implements EoppResource {
                     ResourceMetadataWrapper.ResourceMetadataWrapperBuilder builder = ResourceMetadataWrapper.builder();
 
                     if (response.isPresent()) {
+                        HeadObjectResponse headObjectResponse = response.get();
+
                         builder.exists(true);
                         builder.readable(true);
-                        builder.lastModified(response.get().lastModified().toEpochMilli());
-                        Stream.of(Optional.ofNullable(response.get().metadata().get(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader())).map(Long::valueOf),
-                                Optional.ofNullable(response.get().contentLength()))
+
+                        // Prefer the metadata attributes from the complete stored FileMeta, if it's available
+                        Optional<FileMeta> fileMeta = Optional.ofNullable(headObjectResponse.metadata().get(EoppHeaders.FILE_META.getHeader().toLowerCase()))
+                                .map(FileMetas::fromBase64);
+
+                        fileMeta.ifPresent(builder::fileMeta);
+
+                        Stream.of(fileMeta.map(FileMeta::getLastModified).map(Timestamps::instantFromTimestamp).map(Instant::toEpochMilli),
+                                Optional.ofNullable(headObjectResponse.lastModified()).map(Instant::toEpochMilli))
+                                .filter(Optional::isPresent).map(Optional::get).findFirst()
+                                .ifPresent(builder::lastModified);
+
+                        Stream.of(fileMeta.map(FileMeta::getSize),
+                                Optional.ofNullable(headObjectResponse.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader())).map(Long::valueOf),
+                                Optional.ofNullable(headObjectResponse.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader().toLowerCase())).map(Long::valueOf),
+                                Optional.ofNullable(headObjectResponse.contentLength()))
                                 .filter(Optional::isPresent).map(Optional::get).findFirst()
                                 .ifPresent(builder::contentLength);
-                        builder.filename(Stream.of(
-                                Optional.ofNullable(response.get().metadata().get(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader())),
-                                Optional.ofNullable(response.get().contentDisposition()).flatMap(EoppHeaders.FILENAME_FROM_HTTP_HEADER))
+
+                        builder.filename(Stream.of(fileMeta.map(FileMeta::getFilename),
+                                Optional.ofNullable(headObjectResponse.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader())),
+                                Optional.ofNullable(headObjectResponse.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader().toLowerCase())),
+                                Optional.ofNullable(headObjectResponse.contentDisposition()).flatMap(EoppHeaders.FILENAME_FROM_HTTP_HEADER))
                                 .filter(Optional::isPresent).map(Optional::get).findFirst()
                                 .orElse(StringUtils.getFilename(key)));
-                        Optional.ofNullable(response.get().metadata().get(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader()))
+
+                        Stream.of(fileMeta.map(FileMeta::getChecksum),
+                                Optional.ofNullable(headObjectResponse.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader())),
+                                Optional.ofNullable(headObjectResponse.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader().toLowerCase())))
+                                .filter(Optional::isPresent).map(Optional::get).findFirst()
                                 .ifPresent(builder::checksum);
                     }
 

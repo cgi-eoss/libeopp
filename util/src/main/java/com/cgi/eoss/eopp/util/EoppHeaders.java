@@ -1,5 +1,9 @@
 package com.cgi.eoss.eopp.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -38,7 +42,20 @@ public enum EoppHeaders {
     /**
      * <p>A {@link com.cgi.eoss.eopp.file.FileMeta#getChecksum()} string for a product being requested.</p>
      */
-    PRODUCT_ARCHIVE_CHECKSUM("X-Eopp-Product-Archive-Checksum");
+    PRODUCT_ARCHIVE_CHECKSUM("X-Eopp-Product-Archive-Checksum"),
+
+    /**
+     * <p>A base64-encoded {@link com.cgi.eoss.eopp.file.FileMeta} describing a file being requested.</p>
+     * <p>If multiple {@link EoppHeaders} are available on the resource, this should be the first source of truth for
+     * metadata values.</p>
+     */
+    FILE_META("X-Eopp-File-Meta");
+
+    // adapted from https://tools.ietf.org/html/rfc2616#section-3.3
+    private static final SimpleDateFormat[] HTTP_DATE_FORMATS = {
+            new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US),
+            new SimpleDateFormat("EEEEEE, dd-MMM-yy HH:mm:ss zzz", Locale.US),
+            new SimpleDateFormat("EEE MMMM d HH:mm:ss yyyy", Locale.US)};
 
     private final String header;
 
@@ -57,5 +74,21 @@ public enum EoppHeaders {
         Matcher matcher = Pattern.compile("attachment; filename=\"?(.*)\"?").matcher(s);
         return matcher.matches() ? Optional.of(matcher.group(1)) : Optional.empty();
     };
+
+    /**
+     * <p>Function to parse an Instant from one of the various HTTP date formats available.</p>
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc2616#section-3.3">https://tools.ietf.org/html/rfc2616#section-3.3</a>
+     */
+    public static Instant parseInstant(String httpDate) {
+        for (SimpleDateFormat format : HTTP_DATE_FORMATS) {
+            try {
+                return format.parse(httpDate).toInstant();
+            } catch (ParseException ignored) {
+                // nothing to do
+            }
+        }
+        throw new IllegalArgumentException("Could not parse date as any HTTP-Date format: " + httpDate);
+    }
 
 }

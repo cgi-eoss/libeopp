@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 
 /**
- * <p>Utility methods for working with streams of {@link com.cgi.eoss.eopp.file.FileChunk} objects.</p>
+ * <p>Utility methods for working with streams of {@link FileChunk} objects.</p>
  */
 public final class FileStreams {
 

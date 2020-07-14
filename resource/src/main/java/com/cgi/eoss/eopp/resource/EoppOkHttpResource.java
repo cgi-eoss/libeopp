@@ -1,6 +1,7 @@
 package com.cgi.eoss.eopp.resource;
 
 import com.cgi.eoss.eopp.file.FileMeta;
+import com.cgi.eoss.eopp.file.FileMetas;
 import com.cgi.eoss.eopp.util.EoppHeaders;
 import com.cgi.eoss.eopp.util.Lazy;
 import com.cgi.eoss.eopp.util.Timestamps;
@@ -22,11 +23,7 @@ import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -38,15 +35,10 @@ public class EoppOkHttpResource implements EoppResource {
 
     private static final Logger log = LoggerFactory.getLogger(EoppOkHttpResource.class);
 
-    private static final SimpleDateFormat[] HTTP_DATE_FORMATS = {
-            new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US),
-            new SimpleDateFormat("EEEEEE, dd-MMM-yy HH:mm:ss zzz", Locale.US),
-            new SimpleDateFormat("EEE MMMM d HH:mm:ss yyyy", Locale.US)};
-
     private final OkHttpClient httpClient;
     private final HttpUrl url;
+    private final Supplier<ResourceMetadataWrapper> metadata = Lazy.lazily(this::getHttpResourceMetadata);
 
-    private Supplier<ResourceMetadataWrapper> metadata = Lazy.lazily(this::getHttpResourceMetadata);
     private int remainingRetries = 3;
 
     public EoppOkHttpResource(OkHttpClient httpClient, HttpUrl url) {
@@ -56,13 +48,7 @@ public class EoppOkHttpResource implements EoppResource {
 
     @Override
     public FileMeta getFileMeta() {
-        FileMeta.Builder fileMeta = FileMeta.newBuilder()
-                .setFilename(this.getFilename())
-                .setSize(this.contentLength())
-                .setLastModified(Timestamps.timestampFromInstant(Instant.ofEpochMilli(this.lastModified())))
-                .setExecutable(false);
-        metadata.get().getChecksum().ifPresent(fileMeta::setChecksum);
-        return fileMeta.build();
+        return metadata.get().getFileMeta();
     }
 
     @Override
@@ -151,46 +137,52 @@ public class EoppOkHttpResource implements EoppResource {
         }
     }
 
-    private ResourceMetadataWrapper getHttpResourceMetadata() {
+    protected ResourceMetadataWrapper getHttpResourceMetadata() {
         // Make a HEAD request to get metadata only
         Request request = new Request.Builder().url(url).head().build();
 
         ResourceMetadataWrapper.ResourceMetadataWrapperBuilder builder = ResourceMetadataWrapper.builder();
 
         try (Response response = httpClient.newCall(request).execute()) {
-            log.debug("Received HEAD response: {}", response);
-            builder.exists(response.isSuccessful());
-            builder.readable(response.isSuccessful());
-            Optional.ofNullable(response.header(HttpHeaders.LAST_MODIFIED))
-                    .map(h -> parseDate(h).toInstant().toEpochMilli())
-                    .ifPresent(builder::lastModified);
-            Stream.of(Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader())).map(Long::valueOf),
-                    Optional.ofNullable(response.header(HttpHeaders.CONTENT_LENGTH)).map(Long::valueOf))
-                    .filter(Optional::isPresent).map(Optional::get).findFirst()
-                    .ifPresent(builder::contentLength);
-            builder.filename(Stream.of(
-                    Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader())),
-                    Optional.ofNullable(response.header(HttpHeaders.CONTENT_DISPOSITION)).flatMap(EoppHeaders.FILENAME_FROM_HTTP_HEADER))
-                    .filter(Optional::isPresent).map(Optional::get).findFirst()
-                    .orElse(StringUtils.getFilename(url.encodedPath())));
-            Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader()))
-                    .ifPresent(builder::checksum);
+            log.trace("Received HEAD response: {}", response);
+
+            if (response.isSuccessful()) {
+                builder.exists(true);
+                builder.readable(true);
+
+                // Prefer the metadata attributes from the complete stored FileMeta, if it's available
+                Optional<FileMeta> fileMeta = Optional.ofNullable(response.header(EoppHeaders.FILE_META.getHeader()))
+                        .map(FileMetas::fromBase64);
+
+                fileMeta.ifPresent(builder::fileMeta);
+
+                Stream.of(fileMeta.map(FileMeta::getLastModified).map(Timestamps::instantFromTimestamp).map(Instant::toEpochMilli),
+                        Optional.ofNullable(response.header(HttpHeaders.LAST_MODIFIED)).map(EoppHeaders::parseInstant).map(Instant::toEpochMilli))
+                        .filter(Optional::isPresent).map(Optional::get).findFirst()
+                        .ifPresent(builder::lastModified);
+
+                Stream.of(fileMeta.map(FileMeta::getSize),
+                        Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader())).map(Long::valueOf),
+                        Optional.ofNullable(response.header(HttpHeaders.CONTENT_LENGTH)).map(Long::valueOf))
+                        .filter(Optional::isPresent).map(Optional::get).findFirst()
+                        .ifPresent(builder::contentLength);
+
+                builder.filename(Stream.of(fileMeta.map(FileMeta::getFilename),
+                        Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader())),
+                        Optional.ofNullable(response.header(HttpHeaders.CONTENT_DISPOSITION)).flatMap(EoppHeaders.FILENAME_FROM_HTTP_HEADER))
+                        .filter(Optional::isPresent).map(Optional::get).findFirst()
+                        .orElse(StringUtils.getFilename(url.encodedPath())));
+
+                Stream.of(fileMeta.map(FileMeta::getChecksum),
+                        Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader())))
+                        .filter(Optional::isPresent).map(Optional::get).findFirst()
+                        .ifPresent(builder::checksum);
+            }
         } catch (IOException e) {
             log.warn("Failed to HEAD resource at {}", url, e);
         }
 
         return builder.build();
-    }
-
-    private Date parseDate(String httpDate) {
-        for (SimpleDateFormat format : HTTP_DATE_FORMATS) {
-            try {
-                return format.parse(httpDate);
-            } catch (ParseException ignored) {
-                // nothing to do
-            }
-        }
-        throw new IllegalArgumentException("Could not parse date as any HTTP-Date format: " + httpDate);
     }
 
 }

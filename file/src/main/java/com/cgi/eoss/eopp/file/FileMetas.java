@@ -1,6 +1,8 @@
 package com.cgi.eoss.eopp.file;
 
+import com.cgi.eoss.eopp.util.EoppHeaders;
 import com.cgi.eoss.eopp.util.Timestamps;
+import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.hash.HashCode;
@@ -14,6 +16,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
@@ -83,6 +86,7 @@ public final class FileMetas {
 
     /**
      * <p>Read the FileMeta from the given file.</p>
+     * <p>Extended filesystem attributes are used to find existing FileMeta stored with the file.</p>
      * <p>The given HashFunction is used when calculating the file checksum.</p>
      * <p>The given properties are added as additional metadata.</p>
      *
@@ -94,14 +98,35 @@ public final class FileMetas {
      */
     public static FileMeta get(Path file, HashFunction checksumFunction, Map<String, Any> properties, boolean executable) {
         try {
-            return FileMeta.newBuilder()
-                    .setFilename(file.getFileName().toString())
-                    .setSize(Files.size(file))
-                    .setChecksum(checksum(MoreFiles.asByteSource(file), checksumFunction))
-                    .setExecutable(executable)
-                    .putAllProperties(properties)
-                    .setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(file).toInstant()))
-                    .build();
+            FileMeta.Builder builder = FileMeta.newBuilder();
+
+            if (Files.getFileStore(file).supportsFileAttributeView(UserDefinedFileAttributeView.class)
+                    && Files.getFileAttributeView(file, UserDefinedFileAttributeView.class).list().contains(EoppHeaders.FILE_META.getHeader())) {
+                FileMeta storedFileMeta = FileMeta.parseFrom((byte[]) Files.getAttribute(file, "user:" + EoppHeaders.FILE_META.getHeader()));
+                builder.mergeFrom(storedFileMeta);
+            }
+
+            if (Strings.isNullOrEmpty(builder.getFilename())) {
+                builder.setFilename(file.getFileName().toString());
+            }
+
+            if (builder.getSize() == 0 && !Files.isDirectory(file)) {
+                builder.setSize(Files.size(file));
+            }
+
+            if (Strings.isNullOrEmpty(builder.getChecksum()) && !Files.isDirectory(file)) {
+                builder.setChecksum(checksum(MoreFiles.asByteSource(file), checksumFunction));
+            }
+
+            if (!builder.hasLastModified()) {
+                builder.setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(file).toInstant()));
+            }
+
+            // These parameters should overwrite any existing FileMeta
+            builder.setExecutable(executable);
+            builder.putAllProperties(properties);
+
+            return builder.build();
         } catch (IOException e) {
             throw new EoppFileException(e);
         }
@@ -113,8 +138,12 @@ public final class FileMetas {
      * @return The FileMeta represented by the given base64-encoded string.
      * @see FileMeta#parseFrom(byte[])
      */
-    public static FileMeta fromBase64(String string) throws InvalidProtocolBufferException {
-        return FileMeta.parseFrom(Base64.getDecoder().decode(string));
+    public static FileMeta fromBase64(String string) {
+        try {
+            return FileMeta.parseFrom(Base64.getDecoder().decode(string));
+        } catch (InvalidProtocolBufferException e) {
+            throw new EoppFileException(e);
+        }
     }
 
     /**
