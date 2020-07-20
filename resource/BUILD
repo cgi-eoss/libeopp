@@ -4,6 +4,7 @@ maven_library(
     name = "resource",
     srcs = [
         "src/main/java/com/cgi/eoss/eopp/resource/EoppResource.java",
+        "src/main/java/com/cgi/eoss/eopp/resource/EoppResourceException.java",
         "src/main/java/com/cgi/eoss/eopp/resource/EoppZipCombiningResource.java",
         "src/main/java/com/cgi/eoss/eopp/resource/ResourceMetadataWrapper.java",
         "src/main/java/com/cgi/eoss/eopp/resource/WritableEoppResource.java",

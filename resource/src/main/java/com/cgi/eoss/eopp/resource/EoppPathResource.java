@@ -4,6 +4,7 @@ import com.cgi.eoss.eopp.file.FileMeta;
 import com.cgi.eoss.eopp.file.FileMetas;
 import org.springframework.core.io.FileSystemResource;
 
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
 /**
@@ -14,6 +15,8 @@ import java.nio.file.Path;
 public class EoppPathResource extends FileSystemResource implements WritableEoppResource {
 
     private final FileMeta fileMeta;
+
+    private final Path fsPath;
 
     public EoppPathResource(Path path) {
         this(path, FileMetas.get(path));
@@ -26,6 +29,7 @@ public class EoppPathResource extends FileSystemResource implements WritableEopp
     public EoppPathResource(Path path, FileMeta fileMeta) {
         super(path);
         this.fileMeta = fileMeta;
+        this.fsPath = path;
     }
 
     @Override
@@ -46,6 +50,19 @@ public class EoppPathResource extends FileSystemResource implements WritableEopp
     @Override
     public int hashCode() {
         return super.hashCode();
+    }
+
+    @Override
+    public boolean isFile() {
+        // This should comply with Path#toFile
+        return fsPath.getFileSystem() == FileSystems.getDefault();
+    }
+
+    /**
+     * @return The {@link Path} referred to by this resource.
+     */
+    public Path getFsPath() {
+        return fsPath;
     }
 
 }

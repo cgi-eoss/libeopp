@@ -141,6 +141,11 @@ public class EoppS3ObjectResource implements EoppResource {
     }
 
     @Override
+    public String toString() {
+        return getDescription();
+    }
+
+    @Override
     public InputStream getInputStream() throws IOException {
         GetObjectRequest request = GetObjectRequest.builder()
                 .bucket(bucket)
@@ -157,56 +162,61 @@ public class EoppS3ObjectResource implements EoppResource {
     }
 
     protected ResourceMetadataWrapper getS3ObjectMetadata() {
-        return Mono.fromFuture(s3AsyncClient.headObject(HeadObjectRequest.builder()
+        try {
+            return s3AsyncClient.headObject(HeadObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
-                .build()))
-                .map(Optional::of)
-                .onErrorReturn(NoSuchKeyException.class, Optional.empty())
-                .map(response -> {
+                    .build())
+                    .thenApply(response -> {
                     ResourceMetadataWrapper.ResourceMetadataWrapperBuilder builder = ResourceMetadataWrapper.builder();
-
-                    if (response.isPresent()) {
-                        HeadObjectResponse headObjectResponse = response.get();
 
                         builder.exists(true);
                         builder.readable(true);
 
                         // Prefer the metadata attributes from the complete stored FileMeta, if it's available
-                        Optional<FileMeta> fileMeta = Optional.ofNullable(headObjectResponse.metadata().get(EoppHeaders.FILE_META.getHeader().toLowerCase()))
+                        Optional<FileMeta> fileMeta = Optional.ofNullable(response.metadata().get(EoppHeaders.FILE_META.getHeader().toLowerCase()))
                                 .map(FileMetas::fromBase64);
 
                         fileMeta.ifPresent(builder::fileMeta);
 
                         Stream.of(fileMeta.map(FileMeta::getLastModified).map(Timestamps::instantFromTimestamp).map(Instant::toEpochMilli),
-                                Optional.ofNullable(headObjectResponse.lastModified()).map(Instant::toEpochMilli))
+                                Optional.ofNullable(response.lastModified()).map(Instant::toEpochMilli))
                                 .filter(Optional::isPresent).map(Optional::get).findFirst()
                                 .ifPresent(builder::lastModified);
 
                         Stream.of(fileMeta.map(FileMeta::getSize),
-                                Optional.ofNullable(headObjectResponse.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader())).map(Long::valueOf),
-                                Optional.ofNullable(headObjectResponse.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader().toLowerCase())).map(Long::valueOf),
-                                Optional.ofNullable(headObjectResponse.contentLength()))
+                                Optional.ofNullable(response.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader())).map(Long::valueOf),
+                                Optional.ofNullable(response.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader().toLowerCase())).map(Long::valueOf),
+                                Optional.ofNullable(response.contentLength()))
                                 .filter(Optional::isPresent).map(Optional::get).findFirst()
                                 .ifPresent(builder::contentLength);
 
                         builder.filename(Stream.of(fileMeta.map(FileMeta::getFilename),
-                                Optional.ofNullable(headObjectResponse.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader())),
-                                Optional.ofNullable(headObjectResponse.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader().toLowerCase())),
-                                Optional.ofNullable(headObjectResponse.contentDisposition()).flatMap(EoppHeaders.FILENAME_FROM_HTTP_HEADER))
+                                Optional.ofNullable(response.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader())),
+                                Optional.ofNullable(response.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader().toLowerCase())),
+                                Optional.ofNullable(response.contentDisposition()).flatMap(EoppHeaders.FILENAME_FROM_HTTP_HEADER))
                                 .filter(Optional::isPresent).map(Optional::get).findFirst()
                                 .orElse(StringUtils.getFilename(key)));
 
                         Stream.of(fileMeta.map(FileMeta::getChecksum),
-                                Optional.ofNullable(headObjectResponse.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader())),
-                                Optional.ofNullable(headObjectResponse.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader().toLowerCase())))
+                                Optional.ofNullable(response.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader())),
+                                Optional.ofNullable(response.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader().toLowerCase())))
                                 .filter(Optional::isPresent).map(Optional::get).findFirst()
                                 .ifPresent(builder::checksum);
-                    }
 
                     return builder.build();
                 })
-                .block();
+                    .get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new EoppResourceException("S3 resource HEAD request interrupted");
+        } catch (ExecutionException e) {
+            if (e.getCause() instanceof NoSuchKeyException) {
+                return ResourceMetadataWrapper.builder().build();
+            } else {
+                throw new EoppResourceException("Failed to complete S3 resource HEAD request", e.getCause());
+            }
+        }
     }
 
     /**
