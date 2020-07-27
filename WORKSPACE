@@ -50,9 +50,9 @@ http_archive(
     urls = ["https://github.com/bazelbuild/rules_python/archive/c82a8cc1f44ba6e81c65e801b1ec3e4f3852359e.tar.gz"],
 )
 
-RULES_JVM_EXTERNAL_TAG = "3.2"
+RULES_JVM_EXTERNAL_TAG = "3.3"
 
-RULES_JVM_EXTERNAL_SHA = "82262ff4223c5fda6fb7ff8bd63db8131b51b413d26eb49e3131037e79e324af"
+RULES_JVM_EXTERNAL_SHA = "d85951a92c0908c80bd8551002d66cb23c3434409c814179c0ff026b53544dab"
 
 http_archive(
     name = "rules_jvm_external",

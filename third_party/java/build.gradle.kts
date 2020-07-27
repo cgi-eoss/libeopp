@@ -1,7 +1,7 @@
 plugins {
     base
     id("com.github.zetten.bazel-dependencies-plugin") version "1.7.3"
-    id("com.github.ben-manes.versions") version "0.28.0"
+    id("com.github.ben-manes.versions") version "0.29.0"
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
 }
 
@@ -27,7 +27,7 @@ bazelDependencies {
         "com.google.truth.extensions:truth-liteproto-extension:1.0.1",
         "com.google.truth.extensions:truth-proto-extension:1.0.1",
         "com.google.truth:truth:1.0.1",
-        "com.squareup.okhttp3:mockwebserver:4.7.2",
+        "com.squareup.okhttp3:mockwebserver:4.8.0",
         "junit:junit:4.13",
         "org.hamcrest:hamcrest:2.2",
         "org.hamcrest:hamcrest-core:2.2",
@@ -39,18 +39,18 @@ repositories {
     jcenter()
 }
 
-extra["aws-sdk-v2.version"] = "2.13.30"
+extra["aws-sdk-v2.version"] = "2.13.61"
 extra["google-common-protos.version"] = "1.18.0"
-extra["grpc-java.version"] = "1.30.0" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
+extra["grpc-java.version"] = "1.30.2" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
 extra["guava.version"] = "29.0-jre"
 extra["j2objc-annotations.version"] = "1.3"
 extra["jimfs.version"] = "1.1"
 extra["kotlin.version"] = "1.3.72"
-extra["okhttp.version"] = "4.7.2"
+extra["okhttp.version"] = "4.8.0"
 extra["protobuf-java.version"] = "3.12.2"
 extra["reactor-grpc.version"] = "1.0.1"
-extra["spring-boot.version"] = "2.3.1.RELEASE"
-extra["spring-cloud.version"] = "Hoxton.SR5"
+extra["spring-boot.version"] = "2.3.2.RELEASE"
+extra["spring-cloud.version"] = "Hoxton.SR6"
 extra["truth.version"] = "1.0.1"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
 

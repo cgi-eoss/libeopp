@@ -20,7 +20,7 @@ spec:
     runAsUser: 10000
   containers:
   - name: libeopp-build
-    image: cgici/eopp-build-container:1.15.0
+    image: cgici/eopp-build-container:1.17.0
     imagePullPolicy: IfNotPresent
     command:
     - cat
@@ -76,7 +76,7 @@ spec:
 
     stage('SQ Analysis') {
       environment {
-        BRANCH_ARGS = "${CHANGE_ID ? "-Dsonar.branch.name=${BRANCH_NAME} -Dsonar.branch.target=${baseBranch}" : "-Dsonar.branch.name=${BRANCH_NAME}"}"
+        BRANCH_ARGS = "${CHANGE_ID ? "-Dsonar.pullrequest.key=${CHANGE_ID} -Dsonar.pullrequest.branch=${CHANGE_BRANCH} -Dsonar.pullrequest.base=${baseBranch}" : ""}"
         VERSION_ARGS = "${TAG_NAME ? "-Dsonar.projectVersion=${TAG_NAME}" : "-Dsonar.projectVersion=${baseBranch}"}"
         ABORT_ON_QUALITY_GATE = "${CHANGE_ID ? "true" : "false"}"
       }
