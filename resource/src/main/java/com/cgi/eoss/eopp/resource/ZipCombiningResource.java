@@ -19,6 +19,7 @@ package com.cgi.eoss.eopp.resource;
 import com.google.common.io.ByteStreams;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
+import org.springframework.lang.Nullable;
 import org.springframework.util.unit.DataSize;
 
 import java.io.BufferedOutputStream;
@@ -72,7 +73,8 @@ public class ZipCombiningResource extends AbstractResource {
 
     @Override
     public String getDescription() {
-        return "ZipFile [ " + contents.stream().map(it -> it.resource).filter(Objects::nonNull).map(Resource::getDescription).collect(Collectors.joining(",")) + " ]";
+        return "ZipFile (compression: " + compressionLevel + ") " +
+                "[ " + contents.stream().map(it -> it.resource).filter(Objects::nonNull).map(Resource::getDescription).collect(Collectors.joining(",")) + " ]";
     }
 
     @Override
@@ -103,14 +105,24 @@ public class ZipCombiningResource extends AbstractResource {
                     }
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new EoppResourceException(e);
             }
         });
 
         return pis;
     }
 
-    public final static class ZipResourceEntry {
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    public static final class ZipResourceEntry {
         private final String path;
         private final FileTime lastModified;
 

@@ -28,6 +28,7 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
@@ -38,7 +39,6 @@ import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
 import java.io.File;
@@ -156,19 +156,33 @@ public class EoppS3ObjectResource implements EoppResource {
         try {
             return s3AsyncClient.getObject(request, responseTransformer)
                     .get();
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException(e);
+        } catch (ExecutionException e) {
             throw new IOException(e);
         }
+    }
+
+    @Override
+    public boolean equals(@Nullable Object other) {
+        return (this == other || (other instanceof Resource &&
+                ((Resource) other).getDescription().equals(getDescription())));
+    }
+
+    @Override
+    public int hashCode() {
+        return getDescription().hashCode();
     }
 
     protected ResourceMetadataWrapper getS3ObjectMetadata() {
         try {
             return s3AsyncClient.headObject(HeadObjectRequest.builder()
-                .bucket(bucket)
-                .key(key)
+                    .bucket(bucket)
+                    .key(key)
                     .build())
                     .thenApply(response -> {
-                    ResourceMetadataWrapper.ResourceMetadataWrapperBuilder builder = ResourceMetadataWrapper.builder();
+                        ResourceMetadataWrapper.ResourceMetadataWrapperBuilder builder = ResourceMetadataWrapper.builder();
 
                         builder.exists(true);
                         builder.readable(true);
@@ -204,8 +218,8 @@ public class EoppS3ObjectResource implements EoppResource {
                                 .filter(Optional::isPresent).map(Optional::get).findFirst()
                                 .ifPresent(builder::checksum);
 
-                    return builder.build();
-                })
+                        return builder.build();
+                    })
                     .get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

@@ -37,7 +37,7 @@ public class EoppZipCombiningResourceTest {
                 new ZipCombiningResource.ZipResourceEntry("subdir2/", FileTime.fromMillis(resource2.lastModified())),
                 new ZipCombiningResource.ZipResourceEntry("subdir2/testfile2", resource2)
         ), true);
-        assertThat(zipResource.getDescription()).isEqualTo("ZipFile [ " + resource.getDescription() + "," + resource2.getDescription() + " ]");
+        assertThat(zipResource.getDescription()).isEqualTo("ZipFile (compression: -1) [ " + resource.getDescription() + "," + resource2.getDescription() + " ]");
         assertThat(zipResource.getFileMeta().getChecksum()).isNotEmpty();
         assertThat(zipResource.getFileMeta().getFilename()).isEmpty();
         assertThat(zipResource.getOriginalSize()).isEqualTo(resource.contentLength() + resource2.contentLength());

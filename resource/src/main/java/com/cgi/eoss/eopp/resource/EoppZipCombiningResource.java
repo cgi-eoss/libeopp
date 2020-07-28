@@ -22,6 +22,7 @@ import com.cgi.eoss.eopp.util.Timestamps;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import org.springframework.core.io.Resource;
+import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -139,6 +140,21 @@ public class EoppZipCombiningResource extends ZipCombiningResource implements Eo
         return false;
     }
 
+    @Override
+    public String getFilename() {
+        return filename;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
     /**
      * @return The original file size of all entries in the zip file, i.e. the sum of all constituent resource
      * contentLengths.
@@ -147,8 +163,4 @@ public class EoppZipCombiningResource extends ZipCombiningResource implements Eo
         return originalSize;
     }
 
-    @Override
-    public String getFilename() {
-        return filename;
-    }
 }
