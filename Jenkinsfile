@@ -76,7 +76,7 @@ spec:
 
     stage('SQ Analysis') {
       environment {
-        BRANCH_ARGS = "${CHANGE_ID ? "-Dsonar.pullrequest.key=${CHANGE_ID} -Dsonar.pullrequest.branch=${CHANGE_BRANCH} -Dsonar.pullrequest.base=${baseBranch}" : ""}"
+        BRANCH_ARGS = "${CHANGE_ID ? "-Dsonar.pullrequest.key=${CHANGE_ID} -Dsonar.pullrequest.branch=${CHANGE_BRANCH} -Dsonar.pullrequest.base=${baseBranch}" : "-Dsonar.branch.name=${baseBranch}"}"
         VERSION_ARGS = "${TAG_NAME ? "-Dsonar.projectVersion=${TAG_NAME}" : "-Dsonar.projectVersion=${baseBranch}"}"
         ABORT_ON_QUALITY_GATE = "${CHANGE_ID ? "true" : "false"}"
       }
