@@ -183,7 +183,7 @@ class JobGraph private constructor(
         }
 
         override fun withInput(key: String, value: URI) = apply {
-            (steps["INPUT-$key"] as InputStep).sourceUris.add(value)
+            (getStep("INPUT-$key") as InputStep).sourceUris.add(value)
         }
 
         override fun build(): JobGraph {
@@ -194,7 +194,7 @@ class JobGraph private constructor(
 
             // Build the network so we can prune safely
             dataConnectors.forEach {
-                network.addEdge(steps[it.sourceStep]!!, steps[it.destStep]!!, it)
+                network.addEdge(getStep(it.sourceStep), getStep(it.destStep), it)
             }
 
             populateDefaultParameters(network)
@@ -203,6 +203,9 @@ class JobGraph private constructor(
 
             return JobGraph(network)
         }
+
+        private fun getStep(stepIdentifier: String): Step =
+            steps[stepIdentifier]?: throw GraphBuildFailureException("No Step found with identifier: $stepIdentifier")
 
         private fun populateDefaultParameters(network: MutableNetwork<Step, DataConnector>) {
             network.nodes().filterIsInstance<ProcessStep>().forEach { step ->

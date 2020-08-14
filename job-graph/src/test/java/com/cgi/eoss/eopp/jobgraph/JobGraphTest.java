@@ -564,4 +564,24 @@ public class JobGraphTest {
         }
     }
 
+    @Test
+    public void buildFailureWithMisconfiguredInput() {
+        // A workflow with inputs having minOccurs > 0
+        Workflow workflow = Workflow.newBuilder()
+                .addInputs(Input.newBuilder().setIdentifier("expected_input").setMinOccurs(1).build())
+                .build();
+
+        try {
+            // Provide an input value for a Workflow input which doesn't exist
+            JobGraph.builder("test-job-id")
+                    .withWorkflow(workflow)
+                    .withInput("expected_input", URI.create("http://example.com/expected"))
+                    .withInput("nonexistent_input", URI.create("http://example.com/nonexistent"))
+                    .build();
+            fail("Expected GraphBuildFailureException");
+        } catch (GraphBuildFailureException e) {
+            assertThat(e.getMessage()).isEqualTo("No Step found with identifier: INPUT-nonexistent_input");
+        }
+    }
+
 }
