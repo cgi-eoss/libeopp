@@ -23,6 +23,8 @@ def maven_library(
         build_javadoc_library = True,
         sq_srcs = None,
         sq_targets = None,
+        test_srcs = [],
+        test_targets = [],
         **kwargs):
     maven_coordinates = maven_coordinates_tag(name, group_id, artifact_id)
 
@@ -79,6 +81,8 @@ def maven_library(
             artifact_id,
             group_id,
             targets = sq_targets if sq_targets else [":%s" % name],
+            test_srcs = test_srcs if test_srcs else native.glob(["src/test/java/**/*.java"]),
+            test_targets = test_targets,
         )
 
 def sonarqube_project(
@@ -87,14 +91,19 @@ def sonarqube_project(
         artifact_name,
         artifact_id = None,
         group_id = "com.cgi.eoss.eopp",
-        targets = []):
+        targets = [],
+        test_srcs = [],
+        test_targets = []):
     sq_project(
         name = "sq_%s" % name,
         srcs = srcs,
+        test_srcs = test_srcs,
         project_key = "%s:%s" % (group_id, (artifact_id or name)),
         project_name = artifact_name,
         tags = ["manual"],
         targets = targets,
+        test_reports = ["//:test_reports"],
+        test_targets = test_targets,
         visibility = ["//visibility:public"],
     )
 

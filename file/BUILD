@@ -31,15 +31,18 @@ maven_library(
     srcs = [":file_java_srcs"],
     artifact_name = "libeopp :: file",
     deploy_java_library = False,
+    root_packages = ["com.cgi.eoss.eopp.file"],
+    test_targets = [
+        ":FileMetasTest",
+    ],
     exports = [":file_java_proto"],
     deps = [
         ":file_java_proto",
         "//third_party/protobuf:protobuf_java",
-        "//util:timestamps",
         "//util:eopp-headers",
+        "//util:timestamps",
         "@maven//:com_google_guava_guava",
     ],
-    root_packages = ["com.cgi.eoss.eopp.file"],
 )
 
 load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")

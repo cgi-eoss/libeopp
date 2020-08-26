@@ -14,6 +14,11 @@ maven_library(
     name = "rpc",
     srcs = [":rpc_java_srcs"],
     artifact_name = "libeopp :: rpc",
+    root_packages = ["com.cgi.eoss.eopp.rpc"],
+    test_targets = [
+        ":DiscoveryClientNameResolverProviderTest",
+        ":GrpcClientTest",
+    ],
     deps = [
         "//third_party/grpc:core",
         "//third_party/grpc:core_inprocess",
@@ -26,7 +31,6 @@ maven_library(
         "@maven//:org_springframework_cloud_spring_cloud_commons",
         "@maven//:org_springframework_spring_core",
     ],
-    root_packages = ["com.cgi.eoss.eopp.rpc"],
 )
 
 java_library(

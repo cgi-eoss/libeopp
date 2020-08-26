@@ -14,6 +14,12 @@ maven_library(
     artifact_name = "libeopp :: job-graph",
     build_javadoc_library = False,
     build_kt_jvm_library = True,
+    root_packages = ["com.cgi.eoss.eopp.jobgraph"],
+    test_targets = [
+        ":JobGraphTest",
+        ":StepInstanceExpanderNestedWorkflowTest",
+        ":StepInstanceExpanderParallelTest",
+    ],
     runtime_deps = ["@org_jetbrains_kotlin_kotlin_reflect"],
     deps = [
         "//identifier",
@@ -23,7 +29,6 @@ maven_library(
         "@maven//:org_slf4j_slf4j_api",
         "@maven//:org_springframework_spring_core",
     ],
-    root_packages = ["com.cgi.eoss.eopp.jobgraph"],
 )
 
 java_library(

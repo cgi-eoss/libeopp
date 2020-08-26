@@ -8,17 +8,22 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/resolver/ResolverFacade.java",
     ],
     artifact_name = "libeopp :: resolver",
+    root_packages = ["com.cgi.eoss.eopp.resolver"],
     sq_srcs = glob(["src/main/java/**"]),
     sq_targets = [
         ":okhttp-resolver",
         ":path-resolver",
         ":resolver",
     ],
+    test_targets = [
+        ":DefaultResolverFacadeTest",
+        ":OkHttpResolverTest",
+        ":PathResolverTest",
+    ],
     deps = [
         "//resource",
         "@org_slf4j_slf4j_api",
     ],
-    root_packages = ["com.cgi.eoss.eopp.resolver"],
 )
 
 maven_library(
@@ -26,13 +31,13 @@ maven_library(
     srcs = ["src/main/java/com/cgi/eoss/eopp/resolver/PathResolver.java"],
     artifact_name = "libeopp :: resolver :: path",
     generate_sonarqube_project = False,
+    root_packages = ["com.cgi.eoss.eopp.resolver"],
     deps = [
         ":resolver",
         "//resource",
         "//resource:path-resource",
         "@maven//:com_google_guava_guava",
     ],
-    root_packages = ["com.cgi.eoss.eopp.resolver"],
 )
 
 maven_library(
@@ -40,6 +45,7 @@ maven_library(
     srcs = ["src/main/java/com/cgi/eoss/eopp/resolver/OkHttpResolver.java"],
     artifact_name = "libeopp :: resolver :: okhttp",
     generate_sonarqube_project = False,
+    root_packages = ["com.cgi.eoss.eopp.resolver"],
     deps = [
         ":resolver",
         "//resource",
@@ -47,7 +53,6 @@ maven_library(
         "@maven//:com_google_guava_guava",
         "@maven//:com_squareup_okhttp3_okhttp",
     ],
-    root_packages = ["com.cgi.eoss.eopp.resolver"],
 )
 
 java_library(

@@ -73,9 +73,9 @@ http_archive(
 
 http_archive(
     name = "bazel_sonarqube",
-    sha256 = "2fbb1596fa7ef5e24fa2631f810a116de9513dda7d15ea96fb6f16319cd2e42d",
-    strip_prefix = "bazel-sonarqube-ab1774e5bbcbb602a956fb3b6215c81cbd716127",
-    urls = ["https://github.com/Zetten/bazel-sonarqube/archive/ab1774e5bbcbb602a956fb3b6215c81cbd716127.zip"],
+    sha256 = "e33f8222983b20cc4eb7d128db68bf83a63571d0b6e05b97bd3871b81f8fb9d9",
+    strip_prefix = "bazel-sonarqube-56537ff1cf4e6c28fba2b06e0f20d1f4e186645e",
+    urls = ["https://github.com/Zetten/bazel-sonarqube/archive/56537ff1cf4e6c28fba2b06e0f20d1f4e186645e.zip"],
 )
 
 load("//third_party/java:java_repositories.bzl", "ARTIFACTS", "REPOSITORIES")

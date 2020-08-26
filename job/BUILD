@@ -33,6 +33,10 @@ maven_library(
     srcs = [":job_java_srcs"],
     artifact_name = "libeopp :: job",
     deploy_java_library = False,
+    root_packages = ["com.cgi.eoss.eopp.job"],
+    test_targets = [
+        ":StepDataSetsTest",
+    ],
     exports = [":job_java_proto"],
     deps = [
         ":job_java_proto",
@@ -40,7 +44,6 @@ maven_library(
         "@maven//:com_google_guava_guava",
         "@maven//:org_springframework_spring_web",
     ],
-    root_packages = ["com.cgi.eoss.eopp.job"],
 )
 
 load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")

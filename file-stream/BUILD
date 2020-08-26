@@ -9,6 +9,11 @@ maven_library(
     name = "file-stream",
     srcs = [":file-stream_java_srcs"],
     artifact_name = "libeopp :: file-stream",
+    root_packages = ["com.cgi.eoss.eopp.filestream"],
+    test_targets = [
+        ":EoppFileStreamResourceReactiveTest",
+        ":EoppFileStreamResourceTest",
+    ],
     deps = [
         "//file",
         "//resource",
@@ -22,7 +27,6 @@ maven_library(
         "@maven//:org_slf4j_slf4j_api",
         "@maven//:org_springframework_spring_core",
     ],
-    root_packages = ["com.cgi.eoss.eopp.filestream"],
 )
 
 java_library(

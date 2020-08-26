@@ -4,6 +4,7 @@ maven_library(
     name = "util",
     srcs = ["src/main/java/com/cgi/eoss/eopp/util/Lazy.java"],
     artifact_name = "libeopp :: util",
+    root_packages = ["com.cgi.eoss.eopp.util"],
     sq_srcs = glob(["src/main/java/**"]),
     sq_targets = [
         ":util",
@@ -11,7 +12,9 @@ maven_library(
         ":eopp-headers",
         ":io",
     ],
-    root_packages = ["com.cgi.eoss.eopp.util"],
+    test_targets = [
+        ":LazyTest",
+    ],
 )
 
 maven_library(
@@ -19,8 +22,8 @@ maven_library(
     srcs = ["src/main/java/com/cgi/eoss/eopp/util/Timestamps.java"],
     artifact_name = "libeopp :: util :: timestamps",
     generate_sonarqube_project = False,
-    deps = ["//third_party/protobuf:timestamp_java_proto"],
     root_packages = ["com.cgi.eoss.eopp.util"],
+    deps = ["//third_party/protobuf:timestamp_java_proto"],
 )
 
 maven_library(
@@ -36,11 +39,11 @@ maven_library(
     srcs = ["src/main/java/com/cgi/eoss/eopp/util/HashingCountingOutputStream.java"],
     artifact_name = "libeopp :: util :: io",
     generate_sonarqube_project = False,
+    root_packages = ["com.cgi.eoss.eopp.util"],
     deps = [
         "//file",
         "@maven//:com_google_guava_guava",
     ],
-    root_packages = ["com.cgi.eoss.eopp.util"],
 )
 
 java_library(

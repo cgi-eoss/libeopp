@@ -19,6 +19,13 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 
+filegroup(
+    name = "test_reports",
+    srcs = glob(["bazel-testlogs/**/test.xml"]),
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
+)
+
 # Create a library exporting all modules as dependencies
 
 MODULES = [

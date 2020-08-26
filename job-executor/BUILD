@@ -9,6 +9,10 @@ maven_library(
     name = "job-executor",
     srcs = [":job-executor_java_srcs"],
     artifact_name = "libeopp :: job-executor",
+    root_packages = ["com.cgi.eoss.eopp.executor"],
+    test_targets = [
+        ":AbstractStepOperatorTest",
+    ],
     deps = [
         "//job",
         "//job-graph",
@@ -18,7 +22,6 @@ maven_library(
         "@maven//:org_slf4j_slf4j_api",
         "@maven//:org_springframework_spring_core",
     ],
-    root_packages = ["com.cgi.eoss.eopp.executor"],
 )
 
 java_library(

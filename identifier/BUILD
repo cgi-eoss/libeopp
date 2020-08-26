@@ -27,12 +27,15 @@ maven_library(
     srcs = [":identifier_java_srcs"],
     artifact_name = "libeopp :: identifier",
     deploy_java_library = False,
+    root_packages = ["com.cgi.eoss.eopp.identifier"],
+    test_targets = [
+        ":IdentifierTest",
+    ],
     exports = [":identifier_java_proto"],
     deps = [
         ":identifier_java_proto",
         "//third_party/protobuf:protobuf_java",
     ],
-    root_packages = ["com.cgi.eoss.eopp.identifier"],
 )
 
 load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")

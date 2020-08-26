@@ -19,6 +19,12 @@ maven_library(
         ":resource",
         ":s3-resource",
     ],
+    test_targets = [
+        ":EoppOkHttpResourceTest",
+        ":EoppPathResourceTest",
+        ":EoppS3ObjectResourceTest",
+        ":EoppZipCombiningResourceTest",
+    ],
     deps = [
         "//file",
         "//util:io",
