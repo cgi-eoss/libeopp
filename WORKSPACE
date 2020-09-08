@@ -11,10 +11,10 @@ http_archive(
 
 http_archive(
     name = "bazel_skylib",
-    sha256 = "97e70364e9249702246c0e9444bccdc4b847bed1eb03c5a3ece4f83dfe6abc44",
+    sha256 = "1c531376ac7e5a180e0237938a2536de0c54d93f5c278634818e0efc952dd56c",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.0.2/bazel-skylib-1.0.2.tar.gz",
-        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.0.2/bazel-skylib-1.0.2.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.0.3/bazel-skylib-1.0.3.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.0.3/bazel-skylib-1.0.3.tar.gz",
     ],
 )
 
@@ -24,9 +24,9 @@ bazel_skylib_workspace()
 
 http_archive(
     name = "rules_cc",
-    sha256 = "ce19fea12ee666a0d399e6e15b5a77264f6da2b70f2759adea767c9a7f79b17c",
-    strip_prefix = "rules_cc-5cbd3dfbd1613f71ef29bbb7b10310b81e272975",
-    urls = ["https://github.com/bazelbuild/rules_cc/archive/5cbd3dfbd1613f71ef29bbb7b10310b81e272975.tar.gz"],
+    sha256 = "00cb11a249c93bd59f8b2ae61fba9a34fa26a673a4839fb2f3a57c185a00524a",
+    strip_prefix = "rules_cc-02becfef8bc97bda4f9bb64e153f1b0671aec4ba",
+    urls = ["https://github.com/bazelbuild/rules_cc/archive/02becfef8bc97bda4f9bb64e153f1b0671aec4ba.tar.gz"],
 )
 
 http_archive(
@@ -38,16 +38,16 @@ http_archive(
 
 http_archive(
     name = "rules_proto",
-    sha256 = "dedb72afb9476b2f75da2f661a00d6ad27dfab5d97c0460cf3265894adfaf467",
-    strip_prefix = "rules_proto-486aaf1808a15b87f1b6778be6d30a17a87e491a",
-    urls = ["https://github.com/bazelbuild/rules_proto/archive/486aaf1808a15b87f1b6778be6d30a17a87e491a.tar.gz"],
+    sha256 = "aa1ee19226f707d44bee44c720915199c20c84a23318bb0597ed4e5c873ccbd5",
+    strip_prefix = "rules_proto-40298556293ae502c66579620a7ce867d5f57311",
+    urls = ["https://github.com/bazelbuild/rules_proto/archive/40298556293ae502c66579620a7ce867d5f57311.tar.gz"],
 )
 
 http_archive(
     name = "rules_python",
-    sha256 = "8a4c48ffc3f85b1ee03438d1dc0de0935fa055144c3535df1c07061515d036d4",
-    strip_prefix = "rules_python-c82a8cc1f44ba6e81c65e801b1ec3e4f3852359e",
-    urls = ["https://github.com/bazelbuild/rules_python/archive/c82a8cc1f44ba6e81c65e801b1ec3e4f3852359e.tar.gz"],
+    sha256 = "93ed8a85868d7f0372a935a37dacfefed469960b84c947fed29fba148b37b3bc",
+    strip_prefix = "rules_python-6ed1fe53f8b36ecd404d98634d8e7411531cd6f8",
+    urls = ["https://github.com/bazelbuild/rules_python/archive/6ed1fe53f8b36ecd404d98634d8e7411531cd6f8.tar.gz"],
 )
 
 RULES_JVM_EXTERNAL_TAG = "3.3"
@@ -126,6 +126,6 @@ jarjar_repositories()
 load("@bazel_sonarqube//:repositories.bzl", "bazel_sonarqube_repositories")
 
 bazel_sonarqube_repositories(
-    sonar_scanner_cli_sha256 = "8c78a2a1af24dfbc564d87ba6826795e6892d3035cb91a98c61d9e33e2b3cd46",
-    sonar_scanner_cli_version = "4.3.0.2102",
+    sonar_scanner_cli_sha256 = "b24c19e948f152a4ea8dc43d037253234add639503d42194f6175869693ff058",
+    sonar_scanner_cli_version = "4.4.0.2170",
 )

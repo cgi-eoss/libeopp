@@ -1,8 +1,8 @@
 plugins {
     base
     id("com.github.zetten.bazel-dependencies-plugin") version "1.7.3"
-    id("com.github.ben-manes.versions") version "0.29.0"
-    id("io.spring.dependency-management") version "1.0.9.RELEASE"
+    id("com.github.ben-manes.versions") version "0.31.0"
+    id("io.spring.dependency-management") version "1.0.10.RELEASE"
 }
 
 val generate by configurations.creating
@@ -14,7 +14,7 @@ bazelDependencies {
     createMavenInstallJson = true
     sourcesChecksums = true
     compileOnly = setOf(
-        "com.google.auto.value:auto-value-annotations:1.6.3",
+        "com.google.auto.value:auto-value-annotations:1.7.2",
         "com.google.errorprone:error_prone_annotations:2.3.4",
         "org.codehaus.mojo:animal-sniffer-annotations:1.18",
         "javax.annotation:javax.annotation-api:1.3.2",
@@ -27,7 +27,7 @@ bazelDependencies {
         "com.google.truth.extensions:truth-liteproto-extension:1.0.1",
         "com.google.truth.extensions:truth-proto-extension:1.0.1",
         "com.google.truth:truth:1.0.1",
-        "com.squareup.okhttp3:mockwebserver:4.8.0",
+        "com.squareup.okhttp3:mockwebserver:4.8.1",
         "junit:junit:4.13",
         "org.hamcrest:hamcrest:2.2",
         "org.hamcrest:hamcrest-core:2.2",
@@ -39,18 +39,18 @@ repositories {
     jcenter()
 }
 
-extra["aws-sdk-v2.version"] = "2.13.61"
-extra["google-common-protos.version"] = "1.18.0"
-extra["grpc-java.version"] = "1.30.2" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
+extra["aws-sdk-v2.version"] = "2.14.12"
+extra["google-common-protos.version"] = "1.18.1"
+extra["grpc-java.version"] = "1.31.1" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
 extra["guava.version"] = "29.0-jre"
 extra["j2objc-annotations.version"] = "1.3"
 extra["jimfs.version"] = "1.1"
 extra["kotlin.version"] = "1.3.72"
-extra["okhttp.version"] = "4.8.0"
-extra["protobuf-java.version"] = "3.12.2"
+extra["okhttp.version"] = "4.8.1"
+extra["protobuf-java.version"] = "3.13.0"
 extra["reactor-grpc.version"] = "1.0.1"
-extra["spring-boot.version"] = "2.3.2.RELEASE"
-extra["spring-cloud.version"] = "Hoxton.SR6"
+extra["spring-boot.version"] = "2.3.3.RELEASE"
+extra["spring-cloud.version"] = "Hoxton.SR8"
 extra["truth.version"] = "1.0.1"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
 
