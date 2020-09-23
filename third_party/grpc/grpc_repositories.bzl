@@ -1,13 +1,13 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-GRPC_JAVA_VERSION = "1.31.1"
+GRPC_JAVA_VERSION = "1.32.1"
 
 REACTOR_GRPC_VERSION = "1.0.1"
 
 def grpc_repositories():
     http_archive(
         name = "io_grpc_grpc_java",
-        sha256 = "919c5c567c9e068470a44e62c723a271c4351eb6092da99ef3185cc4a35b4ffa",
+        sha256 = "2705d274ce79b324f3520414202481a09640b4b14e58d3124841b3318d9b6e19",
         strip_prefix = "grpc-java-%s" % GRPC_JAVA_VERSION,
         urls = ["https://github.com/grpc/grpc-java/archive/v%s.zip" % GRPC_JAVA_VERSION],
     )
