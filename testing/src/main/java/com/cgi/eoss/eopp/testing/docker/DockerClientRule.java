@@ -1,0 +1,86 @@
+package com.cgi.eoss.eopp.testing.docker;
+
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.core.DefaultDockerClientConfig;
+import com.github.dockerjava.core.DockerClientImpl;
+import com.github.dockerjava.core.RemoteApiVersion;
+import com.github.dockerjava.transport.DockerHttpClient;
+import com.github.dockerjava.zerodep.ZerodepDockerHttpClient;
+import org.junit.Assume;
+import org.junit.rules.ExternalResource;
+
+/**
+ * <p>A JUnit test rule to provision a Docker API client.</p>
+ * <p>This includes a flag to automatically skip tests using this rule if the configured Docker Engine is unusable.</p>
+ *
+ * @see DockerClient
+ */
+public class DockerClientRule extends ExternalResource {
+    //@VisibleForTesting
+    static final String DEFAULT_DOCKER_HOST = "unix:///var/run/docker.sock";
+
+    private final DockerClient dockerClient;
+    private final String dockerHostUrl;
+    private final boolean skipIfUnusable;
+
+    /**
+     * <p>Create a new Docker client, connecting to an Engine running on the local Docker socket, skipping tests if it
+     * is unusable.</p>
+     */
+    public DockerClientRule() {
+        this(DEFAULT_DOCKER_HOST);
+    }
+
+    /**
+     * <p>Create a new Docker client, connecting to an Engine running at the specified URL, skipping tests if it is
+     * unusable.</p>
+     */
+    public DockerClientRule(String dockerHostUrl) {
+        this(dockerHostUrl, true);
+    }
+
+    /**
+     * <p>Create a new Docker client, connecting to an Engine running at the specified URL, optionally skipping tests if
+     * it is unusable.</p>
+     */
+    public DockerClientRule(String dockerHostUrl, boolean skipIfUnusable) {
+        this.dockerHostUrl = dockerHostUrl;
+        this.skipIfUnusable = skipIfUnusable;
+        DefaultDockerClientConfig dockerClientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder()
+                .withApiVersion(RemoteApiVersion.VERSION_1_24)
+                .withDockerHost(dockerHostUrl)
+                .build();
+        DockerHttpClient dockerHttpClient = new ZerodepDockerHttpClient.Builder()
+                .dockerHost(dockerClientConfig.getDockerHost())
+                .sslConfig(dockerClientConfig.getSSLConfig())
+                .build();
+        this.dockerClient = DockerClientImpl.getInstance(dockerClientConfig, dockerHttpClient);
+    }
+
+    @Override
+    protected void before() throws Throwable {
+        try {
+            dockerClient.infoCmd().exec();
+        } catch (Exception e) {
+            if (skipIfUnusable) {
+                Assume.assumeNoException("Docker client cannot connect to engine", e);
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    /**
+     * @return The configured Docker API client.
+     */
+    public DockerClient getDockerClient() {
+        return dockerClient;
+    }
+
+    /**
+     * @return The configured Docker Engine host URL.
+     */
+    public String getDockerHostUrl() {
+        return dockerHostUrl;
+    }
+}

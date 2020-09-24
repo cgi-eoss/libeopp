@@ -48,6 +48,7 @@ NON_SQ_TARGETS = [
     "//resource:okhttp-resource",
     "//resource:path-resource",
     "//resource:s3-resource",
+    "//testing:docker-junit-rules",
     "//util:eopp-headers",
     "//util:timestamps",
     "//util:io",

@@ -69,6 +69,7 @@ def maven_library(
         targets = [":%s" % name],
         artifact_name = artifact_name,
         artifact_id = artifact_id or name,
+        group_id = group_id,
         packaging = packaging,
         tags = ["manual", maven_coordinates],
     )

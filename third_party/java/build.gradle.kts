@@ -28,6 +28,8 @@ repositories {
 }
 
 extra["aws-sdk-v2.version"] = "2.14.23"
+extra["commons-compress.version"] = "1.20"
+extra["docker-java.version"] = "3.2.5"
 extra["google-common-protos.version"] = "1.18.1"
 extra["grpc-java.version"] = "1.32.1" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
 extra["guava.version"] = "29.0-jre"
@@ -52,6 +54,8 @@ dependencyManagement {
         mavenBom("software.amazon.awssdk:bom:${property("aws-sdk-v2.version")}")
     }
     dependencies {
+        dependency("com.github.docker-java:docker-java-core:${property("docker-java.version")}")
+        dependency("com.github.docker-java:docker-java-transport-zerodep:${property("docker-java.version")}")
         dependency("com.google.api.grpc:proto-google-common-protos:${property("google-common-protos.version")}")
         dependency("com.google.guava:guava:${property("guava.version")}")
         dependency("com.google.j2objc:j2objc-annotations:${property("j2objc-annotations.version")}")
@@ -64,12 +68,15 @@ dependencyManagement {
         dependency("com.squareup.okhttp3:logging-interceptor:${property("okhttp.version")}")
         dependency("com.squareup.okhttp3:mockwebserver:${property("okhttp.version")}")
         dependency("com.squareup.okhttp3:okhttp:${property("okhttp.version")}")
+        dependency("org.apache.commons:commons-compress:${property("commons-compress.version")}")
         dependency("org.apache.tomcat:annotations-api:${property("org.apache.tomcat:annotations-api.version")}")
     }
 }
 
 dependencies {
     generate("ch.qos.logback:logback-classic")
+    generate("com.github.docker-java:docker-java-core")
+    generate("com.github.docker-java:docker-java-transport-zerodep")
     generate("com.fasterxml.jackson.core:jackson-databind")
     generate("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     generate("com.google.api.grpc:proto-google-common-protos")
@@ -94,6 +101,8 @@ dependencies {
     generate("io.projectreactor:reactor-core")
     generate("javax.annotation:javax.annotation-api")
     generate("junit:junit")
+    generate("org.awaitility:awaitility")
+    generate("org.apache.commons:commons-compress")
     generate("org.apache.tomcat:annotations-api")
     generate("org.jetbrains.kotlin:kotlin-reflect")
     generate("org.jetbrains.kotlin:kotlin-stdlib")
