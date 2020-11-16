@@ -32,6 +32,7 @@ MODULES = [
     "file",
     "file-stream",
     "identifier",
+    "geojson",
     "job",
     "job-executor",
     "job-graph",
@@ -43,6 +44,7 @@ MODULES = [
 ]
 
 NON_SQ_TARGETS = [
+    "//geojson:geojson-schema",
     "//resolver:okhttp-resolver",
     "//resolver:path-resolver",
     "//resource:okhttp-resource",

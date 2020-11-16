@@ -1081,6 +1081,48 @@
                 "sha256": "7f4d40e97827f8a3285c3e47e8d28797ecfd45fb2ff94bd12cb6a83760a5f427"
             },
             {
+                "coord": "com.networknt:json-schema-validator:1.0.45",
+                "file": "v1/https/jcenter.bintray.com/com/networknt/json-schema-validator/1.0.45/json-schema-validator-1.0.45.jar",
+                "directDependencies": [
+                    "com.fasterxml.jackson.core:jackson-databind:2.11.2",
+                    "org.apache.commons:commons-lang3:3.10",
+                    "org.slf4j:slf4j-api:1.7.30"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:2.11.2",
+                    "com.fasterxml.jackson.core:jackson-core:2.11.2",
+                    "com.fasterxml.jackson.core:jackson-databind:2.11.2",
+                    "org.apache.commons:commons-lang3:3.10",
+                    "org.slf4j:slf4j-api:1.7.30"
+                ],
+                "url": "https://jcenter.bintray.com/com/networknt/json-schema-validator/1.0.45/json-schema-validator-1.0.45.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/com/networknt/json-schema-validator/1.0.45/json-schema-validator-1.0.45.jar"
+                ],
+                "sha256": "bd15e78808ee7b92f8bb99bd7b653769eadbc79f7bc997034c1640fe1424dca4"
+            },
+            {
+                "coord": "com.networknt:json-schema-validator:jar:sources:1.0.45",
+                "file": "v1/https/jcenter.bintray.com/com/networknt/json-schema-validator/1.0.45/json-schema-validator-1.0.45-sources.jar",
+                "directDependencies": [
+                    "com.fasterxml.jackson.core:jackson-databind:jar:sources:2.11.2",
+                    "org.apache.commons:commons-lang3:jar:sources:3.10",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30"
+                ],
+                "dependencies": [
+                    "com.fasterxml.jackson.core:jackson-annotations:jar:sources:2.11.2",
+                    "com.fasterxml.jackson.core:jackson-core:jar:sources:2.11.2",
+                    "com.fasterxml.jackson.core:jackson-databind:jar:sources:2.11.2",
+                    "org.apache.commons:commons-lang3:jar:sources:3.10",
+                    "org.slf4j:slf4j-api:jar:sources:1.7.30"
+                ],
+                "url": "https://jcenter.bintray.com/com/networknt/json-schema-validator/1.0.45/json-schema-validator-1.0.45-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/com/networknt/json-schema-validator/1.0.45/json-schema-validator-1.0.45-sources.jar"
+                ],
+                "sha256": "3c2a7b26b2fc77f70c085ab42b3ce3e924df8d68edb3b5a80439ddde31a57ee1"
+            },
+            {
                 "coord": "com.salesforce.servicelibs:grpc-contrib:0.8.1",
                 "file": "v1/https/jcenter.bintray.com/com/salesforce/servicelibs/grpc-contrib/0.8.1/grpc-contrib-0.8.1.jar",
                 "directDependencies": [
@@ -2855,6 +2897,32 @@
                 "sha256": "0eb5d7f270c2fccdab31daa5f7091b038ad0099b29885040604d66e07fd46a18"
             },
             {
+                "coord": "org.apache.commons:commons-lang3:3.10",
+                "file": "v1/https/jcenter.bintray.com/org/apache/commons/commons-lang3/3.10/commons-lang3-3.10.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/org/apache/commons/commons-lang3/3.10/commons-lang3-3.10.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/org/apache/commons/commons-lang3/3.10/commons-lang3-3.10.jar"
+                ],
+                "sha256": "28968ae55fff465494083aeba856f8824c34902329882bf61e77246a91e25aa9"
+            },
+            {
+                "coord": "org.apache.commons:commons-lang3:jar:sources:3.10",
+                "file": "v1/https/jcenter.bintray.com/org/apache/commons/commons-lang3/3.10/commons-lang3-3.10-sources.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/org/apache/commons/commons-lang3/3.10/commons-lang3-3.10-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/org/apache/commons/commons-lang3/3.10/commons-lang3-3.10-sources.jar"
+                ],
+                "sha256": "8809a59cd44660215183ea1de710bcaf0bec2e8d858ca7c72b3017a5063f3dac"
+            },
+            {
                 "coord": "org.apache.httpcomponents:httpclient:4.5.12",
                 "file": "v1/https/jcenter.bintray.com/org/apache/httpcomponents/httpclient/4.5.12/httpclient-4.5.12.jar",
                 "directDependencies": [
@@ -3338,6 +3406,32 @@
                     "https://jcenter.bintray.com/org/jetbrains/annotations/13.0/annotations-13.0-sources.jar"
                 ],
                 "sha256": "42a5e144b8e81d50d6913d1007b695e62e614705268d8cf9f13dbdc478c2c68e"
+            },
+            {
+                "coord": "org.locationtech.jts:jts-core:1.17.1",
+                "file": "v1/https/jcenter.bintray.com/org/locationtech/jts/jts-core/1.17.1/jts-core-1.17.1.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/org/locationtech/jts/jts-core/1.17.1/jts-core-1.17.1.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/org/locationtech/jts/jts-core/1.17.1/jts-core-1.17.1.jar"
+                ],
+                "sha256": "5f87419b7b0104d9ae3ea1648340241495d2c3a1d3e7f44e678641e0b46e8b9e"
+            },
+            {
+                "coord": "org.locationtech.jts:jts-core:jar:sources:1.17.1",
+                "file": "v1/https/jcenter.bintray.com/org/locationtech/jts/jts-core/1.17.1/jts-core-1.17.1-sources.jar",
+                "directDependencies": [
+                ],
+                "dependencies": [
+                ],
+                "url": "https://jcenter.bintray.com/org/locationtech/jts/jts-core/1.17.1/jts-core-1.17.1-sources.jar",
+                "mirror_urls": [
+                    "https://jcenter.bintray.com/org/locationtech/jts/jts-core/1.17.1/jts-core-1.17.1-sources.jar"
+                ],
+                "sha256": "b09b6d11a8f5ccfce2c6af9c2e8ac0924131a2f145e66af0d0b04bd43d1ef089"
             },
             {
                 "coord": "org.mockito:mockito-core:3.3.3",
@@ -4653,6 +4747,6 @@
             }
         ],
         "version": "0.1.0",
-        "__AUTOGENERATED_FILE_DO_NOT_MODIFY_THIS_FILE_MANUALLY": -1289305059
+        "__AUTOGENERATED_FILE_DO_NOT_MODIFY_THIS_FILE_MANUALLY": 1811465645
     }
 }

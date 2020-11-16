@@ -13,14 +13,6 @@ bazelDependencies {
     mode = com.github.zetten.bazeldeps.BazelDependenciesMode.RULES_JVM_EXTERNAL
     createMavenInstallJson = true
     sourcesChecksums = true
-    compileOnly = setOf(
-        "com.google.auto.value:auto-value-annotations:1.7.2",
-        "com.google.errorprone:error_prone_annotations:2.3.4",
-        "org.codehaus.mojo:animal-sniffer-annotations:1.18",
-        "javax.annotation:javax.annotation-api:1.3.2",
-        "org.jetbrains:annotations:13.0",
-        "org.apache.tomcat:annotations-api:6.0.53"
-    )
 }
 
 repositories {
@@ -35,6 +27,8 @@ extra["grpc-java.version"] = "1.32.1" // check org.apache.tomcat:annotations-api
 extra["guava.version"] = "29.0-jre"
 extra["j2objc-annotations.version"] = "1.3"
 extra["jimfs.version"] = "1.1"
+extra["json-schema-validator.version"] = "1.0.45"
+extra["jts-core.version"] = "1.17.1"
 extra["kotlin.version"] = "1.3.72"
 extra["okhttp.version"] = "4.9.0"
 extra["protobuf-java.version"] = "3.13.0"
@@ -64,12 +58,14 @@ dependencyManagement {
         dependency("com.google.truth.extensions:truth-java8-extension:${property("truth.version")}")
         dependency("com.google.truth.extensions:truth-proto-extension:${property("truth.version")}")
         dependency("com.google.truth:truth:${property("truth.version")}")
+        dependency("com.networknt:json-schema-validator:${property("json-schema-validator.version")}")
         dependency("com.salesforce.servicelibs:reactive-grpc-gencommon:${property("reactor-grpc.version")}")
         dependency("com.squareup.okhttp3:logging-interceptor:${property("okhttp.version")}")
         dependency("com.squareup.okhttp3:mockwebserver:${property("okhttp.version")}")
         dependency("com.squareup.okhttp3:okhttp:${property("okhttp.version")}")
         dependency("org.apache.commons:commons-compress:${property("commons-compress.version")}")
         dependency("org.apache.tomcat:annotations-api:${property("org.apache.tomcat:annotations-api.version")}")
+        dependency("org.locationtech.jts:jts-core:${property("jts-core.version")}")
     }
 }
 
@@ -87,6 +83,7 @@ dependencies {
     generate("com.google.truth.extensions:truth-java8-extension")
     generate("com.google.truth.extensions:truth-proto-extension")
     generate("com.google.truth:truth")
+    generate("com.networknt:json-schema-validator")
     generate("com.salesforce.servicelibs:reactive-grpc-gencommon")
     generate("com.squareup.okhttp3:logging-interceptor")
     generate("com.squareup.okhttp3:mockwebserver")
@@ -106,6 +103,7 @@ dependencies {
     generate("org.apache.tomcat:annotations-api")
     generate("org.jetbrains.kotlin:kotlin-reflect")
     generate("org.jetbrains.kotlin:kotlin-stdlib")
+    generate("org.locationtech.jts:jts-core")
     generate("org.mockito:mockito-core")
     generate("org.slf4j:slf4j-api")
     generate("org.springframework.cloud:spring-cloud-commons")
