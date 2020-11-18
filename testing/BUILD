@@ -1,4 +1,5 @@
 load("//tools:maven.bzl", "maven_library")
+load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@rules_java//java:defs.bzl", "java_library", "java_test")
 
 maven_library(
@@ -8,8 +9,10 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/testing/docker/DockerRegistryRule.java",
     ],
     artifact_name = "libeopp :: testing :: docker-junit-rules",
+    generate_sonarqube_project = False,
     group_id = "com.cgi.eoss.eopp.testing",
     root_packages = ["com.cgi.eoss.eopp.testing"],
+    test_suite = [":testing_tests"],
     deps = [
         "@maven//:com_github_docker_java_docker_java_api",
         "@maven//:com_github_docker_java_docker_java_core",
@@ -20,13 +23,9 @@ maven_library(
     ],
 )
 
-java_library(
+gen_java_tests(
     name = "testing_tests",
-    testonly = True,
     srcs = glob(["src/test/java/**/*.java"]),
-    runtime_deps = [
-        "@maven//:ch_qos_logback_logback_classic",
-    ],
     deps = [
         ":docker-junit-rules",
         "@maven//:com_github_docker_java_docker_java_api",
@@ -35,18 +34,4 @@ java_library(
         "@maven//:junit_junit",
         "@maven//:org_apache_commons_commons_compress",
     ],
-)
-
-java_test(
-    name = "DockerClientRuleTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.testing.docker.DockerClientRuleTest",
-    runtime_deps = [":testing_tests"],
-)
-
-java_test(
-    name = "DockerRegistryRuleTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.testing.docker.DockerRegistryRuleTest",
-    runtime_deps = [":testing_tests"],
 )

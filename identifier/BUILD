@@ -30,6 +30,7 @@ maven_library(
     srcs = [":identifier_java_srcs"],
     artifact_name = "libeopp :: identifier",
     deploy_java_library = False,
+    generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.identifier"],
     test_suite = [":identifier_tests"],
     exports = [":identifier_java_proto"],

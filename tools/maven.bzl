@@ -3,6 +3,7 @@ load("@google_bazel_common//tools/maven:pom_file.bzl", default_pom_file = "pom_f
 load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 load("@bazel_sonarqube//:defs.bzl", "sq_project")
 load("@rules_java//java:defs.bzl", "java_library")
+load("//tools/pitest:pitest.bzl", "pitest_mutation_coverage_test")
 
 POM_VERSION = "${project.version}"
 
@@ -27,6 +28,7 @@ def maven_library(
         test_srcs = [],
         test_targets = [],
         test_suite = None,
+        generate_pitest_coverage_target = False,
         **kwargs):
     maven_coordinates = maven_coordinates_tag(name, group_id, artifact_id)
 
@@ -76,14 +78,14 @@ def maven_library(
         tags = ["manual", maven_coordinates],
     )
 
-    if generate_sonarqube_project:
-        _test_srcs = test_srcs if test_srcs else native.glob(["src/test/java/**/*.java"])
-        _test_targets = []
-        _test_targets.extend(test_targets)
-        if test_suite:
-            # test source -> target mapping from @google_bazel_common//testing:test_defs.bzl
-            _test_targets.extend([":%s" % test_file.replace(".java", "") for test_file in _test_srcs if test_file.endswith("Test.java")])
+    _test_srcs = test_srcs if test_srcs else native.glob(["src/test/java/**/*.java"])
+    _test_targets = []
+    _test_targets.extend(test_targets)
+    if test_suite:
+        # test source -> target mapping from @google_bazel_common//testing:test_defs.bzl
+        _test_targets.extend([":%s" % test_file.replace(".java", "") for test_file in _test_srcs if test_file.endswith("Test.java")])
 
+    if generate_sonarqube_project:
         sonarqube_project(
             name,
             sq_srcs if sq_srcs else srcs,
@@ -93,6 +95,18 @@ def maven_library(
             targets = sq_targets if sq_targets else [":%s" % name],
             test_srcs = _test_srcs,
             test_targets = _test_targets,
+        )
+
+    if generate_pitest_coverage_target:
+        pitest_mutation_coverage_test(
+            name = "%s_pitest" % name,
+            srcs = srcs,
+            libraries = [":%s" % name],
+            target_classes = ",".join(["%s.*" % p for p in root_packages]),
+            target_tests = ",".join(["%s.*" % p for p in root_packages]),
+            test_srcs = _test_srcs,
+            test_targets = _test_targets,
+            tags = ["manual", "pitest"],
         )
 
 def sonarqube_project(

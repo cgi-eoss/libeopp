@@ -11,6 +11,7 @@ maven_library(
     name = "job-executor",
     srcs = [":job-executor_java_srcs"],
     artifact_name = "libeopp :: job-executor",
+    generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.executor"],
     test_suite = [":job-executor_tests"],
     deps = [

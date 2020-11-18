@@ -10,6 +10,7 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/util/Lazy.java",
     ],
     artifact_name = "libeopp :: util",
+    generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.util"],
     sq_srcs = glob(["src/main/java/**"]),
     sq_targets = [

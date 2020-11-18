@@ -31,6 +31,7 @@ maven_library(
     srcs = [":workflow_java_srcs"],
     artifact_name = "libeopp :: workflow",
     deploy_java_library = False,
+    generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.workflow"],
     test_suite = [":workflow_tests"],
     exports = [":workflow_java_proto"],

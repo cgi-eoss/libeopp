@@ -31,6 +31,7 @@ extra["json-schema-validator.version"] = "1.0.57"
 extra["jts-core.version"] = "1.18.2"
 extra["kotlin.version"] = "1.5.31"
 extra["okhttp.version"] = "4.9.1"
+extra["pitest.version"] = "1.7.2"
 extra["protobuf-java.version"] = "3.17.3"
 extra["reactor-grpc.version"] = "1.2.0"
 extra["spring-boot.version"] = "2.5.5"
@@ -67,6 +68,10 @@ dependencyManagement {
         dependency("org.apache.commons:commons-compress:${property("commons-compress.version")}")
         dependency("org.apache.tomcat:annotations-api:${property("org.apache.tomcat:annotations-api.version")}")
         dependency("org.locationtech.jts:jts-core:${property("jts-core.version")}")
+        dependency("org.pitest:pitest:${property("pitest.version")}")
+        dependency("org.pitest:pitest-aggregator:${property("pitest.version")}")
+        dependency("org.pitest:pitest-command-line:${property("pitest.version")}")
+        dependency("org.pitest:pitest-html-report:${property("pitest.version")}")
     }
 }
 
@@ -111,6 +116,10 @@ dependencies {
     generate("org.jetbrains.kotlin:kotlin-stdlib")
     generate("org.locationtech.jts:jts-core")
     generate("org.mockito:mockito-core")
+    generate("org.pitest:pitest")
+    generate("org.pitest:pitest-aggregator")
+    generate("org.pitest:pitest-command-line")
+    generate("org.pitest:pitest-html-report")
     generate("org.slf4j:slf4j-api")
     generate("org.springframework.cloud:spring-cloud-commons")
     generate("org.springframework:spring-core")

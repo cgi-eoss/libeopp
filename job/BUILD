@@ -36,6 +36,7 @@ maven_library(
     srcs = [":job_java_srcs"],
     artifact_name = "libeopp :: job",
     deploy_java_library = False,
+    generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.job"],
     test_suite = [":job_tests"],
     exports = [":job_java_proto"],

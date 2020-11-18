@@ -1,1 +1,3 @@
-exports_files(["pom-template.xml"])
+exports_files([
+    "pom-template.xml",
+])

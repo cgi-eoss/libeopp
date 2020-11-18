@@ -14,6 +14,7 @@ maven_library(
     name = "file-stream",
     srcs = [":file-stream_java_srcs"],
     artifact_name = "libeopp :: file-stream",
+    generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.filestream"],
     test_suite = [":file-stream_tests"],
     deps = [

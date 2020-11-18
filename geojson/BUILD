@@ -11,6 +11,7 @@ maven_library(
     name = "geojson",
     srcs = [":geojson_java_srcs"],
     artifact_name = "libeopp :: geojson",
+    generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.geojson"],
     test_suite = [":geojson_tests"],
     deps = [

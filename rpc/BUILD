@@ -11,6 +11,7 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/rpc/GrpcMethod.java",
     ],
     artifact_name = "libeopp :: rpc",
+    generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.rpc"],
     sq_srcs = glob(["src/main/java/**/*.java"]),
     sq_targets = [

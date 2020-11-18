@@ -16,6 +16,7 @@ maven_library(
     artifact_name = "libeopp :: job-graph",
     build_javadoc_library = False,
     build_kt_jvm_library = True,
+    generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.jobgraph"],
     test_suite = [":job-graph_tests"],
     runtime_deps = ["@org_jetbrains_kotlin_kotlin_reflect"],
