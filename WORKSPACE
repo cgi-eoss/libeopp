@@ -4,9 +4,9 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "google_bazel_common",
-    sha256 = "af494f72366fc9127a756d57042098b9f27b9d01f38f791d3de8a006f88d1271",
-    strip_prefix = "bazel-common-53d2b4f9143ebe0ec7315e32bc66b63d72fc0307",
-    urls = ["https://github.com/google/bazel-common/archive/53d2b4f9143ebe0ec7315e32bc66b63d72fc0307.zip"],
+    sha256 = "cf607d9004a518d8a9bc959b558ffca730ab26e31ee1a7a36248fb054ca84cb7",
+    strip_prefix = "bazel-common-11b744fb848a5c73b7173e8b771bf857b8558c89",
+    urls = ["https://github.com/google/bazel-common/archive/11b744fb848a5c73b7173e8b771bf857b8558c89.zip"],
 )
 
 http_archive(
@@ -61,9 +61,9 @@ http_archive(
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
 
-rules_kotlin_version = "legacy-1.4.0-rc3"
+rules_kotlin_version = "v1.5.0-alpha-2"
 
-rules_kotlin_sha = "da0e6e1543fcc79e93d4d93c3333378f3bd5d29e82c1bc2518de0dbe048e6598"
+rules_kotlin_sha = "6194a864280e1989b6d8118a4aee03bb50edeeae4076e5bc30eef8a98dcd4f07"
 
 http_archive(
     name = "io_bazel_rules_kotlin",
@@ -126,6 +126,6 @@ jarjar_repositories()
 load("@bazel_sonarqube//:repositories.bzl", "bazel_sonarqube_repositories")
 
 bazel_sonarqube_repositories(
-    sonar_scanner_cli_sha256 = "b24c19e948f152a4ea8dc43d037253234add639503d42194f6175869693ff058",
-    sonar_scanner_cli_version = "4.4.0.2170",
+    sonar_scanner_cli_sha256 = "a271a933d14da6e8705d58996d30afd0b4afc93c0bfe957eb377bed808c4fa89",
+    sonar_scanner_cli_version = "4.5.0.2216",
 )

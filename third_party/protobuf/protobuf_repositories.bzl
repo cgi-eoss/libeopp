@@ -1,6 +1,6 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-PROTOBUF_VERSION = "3.13.0"
+PROTOBUF_VERSION = "3.14.0"
 
 def protobuf_repositories():
     #    # Protobuf expects an //external:python_headers label which would contain the
@@ -21,19 +21,15 @@ def protobuf_repositories():
 
     http_archive(
         name = "com_google_protobuf",
-        sha256 = "1c744a6a1f2c901e68c5521bc275e22bdc66256eeb605c2781923365b7087e5f",
+        sha256 = "bf0e5070b4b99240183b29df78155eee335885e53a8af8683964579c214ad301",
         strip_prefix = "protobuf-%s" % PROTOBUF_VERSION,
-        patches = ["@com_cgi_eoss_eopp//third_party/protobuf:protobuf_drop_java_7_compatibility.patch"],
-        patch_args = ["-p1"],
         urls = ["https://github.com/google/protobuf/archive/v%s.zip" % PROTOBUF_VERSION],
     )
 
     http_archive(
         name = "com_google_protobuf_javalite",
-        sha256 = "1c744a6a1f2c901e68c5521bc275e22bdc66256eeb605c2781923365b7087e5f",
+        sha256 = "bf0e5070b4b99240183b29df78155eee335885e53a8af8683964579c214ad301",
         strip_prefix = "protobuf-%s" % PROTOBUF_VERSION,
-        patches = ["@com_cgi_eoss_eopp//third_party/protobuf:protobuf_drop_java_7_compatibility.patch"],
-        patch_args = ["-p1"],
         urls = ["https://github.com/google/protobuf/archive/v%s.zip" % PROTOBUF_VERSION],
     )
 

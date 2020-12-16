@@ -2,6 +2,7 @@ load("@rules_jvm_external//:defs.bzl", "javadoc")
 load("@google_bazel_common//tools/maven:pom_file.bzl", default_pom_file = "pom_file")
 load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kt_jvm_library")
 load("@bazel_sonarqube//:defs.bzl", "sq_project")
+load("@rules_java//java:defs.bzl", "java_library")
 
 POM_VERSION = "${project.version}"
 
@@ -37,13 +38,13 @@ def maven_library(
             **kwargs
         )
 
-        native.java_library(
+        java_library(
             name = "%s_srcjar" % name,
             resources = srcs,
             tags = ["manual", "maven_srcjar", maven_coordinates],
         )
     else:
-        native.java_library(
+        java_library(
             name = name,
             srcs = srcs,
             tags = (["maven_artifact"] if deploy_java_library else []) + [maven_coordinates],

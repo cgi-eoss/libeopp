@@ -8,49 +8,46 @@ pipeline {
   }
   agent {
     kubernetes {
-      label 'libeopp-build'
-      yaml """
-apiVersion: v1
-kind: Pod
-metadata:
-  annotations:
-    cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
-spec:
-  securityContext:
-    runAsUser: 10000
-  containers:
-  - name: libeopp-build
-    image: cgici/eopp-build-container:1.17.0
-    imagePullPolicy: IfNotPresent
-    command:
-    - cat
-    tty: true
-    resources:
-      requests:
-        cpu: 2
-        memory: 4Gi
-"""
+      yamlFile 'JenkinsfilePod.yaml'
     }
   }
 
   stages {
+    stage('Setup') {
+      steps {
+        gerritReview message: "Starting build: ${env.BUILD_URL}"
+
+        container('libeopp-build') {
+          echo "Updating repository URLs to local proxies..."
+          sh """
+            sed -i 's#https\\(:/\\)\\?/jcenter.bintray.com/#http\\1/cgici-nexus-nexus/repository/maven-jcenter/#' third_party/java/maven_install.json
+            sed -i 's#https\\(:/\\)\\?/repo.maven.apache.org/maven2/#http\\1/cgici-nexus-nexus/repository/maven-central/#' third_party/java/maven_install.json
+            (cd third_party/java && ./gradlew --no-daemon rehashMavenInstall)
+          """
+        }
+      }
+    }
+
     stage('Build') {
       steps {
         container('libeopp-build') {
-          gerritReview message: "Starting build: ${env.BUILD_URL}"
           sh "bazel build //..."
+        }
+      }
+    }
+
+    stage('Test Maven Install') {
+      steps {
+        container('libeopp-build') {
           sh "./scripts/deploy/install-local-snapshot.sh"
         }
       }
     }
 
     stage('Test') {
-      environment {
-        EXTRA_TEST_FLAGS = "${CHANGE_ID ? '' : '--nocache_test_results'}"
-      }
       steps {
         container('libeopp-build') {
-          sh "bazel coverage //... --test_output=errors --keep_going --noremote_accept_cached \${EXTRA_TEST_FLAGS}"
+          sh "bazel coverage //... --test_output=errors --keep_going"
         }
       }
       post {

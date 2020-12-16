@@ -1,3 +1,6 @@
+load("//tools:maven.bzl", "maven_library")
+load("@rules_java//java:defs.bzl", "java_library", "java_test")
+
 filegroup(
     name = "job-graph_java_srcs",
     srcs = glob([
@@ -5,8 +8,6 @@ filegroup(
         "src/main/java/**/*.kt",
     ]),
 )
-
-load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
 
 maven_library(
     name = "job-graph",

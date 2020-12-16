@@ -1,9 +1,13 @@
+load("//tools:maven.bzl", "maven_library")
+load("@com_salesforce_servicelibs_reactive_grpc//bazel:java_reactive_grpc_library.bzl", "reactor_grpc_library")
+load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
+load("@rules_java//java:defs.bzl", "java_library", "java_proto_library", "java_test")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+
 filegroup(
     name = "file-stream_java_srcs",
     srcs = glob(["src/main/java/**/*.java"]),
 )
-
-load("//tools:maven.bzl", "maven_library")
 
 maven_library(
     name = "file-stream",
@@ -67,8 +71,6 @@ java_test(
     runtime_deps = [":file-stream_java_tests"],
 )
 
-load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
-
 proto_library(
     name = "filestream_test_server_proto",
     testonly = True,
@@ -90,8 +92,6 @@ java_grpc_library(
     visibility = ["//visibility:public"],
     deps = [":filestream_test_server_java_proto"],
 )
-
-load("@com_salesforce_servicelibs_reactive_grpc//bazel:java_reactive_grpc_library.bzl", "reactor_grpc_library")
 
 reactor_grpc_library(
     name = "filestream_test_server_reactor_grpc",

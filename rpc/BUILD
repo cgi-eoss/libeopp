@@ -1,3 +1,8 @@
+load("//tools:maven.bzl", "maven_library")
+load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
+load("@rules_java//java:defs.bzl", "java_library", "java_proto_library", "java_test")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+
 filegroup(
     name = "rpc_java_srcs",
     srcs = glob(["src/main/java/**/*.java"]),
@@ -7,8 +12,6 @@ filegroup(
     name = "rpc_java_resources",
     srcs = glob(["src/main/resources/**"]),
 )
-
-load("//tools:maven.bzl", "maven_library")
 
 maven_library(
     name = "rpc",
@@ -66,8 +69,6 @@ java_test(
     test_class = "com.cgi.eoss.eopp.rpc.DiscoveryClientNameResolverProviderTest",
     runtime_deps = [":rpc_java_tests"],
 )
-
-load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
 
 proto_library(
     name = "helloworld_proto",

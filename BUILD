@@ -1,3 +1,7 @@
+load("@rules_java//java:defs.bzl", "java_library")
+load("//tools:maven.bzl", "POM_VERSION", "pom_file")
+load("@bazel_sonarqube//:defs.bzl", "sonarqube")
+
 filegroup(
     name = "dummy",
     visibility = ["//visibility:public"],
@@ -56,8 +60,6 @@ NON_SQ_TARGETS = [
     "//util:io",
 ]
 
-load("//tools:maven.bzl", "POM_VERSION", "pom_file")
-
 java_library(
     name = "eopp",
     tags = [
@@ -74,8 +76,6 @@ pom_file(
     tags = ["maven_coordinates=com.cgi.eoss.eopp:libeopp:" + POM_VERSION],
     targets = [":eopp"],
 )
-
-load("@bazel_sonarqube//:defs.bzl", "sonarqube")
 
 sonarqube(
     name = "sq_libeopp",

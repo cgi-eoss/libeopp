@@ -1,3 +1,8 @@
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@rules_java//java:defs.bzl", "java_library", "java_proto_library", "java_test")
+load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
+load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
+
 filegroup(
     name = "workflow_proto_srcs",
     srcs = glob(["src/main/proto/**/*.proto"]),
@@ -21,13 +26,12 @@ java_proto_library(
     deps = [":workflow_proto"],
 )
 
-load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
-
 maven_library(
     name = "workflow",
     srcs = [":workflow_java_srcs"],
     artifact_name = "libeopp :: workflow",
     deploy_java_library = False,
+    root_packages = ["com.cgi.eoss.eopp.workflow"],
     exports = [":workflow_java_proto"],
     deps = [
         ":workflow_java_proto",
@@ -36,10 +40,7 @@ maven_library(
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
         "@maven//:com_fasterxml_jackson_dataformat_jackson_dataformat_yaml",
     ],
-    root_packages = ["com.cgi.eoss.eopp.workflow"],
 )
-
-load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
 
 # Bundle the proto-derived classes for the Maven artifact
 jarjar_library(

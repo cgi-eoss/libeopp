@@ -1,3 +1,8 @@
+load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
+load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
+load("@rules_java//java:defs.bzl", "java_library", "java_proto_library", "java_test")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+
 filegroup(
     name = "identifier_proto_srcs",
     srcs = glob(["src/main/proto/**/*.proto"]),
@@ -20,8 +25,6 @@ java_proto_library(
     deps = [":identifier_proto"],
 )
 
-load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
-
 maven_library(
     name = "identifier",
     srcs = [":identifier_java_srcs"],
@@ -37,8 +40,6 @@ maven_library(
         "//third_party/protobuf:protobuf_java",
     ],
 )
-
-load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
 
 # Bundle the proto-derived classes for the Maven artifact
 jarjar_library(

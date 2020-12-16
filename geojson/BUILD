@@ -1,4 +1,5 @@
-load("//tools:maven.bzl", "maven_library", "sonarqube_project")
+load("//tools:maven.bzl", "maven_library")
+load("@rules_java//java:defs.bzl", "java_library", "java_test")
 
 filegroup(
     name = "geojson_java_srcs",

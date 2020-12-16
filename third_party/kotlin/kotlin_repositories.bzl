@@ -1,11 +1,10 @@
 load(
     "@io_bazel_rules_kotlin//kotlin:kotlin.bzl",
     _kotlin_repositories = "kotlin_repositories",
-    _kt_register_toolchains = "kt_register_toolchains",
 )
 
-KOTLIN_VERSION = "1.3.72"
-KOTLINC_RELEASE_SHA = "ccd0db87981f1c0e3f209a1a4acb6778f14e63fe3e561a98948b5317e526cc6c"
+KOTLIN_VERSION = "1.4.21"
+KOTLINC_RELEASE_SHA = "46720991a716e90bfc0cf3f2c81b2bd735c14f4ea6a5064c488e04fd76e6b6c7"
 
 KOTLINC_RELEASE = {
     "urls": [
@@ -18,4 +17,4 @@ def kotlin_repositories():
     _kotlin_repositories(compiler_release = KOTLINC_RELEASE)
 
 def kt_register_toolchains():
-    native.register_toolchains("//third_party/kotlin:kotlin_toolchain")
+    native.register_toolchains("@com_cgi_eoss_eopp//third_party/kotlin:kotlin_toolchain")

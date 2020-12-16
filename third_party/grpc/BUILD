@@ -1,8 +1,9 @@
+load("@rules_java//java:defs.bzl", "java_library")
+load(":grpc_repositories.bzl", "GRPC_JAVA_VERSION", "REACTOR_GRPC_VERSION")
+
 licenses(["notice"])
 
 # Re-exports with Maven coordinates for POM generation
-
-load(":grpc_repositories.bzl", "GRPC_JAVA_VERSION", "REACTOR_GRPC_VERSION")
 
 java_library(
     name = "api",
@@ -110,8 +111,8 @@ java_library(
     exports = [
         "@io_grpc_grpc_java//services:binarylog",
         "@io_grpc_grpc_java//services:channelz",
-        "@io_grpc_grpc_java//services:reflection",
         "@io_grpc_grpc_java//services:health",
+        "@io_grpc_grpc_java//services:reflection",
     ],
 )
 

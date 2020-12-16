@@ -1,41 +1,41 @@
 plugins {
     base
-    id("com.github.zetten.bazel-dependencies-plugin") version "1.7.3"
-    id("com.github.ben-manes.versions") version "0.33.0"
+    id("com.github.zetten.bazel-dependencies-plugin") version "1.8.0"
+    id("com.github.ben-manes.versions") version "0.36.0"
     id("io.spring.dependency-management") version "1.0.10.RELEASE"
 }
 
 val generate by configurations.creating
 
 bazelDependencies {
-    configuration = generate
-    outputFile = project.rootDir.resolve("java_repositories.bzl")
-    mode = com.github.zetten.bazeldeps.BazelDependenciesMode.RULES_JVM_EXTERNAL
-    createMavenInstallJson = true
-    sourcesChecksums = true
+    configuration.set(generate)
+    outputFile.set(project.rootDir.resolve("java_repositories.bzl"))
+    createMavenInstallJson.set(true)
+    sourcesChecksums.set(true)
 }
 
 repositories {
     jcenter()
+    mavenCentral()
 }
 
-extra["aws-sdk-v2.version"] = "2.14.23"
+extra["aws-sdk-v2.version"] = "2.15.57"
 extra["commons-compress.version"] = "1.20"
-extra["docker-java.version"] = "3.2.5"
-extra["google-common-protos.version"] = "1.18.1"
-extra["grpc-java.version"] = "1.32.1" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
-extra["guava.version"] = "29.0-jre"
+extra["docker-java.version"] = "3.2.7"
+extra["google-common-protos.version"] = "2.0.1"
+extra["grpc-java.version"] = "1.34.1" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
+extra["guava.version"] = "30.1-jre"
 extra["j2objc-annotations.version"] = "1.3"
 extra["jimfs.version"] = "1.1"
-extra["json-schema-validator.version"] = "1.0.45"
-extra["jts-core.version"] = "1.17.1"
-extra["kotlin.version"] = "1.3.72"
+extra["json-schema-validator.version"] = "1.0.46"
+extra["jts-core.version"] = "1.18.0"
+extra["kotlin.version"] = "1.4.21"
 extra["okhttp.version"] = "4.9.0"
-extra["protobuf-java.version"] = "3.13.0"
+extra["protobuf-java.version"] = "3.14.0"
 extra["reactor-grpc.version"] = "1.0.1"
-extra["spring-boot.version"] = "2.3.4.RELEASE"
-extra["spring-cloud.version"] = "Hoxton.SR8"
-extra["truth.version"] = "1.0.1"
+extra["spring-boot.version"] = "2.4.1"
+extra["spring-cloud.version"] = "2020.0.0"
+extra["truth.version"] = "1.1"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
 
 dependencyManagement {

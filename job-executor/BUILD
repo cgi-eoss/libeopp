@@ -1,9 +1,10 @@
+load("@rules_java//java:defs.bzl", "java_library", "java_test")
+load("//tools:maven.bzl", "maven_library")
+
 filegroup(
     name = "job-executor_java_srcs",
     srcs = glob(["src/main/java/**/*.java"]),
 )
-
-load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
 
 maven_library(
     name = "job-executor",
