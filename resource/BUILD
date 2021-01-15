@@ -69,7 +69,11 @@ maven_library(
 
 maven_library(
     name = "s3-resource",
-    srcs = ["src/main/java/com/cgi/eoss/eopp/resource/EoppS3ObjectResource.java"],
+    srcs = [
+        "src/main/java/com/cgi/eoss/eopp/resource/BaseS3ObjectResource.java",
+        "src/main/java/com/cgi/eoss/eopp/resource/EoppS3ObjectResource.java",
+        "src/main/java/com/cgi/eoss/eopp/resource/EoppS3ObjectAsyncResource.java",
+    ],
     artifact_name = "libeopp :: resource :: s3",
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.resource"],
@@ -127,6 +131,13 @@ java_test(
     name = "EoppOkHttpResourceTest",
     size = "small",
     test_class = "com.cgi.eoss.eopp.resource.EoppOkHttpResourceTest",
+    runtime_deps = [":resource_java_tests"],
+)
+
+java_test(
+    name = "EoppS3ObjectAsyncResourceTest",
+    size = "small",
+    test_class = "com.cgi.eoss.eopp.resource.EoppS3ObjectAsyncResourceTest",
     runtime_deps = [":resource_java_tests"],
 )
 

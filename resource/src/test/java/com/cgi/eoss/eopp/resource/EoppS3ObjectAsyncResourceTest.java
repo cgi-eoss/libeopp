@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3AsyncClient;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -51,11 +51,11 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.fail;
 
 @RunWith(JUnit4.class)
-public class EoppS3ObjectResourceTest {
-    private static final Logger log = LoggerFactory.getLogger(EoppS3ObjectResourceTest.class);
+public class EoppS3ObjectAsyncResourceTest {
+    private static final Logger log = LoggerFactory.getLogger(EoppS3ObjectAsyncResourceTest.class);
 
     private MockWebServer server;
-    private S3Client s3Client;
+    private S3AsyncClient asyncS3Client;
 
     @Before
     public void setUp() throws IOException {
@@ -63,7 +63,7 @@ public class EoppS3ObjectResourceTest {
 
         server.start();
 
-        s3Client = S3Client.builder()
+        asyncS3Client = S3AsyncClient.builder()
                 .endpointOverride(server.url("/").uri())
                 .region(Region.of("LOCAL"))
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("default", "default")))
@@ -92,7 +92,7 @@ public class EoppS3ObjectResourceTest {
                 .setBody(new String(Files.readAllBytes(testfile)))
         );
 
-        EoppResource resource = new EoppS3ObjectResource(s3Client, "EODATA", "testfile");
+        EoppResource resource = new EoppS3ObjectAsyncResource(asyncS3Client, "EODATA", "testfile");
         ProtoTruth.assertThat(resource.getFileMeta()) // S3 HTTP response won't contain nanos, so match only seconds
                 .withPartialScope(FieldScopes.ignoringFields(FileMeta.LAST_MODIFIED_FIELD_NUMBER))
                 .isEqualTo(FileMetas.get(testfile));
