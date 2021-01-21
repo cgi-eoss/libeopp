@@ -4,9 +4,9 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "google_bazel_common",
-    sha256 = "cf607d9004a518d8a9bc959b558ffca730ab26e31ee1a7a36248fb054ca84cb7",
-    strip_prefix = "bazel-common-11b744fb848a5c73b7173e8b771bf857b8558c89",
-    urls = ["https://github.com/google/bazel-common/archive/11b744fb848a5c73b7173e8b771bf857b8558c89.zip"],
+    sha256 = "d8aa0ef609248c2a494d5dbdd4c89ef2a527a97c5a87687e5a218eb0b77ff640",
+    strip_prefix = "bazel-common-4a8d451e57fb7e1efecbf9495587a10684a19eb2",
+    urls = ["https://github.com/google/bazel-common/archive/4a8d451e57fb7e1efecbf9495587a10684a19eb2.zip"],
 )
 
 http_archive(
@@ -24,35 +24,40 @@ bazel_skylib_workspace()
 
 http_archive(
     name = "rules_cc",
-    sha256 = "00cb11a249c93bd59f8b2ae61fba9a34fa26a673a4839fb2f3a57c185a00524a",
-    strip_prefix = "rules_cc-02becfef8bc97bda4f9bb64e153f1b0671aec4ba",
-    urls = ["https://github.com/bazelbuild/rules_cc/archive/02becfef8bc97bda4f9bb64e153f1b0671aec4ba.tar.gz"],
+    sha256 = "71d037168733f26d2a9648ad066ee8da4a34a13f51d24843a42efa6b65c2420f",
+    strip_prefix = "rules_cc-b1c40e1de81913a3c40e5948f78719c28152486d",
+    urls = ["https://github.com/bazelbuild/rules_cc/archive/b1c40e1de81913a3c40e5948f78719c28152486d.tar.gz"],
 )
 
 http_archive(
     name = "rules_java",
-    sha256 = "1969a89e8da396eb7754fd0247b7df39b6df433c3dcca0095b4ba30a5409cc9d",
-    strip_prefix = "rules_java-32ddd6c4f0ad38a54169d049ec05febc393b58fc",
-    urls = ["https://github.com/bazelbuild/rules_java/archive/32ddd6c4f0ad38a54169d049ec05febc393b58fc.tar.gz"],
+    sha256 = "34b41ec683e67253043ab1a3d1e8b7c61e4e8edefbcad485381328c934d072fe",
+    urls = ["https://github.com/bazelbuild/rules_java/releases/download/4.0.0/rules_java-4.0.0.tar.gz"],
 )
+
+load("@rules_java//java:repositories.bzl", "rules_java_dependencies", "rules_java_toolchains")
+
+rules_java_dependencies()
+
+rules_java_toolchains()
 
 http_archive(
     name = "rules_proto",
-    sha256 = "aa1ee19226f707d44bee44c720915199c20c84a23318bb0597ed4e5c873ccbd5",
-    strip_prefix = "rules_proto-40298556293ae502c66579620a7ce867d5f57311",
-    urls = ["https://github.com/bazelbuild/rules_proto/archive/40298556293ae502c66579620a7ce867d5f57311.tar.gz"],
+    sha256 = "9fc210a34f0f9e7cc31598d109b5d069ef44911a82f507d5a88716db171615a8",
+    strip_prefix = "rules_proto-f7a30f6f80006b591fa7c437fe5a951eb10bcbcf",
+    urls = ["https://github.com/bazelbuild/rules_proto/archive/f7a30f6f80006b591fa7c437fe5a951eb10bcbcf.tar.gz"],
 )
 
 http_archive(
     name = "rules_python",
-    sha256 = "93ed8a85868d7f0372a935a37dacfefed469960b84c947fed29fba148b37b3bc",
-    strip_prefix = "rules_python-6ed1fe53f8b36ecd404d98634d8e7411531cd6f8",
-    urls = ["https://github.com/bazelbuild/rules_python/archive/6ed1fe53f8b36ecd404d98634d8e7411531cd6f8.tar.gz"],
+    sha256 = "8cc0ad31c8fc699a49ad31628273529ef8929ded0a0859a3d841ce711a9a90d5",
+    strip_prefix = "rules_python-c7e068d38e2fec1d899e1c150e372f205c220e27",
+    urls = ["https://github.com/bazelbuild/rules_python/archive/c7e068d38e2fec1d899e1c150e372f205c220e27.tar.gz"],
 )
 
-RULES_JVM_EXTERNAL_TAG = "3.3"
+RULES_JVM_EXTERNAL_TAG = "4.0"
 
-RULES_JVM_EXTERNAL_SHA = "d85951a92c0908c80bd8551002d66cb23c3434409c814179c0ff026b53544dab"
+RULES_JVM_EXTERNAL_SHA = "31701ad93dbfe544d597dbe62c9a1fdd76d81d8a9150c2bf1ecf928ecdf97169"
 
 http_archive(
     name = "rules_jvm_external",
@@ -61,9 +66,9 @@ http_archive(
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
 
-rules_kotlin_version = "v1.5.0-alpha-2"
+rules_kotlin_version = "v1.5.0-alpha-3"
 
-rules_kotlin_sha = "6194a864280e1989b6d8118a4aee03bb50edeeae4076e5bc30eef8a98dcd4f07"
+rules_kotlin_sha = "eeae65f973b70896e474c57aa7681e444d7a5446d9ec0a59bb88c59fc263ff62"
 
 http_archive(
     name = "io_bazel_rules_kotlin",
@@ -126,6 +131,6 @@ jarjar_repositories()
 load("@bazel_sonarqube//:repositories.bzl", "bazel_sonarqube_repositories")
 
 bazel_sonarqube_repositories(
-    sonar_scanner_cli_sha256 = "a271a933d14da6e8705d58996d30afd0b4afc93c0bfe957eb377bed808c4fa89",
-    sonar_scanner_cli_version = "4.5.0.2216",
+    sonar_scanner_cli_sha256 = "e45599982e455fc36ac896579a9b88957060882b8eaa3a2d69e9e373f9174381",
+	sonar_scanner_cli_version = "4.6.0.2311",
 )
