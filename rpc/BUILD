@@ -1,4 +1,5 @@
 load("//tools:maven.bzl", "maven_library")
+load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
 load("@rules_java//java:defs.bzl", "java_library", "java_proto_library", "java_test")
 load("@rules_proto//proto:defs.bzl", "proto_library")
@@ -18,10 +19,7 @@ maven_library(
     srcs = [":rpc_java_srcs"],
     artifact_name = "libeopp :: rpc",
     root_packages = ["com.cgi.eoss.eopp.rpc"],
-    test_targets = [
-        ":DiscoveryClientNameResolverProviderTest",
-        ":GrpcClientTest",
-    ],
+    test_suite = [":rpc_tests"],
     deps = [
         "//third_party/grpc:core",
         "//third_party/grpc:core_inprocess",
@@ -36,9 +34,8 @@ maven_library(
     ],
 )
 
-java_library(
-    name = "rpc_java_tests",
-    testonly = True,
+gen_java_tests(
+    name = "rpc_tests",
     srcs = glob(["src/test/java/**/*.java"]),
     deps = [
         ":helloworld_java_grpc",
@@ -54,20 +51,6 @@ java_library(
         "@maven//:org_mockito_mockito_core",
         "@maven//:org_springframework_cloud_spring_cloud_commons",
     ],
-)
-
-java_test(
-    name = "GrpcClientTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.rpc.GrpcClientTest",
-    runtime_deps = [":rpc_java_tests"],
-)
-
-java_test(
-    name = "DiscoveryClientNameResolverProviderTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.rpc.DiscoveryClientNameResolverProviderTest",
-    runtime_deps = [":rpc_java_tests"],
 )
 
 proto_library(

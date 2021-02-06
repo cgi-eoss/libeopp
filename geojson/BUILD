@@ -1,4 +1,5 @@
 load("//tools:maven.bzl", "maven_library")
+load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@rules_java//java:defs.bzl", "java_library", "java_test")
 
 filegroup(
@@ -11,6 +12,7 @@ maven_library(
     srcs = [":geojson_java_srcs"],
     artifact_name = "libeopp :: geojson",
     root_packages = ["com.cgi.eoss.eopp.geojson"],
+    test_suite = [":geojson_tests"],
     deps = [
         "@maven//:com_fasterxml_jackson_core_jackson_annotations",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
@@ -30,13 +32,17 @@ maven_library(
 )
 
 java_library(
-    name = "geojson_java_tests",
-    testonly = True,
-    srcs = glob(["src/test/java/**/*.java"]),
+    name = "geojson_test_resources",
     resources = glob(["src/test/resources/**/*"]),
+)
+
+gen_java_tests(
+    name = "geojson_tests",
+    srcs = glob(["src/test/java/**/*.java"]),
     deps = [
         ":geojson",
         ":geojson-schema",
+        ":geojson_test_resources",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
         "@maven//:com_google_guava_guava",
@@ -45,88 +51,4 @@ java_library(
         "@maven//:junit_junit",
         "@maven//:org_locationtech_jts_jts_core",
     ],
-)
-
-java_test(
-    name = "GeoJSONTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.geojson.GeoJSONTest",
-    runtime_deps = [":geojson_java_tests"],
-)
-
-java_test(
-    name = "FeatureTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.geojson.FeatureTest",
-    runtime_deps = [":geojson_java_tests"],
-)
-
-java_test(
-    name = "FeatureCollectionTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.geojson.FeatureCollectionTest",
-    runtime_deps = [":geojson_java_tests"],
-)
-
-java_test(
-    name = "GeometryCollectionTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.geojson.GeometryCollectionTest",
-    runtime_deps = [":geojson_java_tests"],
-)
-
-java_test(
-    name = "LinearRingTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.geojson.LinearRingTest",
-    runtime_deps = [":geojson_java_tests"],
-)
-
-java_test(
-    name = "LineStringTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.geojson.LineStringTest",
-    runtime_deps = [":geojson_java_tests"],
-)
-
-java_test(
-    name = "MultiLineStringTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.geojson.MultiLineStringTest",
-    runtime_deps = [":geojson_java_tests"],
-)
-
-java_test(
-    name = "MultiPointTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.geojson.MultiPointTest",
-    runtime_deps = [":geojson_java_tests"],
-)
-
-java_test(
-    name = "MultiPolygonTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.geojson.MultiPolygonTest",
-    runtime_deps = [":geojson_java_tests"],
-)
-
-java_test(
-    name = "PointTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.geojson.PointTest",
-    runtime_deps = [":geojson_java_tests"],
-)
-
-java_test(
-    name = "PolygonTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.geojson.PolygonTest",
-    runtime_deps = [":geojson_java_tests"],
-)
-
-java_test(
-    name = "PositionTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.geojson.PositionTest",
-    runtime_deps = [":geojson_java_tests"],
 )

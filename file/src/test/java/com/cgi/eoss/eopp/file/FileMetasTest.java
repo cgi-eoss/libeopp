@@ -33,6 +33,7 @@ import java.nio.file.Paths;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.extensions.proto.ProtoTruth.assertThat;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.junit.Assert.fail;
 
 @RunWith(JUnit4.class)
@@ -40,7 +41,8 @@ public class FileMetasTest {
 
     @Test
     public void testGet() throws IOException {
-        Path testfile = Paths.get("file/src/test/resources/testfile");
+        Path testfile = Files.createTempDirectory("testdata").resolve("testfile");
+        Files.copy(getClass().getResourceAsStream("/testfile"), testfile, REPLACE_EXISTING);
         FileMeta fileMeta = FileMetas.get(testfile);
         assertThat(fileMeta).isEqualTo(FileMeta.newBuilder()
                 .setFilename("testfile")
@@ -53,7 +55,8 @@ public class FileMetasTest {
 
     @Test
     public void testGetWithProperties() throws IOException {
-        Path testfile = Paths.get("file/src/test/resources/testfile");
+        Path testfile = Files.createTempDirectory("testdata").resolve("testfile");
+        Files.copy(getClass().getResourceAsStream("/testfile"), testfile, REPLACE_EXISTING);
         FileMeta fileMeta = FileMetas.get(testfile, ImmutableMap.of("foo", Any.pack(StringValue.of("bar"))));
         assertThat(fileMeta).isEqualTo(FileMeta.newBuilder()
                 .setFilename("testfile")
@@ -67,7 +70,8 @@ public class FileMetasTest {
 
     @Test
     public void testGetWithPropertiesAndExecutable() throws IOException {
-        Path testfile = Paths.get("file/src/test/resources/testfile");
+        Path testfile = Files.createTempDirectory("testdata").resolve("testfile");
+        Files.copy(getClass().getResourceAsStream("/testfile"), testfile, REPLACE_EXISTING);
         FileMeta fileMeta = FileMetas.get(testfile, FileMetas.DEFAULT_HASH_FUNCTION, ImmutableMap.of("foo", Any.pack(StringValue.of("bar"))), true);
         assertThat(fileMeta).isEqualTo(FileMeta.newBuilder()
                 .setFilename("testfile")
@@ -81,7 +85,8 @@ public class FileMetasTest {
 
     @Test
     public void testGetSha256() throws IOException {
-        Path testfile = Paths.get("file/src/test/resources/testfile");
+        Path testfile = Files.createTempDirectory("testdata").resolve("testfile");
+        Files.copy(getClass().getResourceAsStream("/testfile"), testfile, REPLACE_EXISTING);
         FileMeta fileMeta = FileMetas.get(testfile, Hashing.sha256());
         assertThat(fileMeta).isEqualTo(FileMeta.newBuilder()
                 .setFilename("testfile")
@@ -94,7 +99,7 @@ public class FileMetasTest {
 
     @Test
     public void testGetError() throws IOException {
-        Path testfile = Paths.get("file/src/test/resources/nonexisting");
+        Path testfile = Paths.get("/nonexisting");
 
         try {
             FileMetas.get(testfile);
@@ -107,7 +112,8 @@ public class FileMetasTest {
 
     @Test
     public void testToFromBase64() throws IOException {
-        Path testfile = Paths.get("file/src/test/resources/testfile");
+        Path testfile = Files.createTempDirectory("testdata").resolve("testfile");
+        Files.copy(getClass().getResourceAsStream("/testfile"), testfile, REPLACE_EXISTING);
         FileMeta fileMeta = FileMetas.get(testfile);
         String base64 = FileMetas.toBase64(fileMeta);
 

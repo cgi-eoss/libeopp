@@ -1,4 +1,5 @@
 load("//tools:maven.bzl", "maven_library")
+load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@rules_java//java:defs.bzl", "java_library", "java_test")
 
 maven_library(
@@ -20,12 +21,7 @@ maven_library(
         ":resource",
         ":s3-resource",
     ],
-    test_targets = [
-        ":EoppOkHttpResourceTest",
-        ":EoppPathResourceTest",
-        ":EoppS3ObjectResourceTest",
-        ":EoppZipCombiningResourceTest",
-    ],
+    test_suite = [":resource_tests"],
     deps = [
         "//file",
         "//util:io",
@@ -71,8 +67,8 @@ maven_library(
     name = "s3-resource",
     srcs = [
         "src/main/java/com/cgi/eoss/eopp/resource/BaseS3ObjectResource.java",
-        "src/main/java/com/cgi/eoss/eopp/resource/EoppS3ObjectResource.java",
         "src/main/java/com/cgi/eoss/eopp/resource/EoppS3ObjectAsyncResource.java",
+        "src/main/java/com/cgi/eoss/eopp/resource/EoppS3ObjectResource.java",
     ],
     artifact_name = "libeopp :: resource :: s3",
     generate_sonarqube_project = False,
@@ -91,9 +87,8 @@ maven_library(
     ],
 )
 
-java_library(
-    name = "resource_java_tests",
-    testonly = True,
+gen_java_tests(
+    name = "resource_tests",
     srcs = glob(["src/test/java/**/*.java"]),
     runtime_deps = [
         "@maven//:ch_qos_logback_logback_classic",
@@ -118,39 +113,4 @@ java_library(
         "@maven//:software_amazon_awssdk_regions",
         "@maven//:software_amazon_awssdk_s3",
     ],
-)
-
-java_test(
-    name = "EoppPathResourceTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.resource.EoppPathResourceTest",
-    runtime_deps = [":resource_java_tests"],
-)
-
-java_test(
-    name = "EoppOkHttpResourceTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.resource.EoppOkHttpResourceTest",
-    runtime_deps = [":resource_java_tests"],
-)
-
-java_test(
-    name = "EoppS3ObjectAsyncResourceTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.resource.EoppS3ObjectAsyncResourceTest",
-    runtime_deps = [":resource_java_tests"],
-)
-
-java_test(
-    name = "EoppS3ObjectResourceTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.resource.EoppS3ObjectResourceTest",
-    runtime_deps = [":resource_java_tests"],
-)
-
-java_test(
-    name = "EoppZipCombiningResourceTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.resource.EoppZipCombiningResourceTest",
-    runtime_deps = [":resource_java_tests"],
 )

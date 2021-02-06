@@ -1,4 +1,5 @@
 load("//tools:maven.bzl", "maven_library")
+load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@rules_java//java:defs.bzl", "java_library", "java_test")
 
 maven_library(
@@ -16,11 +17,7 @@ maven_library(
         ":path-resolver",
         ":resolver",
     ],
-    test_targets = [
-        ":DefaultResolverFacadeTest",
-        ":OkHttpResolverTest",
-        ":PathResolverTest",
-    ],
+    test_suite = [":resolver_tests"],
     deps = [
         "//resource",
         "@org_slf4j_slf4j_api",
@@ -56,9 +53,8 @@ maven_library(
     ],
 )
 
-java_library(
-    name = "resolver_java_tests",
-    testonly = True,
+gen_java_tests(
+    name = "resolver_tests",
     srcs = glob(["src/test/java/**/*.java"]),
     deps = [
         ":okhttp-resolver",
@@ -76,25 +72,4 @@ java_library(
         "@maven//:junit_junit",
         "@maven//:org_mockito_mockito_core",
     ],
-)
-
-java_test(
-    name = "DefaultResolverFacadeTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.resolver.DefaultResolverFacadeTest",
-    runtime_deps = [":resolver_java_tests"],
-)
-
-java_test(
-    name = "PathResolverTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.resolver.PathResolverTest",
-    runtime_deps = [":resolver_java_tests"],
-)
-
-java_test(
-    name = "OkHttpResolverTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.resolver.OkHttpResolverTest",
-    runtime_deps = [":resolver_java_tests"],
 )

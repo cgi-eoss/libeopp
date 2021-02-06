@@ -43,7 +43,7 @@ public class StepInstanceExpanderNestedWorkflowTest {
     private StepInstance baseStepInstance = StepInstance.newBuilder()
             .setIdentifier("test-step")
             .setConfiguration(StepConfiguration.newBuilder()
-                    .setNestedWorkflow(JobGraphTest.workflow)
+                    .setNestedWorkflow(JobGraphTestData.workflow)
                     .build())
             .addParameters(StepParameterValue.newBuilder()
                     .setIdentifier("sourced_param") // matches the workflow parameter
@@ -125,7 +125,7 @@ public class StepInstanceExpanderNestedWorkflowTest {
                 .build());
         assertThat(steps.get("test-step-first-step").getConfiguration()).isEqualTo(StepConfiguration.newBuilder()
                 .setIdentifier("first-step")
-                .setNestedWorkflow(Workflow.newBuilder().setIdentifier(JobGraphTest.workflow.getIdentifier()).build())
+                .setNestedWorkflow(Workflow.newBuilder().setIdentifier(JobGraphTestData.workflow.getIdentifier()).build())
                 .build());
 
         assertThat(steps.get("test-step-second-step").getInputsList()).containsExactly(

@@ -1,5 +1,6 @@
 load("//tools:maven.bzl", "maven_library")
 load("@com_salesforce_servicelibs_reactive_grpc//bazel:java_reactive_grpc_library.bzl", "reactor_grpc_library")
+load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
 load("@rules_java//java:defs.bzl", "java_library", "java_proto_library", "java_test")
 load("@rules_proto//proto:defs.bzl", "proto_library")
@@ -14,10 +15,7 @@ maven_library(
     srcs = [":file-stream_java_srcs"],
     artifact_name = "libeopp :: file-stream",
     root_packages = ["com.cgi.eoss.eopp.filestream"],
-    test_targets = [
-        ":EoppFileStreamResourceReactiveTest",
-        ":EoppFileStreamResourceTest",
-    ],
+    test_suite = [":file-stream_tests"],
     deps = [
         "//file",
         "//resource",
@@ -34,19 +32,22 @@ maven_library(
 )
 
 java_library(
-    name = "file-stream_java_tests",
-    testonly = True,
-    srcs = [
-        "src/test/java/com/cgi/eoss/eopp/filestream/EoppFileStreamResourceReactiveTest.java",
-        "src/test/java/com/cgi/eoss/eopp/filestream/EoppFileStreamResourceTest.java",
-    ],
-    data = glob(["src/test/resources/**"]),
+    name = "file-stream_test_resources",
+    resources = glob(["src/test/resources/**/*"]),
+)
+
+gen_java_tests(
+    name = "file-stream_tests",
+    srcs = glob(["src/test/java/**/*.java"]),
     deps = [
         ":file-stream",
+        ":file-stream_test_resources",
         ":filestream_test_server_java",
         "//file",
         "//rpc",
+        "//third_party/grpc:api",
         "//third_party/grpc:core_inprocess",
+        "//third_party/grpc:stub",
         "//third_party/grpc:testing",
         "//util:io",
         "@maven//:com_google_guava_guava",
@@ -54,21 +55,9 @@ java_library(
         "@maven//:com_google_truth_truth",
         "@maven//:io_projectreactor_reactor_core",
         "@maven//:junit_junit",
+        "@maven//:org_slf4j_slf4j_api",
+        "@maven//:org_springframework_spring_core",
     ],
-)
-
-java_test(
-    name = "EoppFileStreamResourceTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.filestream.EoppFileStreamResourceTest",
-    runtime_deps = [":file-stream_java_tests"],
-)
-
-java_test(
-    name = "EoppFileStreamResourceReactiveTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.filestream.EoppFileStreamResourceReactiveTest",
-    runtime_deps = [":file-stream_java_tests"],
 )
 
 proto_library(
@@ -123,8 +112,8 @@ java_library(
         ":filestream_test_server_reactor_grpc",
         "//file",
         "//file-stream",
+        "//third_party/grpc:api",
         "//third_party/grpc:stub",
-        "@io_grpc_grpc_java//api",
         "@maven//:com_google_guava_guava",
         "@maven//:io_projectreactor_reactor_core",
         "@maven//:org_slf4j_slf4j_api",

@@ -38,11 +38,11 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.extensions.proto.ProtoTruth.assertThat;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.junit.Assert.fail;
 
 @RunWith(JUnit4.class)
@@ -64,7 +64,8 @@ public class EoppFileStreamResourceTest {
 
     @Test
     public void testResource() throws IOException {
-        Path testfile = Paths.get("file-stream/src/test/resources/testfile");
+        Path testfile = Files.createTempDirectory("testdata").resolve("testfile");
+        Files.copy(getClass().getResourceAsStream("/testfile"), testfile, REPLACE_EXISTING);
         FileMeta fileMeta = FileMetas.get(testfile);
 
         GetFileParam getFile = GetFileParam.newBuilder().setUri(testfile.toUri().toString()).build();

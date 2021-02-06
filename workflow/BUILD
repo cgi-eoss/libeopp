@@ -1,7 +1,8 @@
-load("@rules_proto//proto:defs.bzl", "proto_library")
-load("@rules_java//java:defs.bzl", "java_library", "java_proto_library", "java_test")
 load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
+load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
+load("@rules_java//java:defs.bzl", "java_library", "java_proto_library", "java_test")
+load("@rules_proto//proto:defs.bzl", "proto_library")
 
 filegroup(
     name = "workflow_proto_srcs",
@@ -32,6 +33,7 @@ maven_library(
     artifact_name = "libeopp :: workflow",
     deploy_java_library = False,
     root_packages = ["com.cgi.eoss.eopp.workflow"],
+    test_suite = [":workflow_tests"],
     exports = [":workflow_java_proto"],
     deps = [
         ":workflow_java_proto",
@@ -60,15 +62,16 @@ jarjar_library(
 )
 
 java_library(
-    name = "workflow_java_tests",
-    testonly = True,
+    name = "workflow_test_resources",
+    resources = glob(["src/test/resources/**/*"]),
+)
+
+gen_java_tests(
+    name = "workflow_tests",
     srcs = glob(["src/test/java/**/*.java"]),
-    resources = glob(["src/test/resources/**"]),
-    runtime_deps = [
-        "@maven//:ch_qos_logback_logback_classic",
-    ],
     deps = [
         ":workflow",
+        ":workflow_test_resources",
         "//identifier",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
         "@maven//:com_google_guava_guava",
@@ -76,11 +79,4 @@ java_library(
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],
-)
-
-java_test(
-    name = "WorkflowsTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.workflow.WorkflowsTest",
-    runtime_deps = [":workflow_java_tests"],
 )

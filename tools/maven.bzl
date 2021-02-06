@@ -26,6 +26,7 @@ def maven_library(
         sq_targets = None,
         test_srcs = [],
         test_targets = [],
+        test_suite = None,
         **kwargs):
     maven_coordinates = maven_coordinates_tag(name, group_id, artifact_id)
 
@@ -76,6 +77,13 @@ def maven_library(
     )
 
     if generate_sonarqube_project:
+        _test_srcs = test_srcs if test_srcs else native.glob(["src/test/java/**/*.java"])
+        _test_targets = []
+        _test_targets.extend(test_targets)
+        if test_suite:
+            # test source -> target mapping from @google_bazel_common//testing:test_defs.bzl
+            _test_targets.extend([":%s" % test_file.replace(".java", "") for test_file in _test_srcs if test_file.endswith("Test.java")])
+
         sonarqube_project(
             name,
             sq_srcs if sq_srcs else srcs,
@@ -83,8 +91,8 @@ def maven_library(
             artifact_id,
             group_id,
             targets = sq_targets if sq_targets else [":%s" % name],
-            test_srcs = test_srcs if test_srcs else native.glob(["src/test/java/**/*.java"]),
-            test_targets = test_targets,
+            test_srcs = _test_srcs,
+            test_targets = _test_targets,
         )
 
 def sonarqube_project(

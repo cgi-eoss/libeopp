@@ -1,4 +1,5 @@
 load("//tools:maven.bzl", "maven_library")
+load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@rules_java//java:defs.bzl", "java_library", "java_test")
 
 filegroup(
@@ -16,11 +17,7 @@ maven_library(
     build_javadoc_library = False,
     build_kt_jvm_library = True,
     root_packages = ["com.cgi.eoss.eopp.jobgraph"],
-    test_targets = [
-        ":JobGraphTest",
-        ":StepInstanceExpanderNestedWorkflowTest",
-        ":StepInstanceExpanderParallelTest",
-    ],
+    test_suite = [":job-graph_tests"],
     runtime_deps = ["@org_jetbrains_kotlin_kotlin_reflect"],
     deps = [
         "//identifier",
@@ -32,9 +29,8 @@ maven_library(
     ],
 )
 
-java_library(
-    name = "job-graph_java_tests",
-    testonly = True,
+gen_java_tests(
+    name = "job-graph_tests",
     srcs = glob(["src/test/java/**/*.java"]),
     runtime_deps = [
         "@maven//:ch_qos_logback_logback_classic",
@@ -49,25 +45,4 @@ java_library(
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],
-)
-
-java_test(
-    name = "JobGraphTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.jobgraph.JobGraphTest",
-    runtime_deps = [":job-graph_java_tests"],
-)
-
-java_test(
-    name = "StepInstanceExpanderNestedWorkflowTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.jobgraph.StepInstanceExpanderNestedWorkflowTest",
-    runtime_deps = [":job-graph_java_tests"],
-)
-
-java_test(
-    name = "StepInstanceExpanderParallelTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.jobgraph.StepInstanceExpanderParallelTest",
-    runtime_deps = [":job-graph_java_tests"],
 )

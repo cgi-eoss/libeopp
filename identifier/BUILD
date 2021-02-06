@@ -1,4 +1,5 @@
 load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
+load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
 load("@rules_java//java:defs.bzl", "java_library", "java_proto_library", "java_test")
 load("@rules_proto//proto:defs.bzl", "proto_library")
@@ -31,9 +32,7 @@ maven_library(
     artifact_name = "libeopp :: identifier",
     deploy_java_library = False,
     root_packages = ["com.cgi.eoss.eopp.identifier"],
-    test_targets = [
-        ":IdentifierTest",
-    ],
+    test_suite = [":identifier_tests"],
     exports = [":identifier_java_proto"],
     deps = [
         ":identifier_java_proto",
@@ -59,9 +58,8 @@ jarjar_library(
     visibility = ["//:__pkg__"],
 )
 
-java_library(
-    name = "identifier_java_tests",
-    testonly = True,
+gen_java_tests(
+    name = "identifier_tests",
     srcs = glob(["src/test/java/**/*.java"]),
     deps = [
         ":identifier",
@@ -70,13 +68,6 @@ java_library(
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],
-)
-
-java_test(
-    name = "IdentifierTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.identifier.IdentifierTest",
-    runtime_deps = [":identifier_java_tests"],
 )
 
 proto_library(

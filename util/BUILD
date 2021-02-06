@@ -1,4 +1,5 @@
 load("//tools:maven.bzl", "maven_library")
+load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@rules_java//java:defs.bzl", "java_library", "java_test")
 
 maven_library(
@@ -13,9 +14,7 @@ maven_library(
         ":eopp-headers",
         ":io",
     ],
-    test_targets = [
-        ":LazyTest",
-    ],
+    test_suite = [":util_tests"],
 )
 
 maven_library(
@@ -47,20 +46,12 @@ maven_library(
     ],
 )
 
-java_library(
-    name = "util_java_tests",
-    testonly = True,
+gen_java_tests(
+    name = "util_tests",
     srcs = glob(["src/test/java/**/*.java"]),
     deps = [
         ":util",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],
-)
-
-java_test(
-    name = "LazyTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.util.LazyTest",
-    runtime_deps = [":util_java_tests"],
 )

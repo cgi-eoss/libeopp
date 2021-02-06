@@ -16,7 +16,6 @@
 
 package com.cgi.eoss.eopp.jobgraph;
 
-import com.cgi.eoss.eopp.identifier.Identifier;
 import com.cgi.eoss.eopp.identifier.Identifiers;
 import com.cgi.eoss.eopp.job.JobSpecification;
 import com.cgi.eoss.eopp.job.JobSpecificationInput;
@@ -32,7 +31,6 @@ import com.cgi.eoss.eopp.workflow.Parameter;
 import com.cgi.eoss.eopp.workflow.Step;
 import com.cgi.eoss.eopp.workflow.StepConfiguration;
 import com.cgi.eoss.eopp.workflow.Workflow;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.graph.Network;
@@ -50,123 +48,10 @@ import static org.junit.Assert.fail;
 @RunWith(JUnit4.class)
 public class JobGraphTest {
 
-    private static final Step firstStep = Step.newBuilder()
-            .setIdentifier(Identifier.newBuilder().setIdentifier("first").setVersion("1.0.0").build())
-            .addParameters(Parameter.newBuilder().setIdentifier("SOURCED_PARAM").setMinOccurs(1).build())
-            .addInputs(Input.newBuilder().setIdentifier("in1").setMinOccurs(1).build())
-            .addOutputs(Output.newBuilder().setIdentifier("out1").setMinOccurs(1).build())
-            .build();
-    private static final Step trimmedStep = Step.newBuilder()
-            .setIdentifier(Identifier.newBuilder().setIdentifier("trimmed").setVersion("1.0.0").build())
-            .addParameters(Parameter.newBuilder().setIdentifier("UNPROVIDED_PARAM").setMinOccurs(0).build())
-            .addInputs(Input.newBuilder().setIdentifier("in1").setMinOccurs(1).build())
-            .addOutputs(Output.newBuilder().setIdentifier("out1").setMinOccurs(1).build())
-            .build();
-    private static final Step secondStep = Step.newBuilder()
-            .setIdentifier(Identifier.newBuilder().setIdentifier("second").setVersion("1.0.0").build())
-            .addParameters(Parameter.newBuilder().setIdentifier("DEFAULTED_PARAM").setMinOccurs(1).addDefaultValues("default").build())
-            .addParameters(Parameter.newBuilder().setIdentifier("HARDCODED_PARAM").setMinOccurs(1).build())
-            .addInputs(Input.newBuilder().setIdentifier("in1").setMinOccurs(1).build())
-            .addOutputs(Output.newBuilder().setIdentifier("out1").setMinOccurs(1).build())
-            .build();
-    private static final Step skippedStep = Step.newBuilder()
-            .setIdentifier(Identifier.newBuilder().setIdentifier("skipped").setVersion("1.0.0").build())
-            .addInputs(Input.newBuilder().setIdentifier("in1").setMinOccurs(2).build())
-            .addOutputs(Output.newBuilder().setIdentifier("out1").setMinOccurs(1).build())
-            .build();
-
-    // A fairly comprehensive workflow to exercise the various node/edge conditions, also used in StepInstanceExpanderNestedWorkflowTest
-    static final Workflow workflow = Workflow.newBuilder()
-            .addParameters(Parameter.newBuilder().setIdentifier("sourced_param").setMinOccurs(0).build())
-            .addInputs(Input.newBuilder().setIdentifier("provided_workflow_input").setMinOccurs(1).build())
-            .addInputs(Input.newBuilder().setIdentifier("unprovided_workflow_input").setMinOccurs(1).build())
-            .addOutputs(Output.newBuilder().setIdentifier("workflow_output").setMinOccurs(1)
-                    .setSources(DataSources.newBuilder()
-                            .addStepOutputs(DataSources.StepOutput.newBuilder().setStepIdentifier("second-step").setOutputIdentifier("out1").build())
-                            .addStepOutputs(DataSources.StepOutput.newBuilder().setStepIdentifier("no-param-successor-step").setOutputIdentifier("out1").build())
-                            .addStepOutputs(DataSources.StepOutput.newBuilder().setStepIdentifier("skipped-step").setOutputIdentifier("out1").build())
-                            .build())
-                    .build())
-            .addStepConfigurations(StepConfiguration.newBuilder()
-                    .setIdentifier("first-step")
-                    .setStep(firstStep)
-                    .addParameterLinks(StepConfiguration.ParameterLink.newBuilder()
-                            .setIdentifier("SOURCED_PARAM")
-                            .setWorkflowParameter("sourced_param").build()
-                    )
-                    .addInputLinks(StepConfiguration.InputLink.newBuilder()
-                            .setIdentifier("in1")
-                            .setSources(DataSources.newBuilder()
-                                    .addWorkflowInputs("provided_workflow_input").build()).build()
-                    )
-                    .build())
-            .addStepConfigurations(StepConfiguration.newBuilder()
-                    .setIdentifier("no-param-step")
-                    .setStep(trimmedStep)
-                    .addParameterLinks(StepConfiguration.ParameterLink.newBuilder()
-                            .setIdentifier("UNPROVIDED_PARAM")
-                            .setWorkflowParameter("unprovided_param")
-                            .setSkipStepIfEmpty(true).build()
-                    )
-                    .addInputLinks(StepConfiguration.InputLink.newBuilder()
-                            .setIdentifier("in1")
-                            .setSources(DataSources.newBuilder()
-                                    .addWorkflowInputs("provided_workflow_input").build()).build()
-                    )
-                    .build())
-            .addStepConfigurations(StepConfiguration.newBuilder()
-                    .setIdentifier("no-param-successor-step")
-                    .setStep(trimmedStep)
-                    .addInputLinks(StepConfiguration.InputLink.newBuilder()
-                            .setIdentifier("in1")
-                            .setSources(DataSources.newBuilder()
-                                    .addStepOutputs(DataSources.StepOutput.newBuilder()
-                                            .setStepIdentifier("no-param-step")
-                                            .setOutputIdentifier("out1").build()).build()).build()
-                    )
-                    .build())
-            .addStepConfigurations(StepConfiguration.newBuilder()
-                    .setIdentifier("trimmed-step")
-                    .setStep(trimmedStep)
-                    .addInputLinks(StepConfiguration.InputLink.newBuilder()
-                            .setIdentifier("in1")
-                            .setSources(DataSources.newBuilder()
-                                    .addWorkflowInputs("unprovided_workflow_input").build()).build()
-                    )
-                    .build())
-            .addStepConfigurations(StepConfiguration.newBuilder()
-                    .setIdentifier("second-step")
-                    .setStep(secondStep)
-                    .addParameterLinks(StepConfiguration.ParameterLink.newBuilder()
-                            .setIdentifier("HARDCODED_PARAM")
-                            .addAllHardcodedValues(ImmutableList.of("a", "list", "of", "strings"))
-                            .build()
-                    )
-                    .addInputLinks(StepConfiguration.InputLink.newBuilder()
-                            .setIdentifier("in1")
-                            .setSources(DataSources.newBuilder()
-                                    .addStepOutputs(DataSources.StepOutput.newBuilder()
-                                            .setStepIdentifier("first-step")
-                                            .setOutputIdentifier("out1").build()).build()).build()
-                    )
-                    .build())
-            .addStepConfigurations(StepConfiguration.newBuilder()
-                    .setIdentifier("skipped-step")
-                    .setStep(skippedStep)
-                    .addInputLinks(StepConfiguration.InputLink.newBuilder()
-                            .setIdentifier("in1")
-                            .setSources(DataSources.newBuilder()
-                                    .addStepOutputs(DataSources.StepOutput.newBuilder()
-                                            .setStepIdentifier("first-step")
-                                            .setOutputIdentifier("out1").build()).build()).build()
-                    )
-                    .build())
-            .build();
-
     @Test
     public void testBuildWithSkippedSteps() {
         JobGraph jobGraph = JobGraph.builder("test-job-id")
-                .withWorkflow(workflow)
+                .withWorkflow(JobGraphTestData.workflow)
                 .withInput("provided_workflow_input", URI.create("file:///etc/hosts"))
                 .withParameter("sourced_param", "1")
                 .build();
@@ -254,9 +139,9 @@ public class JobGraphTest {
     @Test
     public void buildStepsWithUnskippedEmptyParameters() {
         // Set no-param-step's parameter.skipStepIfEmpty to false - adding a branch of two steps to the graph
-        Workflow lenientWorkflow = workflow.toBuilder()
-                .setStepConfigurations(1, workflow.getStepConfigurations(1).toBuilder()
-                        .setParameterLinks(0, workflow.getStepConfigurations(1)
+        Workflow lenientWorkflow = JobGraphTestData.workflow.toBuilder()
+                .setStepConfigurations(1, JobGraphTestData.workflow.getStepConfigurations(1).toBuilder()
+                        .setParameterLinks(0, JobGraphTestData.workflow.getStepConfigurations(1)
                                 .getParameterLinks(0).toBuilder().setSkipStepIfEmpty(false)))
                 .build();
 
@@ -334,20 +219,20 @@ public class JobGraphTest {
 
     @Test
     public void buildStepsWithParallelParameters() {
-        Step parallelStep = firstStep.toBuilder()
-                .setParameters(0, firstStep.getParameters(0).toBuilder()
+        Step parallelStep = JobGraphTestData.firstStep.toBuilder()
+                .setParameters(0, JobGraphTestData.firstStep.getParameters(0).toBuilder()
                         .setMinOccurs(1)
                         .setMaxOccurs(1)
                         .build())
                 .build();
 
         // Set first-step's parameter.parallel to true - ensures the parallelStep.maxOccurs does not cause a graph build error
-        StepConfiguration parallelStepConfiguration = workflow.getStepConfigurations(0).toBuilder()
+        StepConfiguration parallelStepConfiguration = JobGraphTestData.workflow.getStepConfigurations(0).toBuilder()
                 .setStep(parallelStep)
-                .setParameterLinks(0, workflow.getStepConfigurations(0).getParameterLinks(0).toBuilder().setParallel(true))
+                .setParameterLinks(0, JobGraphTestData.workflow.getStepConfigurations(0).getParameterLinks(0).toBuilder().setParallel(true))
                 .build();
 
-        Workflow parallelWorkflow = workflow.toBuilder()
+        Workflow parallelWorkflow = JobGraphTestData.workflow.toBuilder()
                 .setStepConfigurations(0, parallelStepConfiguration)
                 .build();
 
@@ -452,7 +337,7 @@ public class JobGraphTest {
                         .build())
                 .addStepConfigurations(StepConfiguration.newBuilder()
                         .setIdentifier("first-step")
-                        .setStep(firstStep)
+                        .setStep(JobGraphTestData.firstStep)
                         .addParameterLinks(StepConfiguration.ParameterLink.newBuilder()
                                 .setIdentifier("SOURCED_PARAM")
                                 .setWorkflowParameter("sourced_param").build()

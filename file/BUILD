@@ -1,4 +1,5 @@
 load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
+load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
 load("@rules_java//java:defs.bzl", "java_library", "java_proto_library", "java_test")
 load("@rules_proto//proto:defs.bzl", "proto_library")
@@ -35,9 +36,7 @@ maven_library(
     artifact_name = "libeopp :: file",
     deploy_java_library = False,
     root_packages = ["com.cgi.eoss.eopp.file"],
-    test_targets = [
-        ":FileMetasTest",
-    ],
+    test_suite = [":file_tests"],
     exports = [":file_java_proto"],
     deps = [
         ":file_java_proto",
@@ -66,12 +65,16 @@ jarjar_library(
 )
 
 java_library(
-    name = "file_java_tests",
-    testonly = True,
+    name = "file_test_resources",
+    resources = glob(["src/test/resources/**/*"]),
+)
+
+gen_java_tests(
+    name = "file_tests",
     srcs = glob(["src/test/java/**/*.java"]),
-    data = glob(["src/test/resources/**"]),
     deps = [
         ":file",
+        ":file_test_resources",
         "//util:timestamps",
         "@com_google_protobuf//:any_proto",
         "@com_google_protobuf//:protobuf_java",
@@ -80,11 +83,4 @@ java_library(
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],
-)
-
-java_test(
-    name = "FileMetasTest",
-    size = "small",
-    test_class = "com.cgi.eoss.eopp.file.FileMetasTest",
-    runtime_deps = [":file_java_tests"],
 )
