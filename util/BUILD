@@ -4,7 +4,11 @@ load("@rules_java//java:defs.bzl", "java_library", "java_test")
 
 maven_library(
     name = "util",
-    srcs = ["src/main/java/com/cgi/eoss/eopp/util/Lazy.java"],
+    srcs = [
+        "src/main/java/com/cgi/eoss/eopp/util/AbortableCountDownLatch.java",
+        "src/main/java/com/cgi/eoss/eopp/util/AbortedException.java",
+        "src/main/java/com/cgi/eoss/eopp/util/Lazy.java",
+    ],
     artifact_name = "libeopp :: util",
     root_packages = ["com.cgi.eoss.eopp.util"],
     sq_srcs = glob(["src/main/java/**"]),
