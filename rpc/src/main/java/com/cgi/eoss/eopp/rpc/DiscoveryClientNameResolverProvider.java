@@ -18,6 +18,7 @@ package com.cgi.eoss.eopp.rpc;
 
 import io.grpc.NameResolver;
 import io.grpc.NameResolverProvider;
+import io.grpc.NameResolverRegistry;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
 import javax.annotation.Nullable;
@@ -34,7 +35,14 @@ public class DiscoveryClientNameResolverProvider extends NameResolverProvider {
     private final DiscoveryClient discoveryClient;
 
     public DiscoveryClientNameResolverProvider(DiscoveryClient discoveryClient) {
+        this(discoveryClient, true);
+    }
+
+    public DiscoveryClientNameResolverProvider(DiscoveryClient discoveryClient, boolean registerSelf) {
         this.discoveryClient = discoveryClient;
+        if (registerSelf) {
+            NameResolverRegistry.getDefaultRegistry().register(this);
+        }
     }
 
     @Nullable

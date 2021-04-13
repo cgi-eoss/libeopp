@@ -16,6 +16,7 @@
 
 package com.cgi.eoss.eopp.rpc;
 
+import com.google.common.collect.ImmutableMap;
 import io.grpc.ManagedChannel;
 import io.grpc.Server;
 import io.grpc.examples.helloworld.GreeterGrpc;
@@ -30,18 +31,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.stubbing.Answer;
-import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClient;
+import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryProperties;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
-import java.util.Collections;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.stream.Collectors.toList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(JUnit4.class)
 public class DiscoveryClientNameResolverProviderTest {
@@ -67,19 +70,20 @@ public class DiscoveryClientNameResolverProviderTest {
         Server server = NettyServerBuilder.forPort(getRandomPort()).addService(serviceImpl).build().start();
         grpcCleanup.register(server);
 
-        // Set up a mock spring-cloud discovery response matching the local Netty gRPC server instance
-        DiscoveryClient discoveryClient = mock(DiscoveryClient.class);
+        // Set up a spring-cloud discovery environment matching the local gRPC server instance
+        SimpleDiscoveryProperties simpleDiscoveryProperties = new SimpleDiscoveryProperties();
+        simpleDiscoveryProperties.setInstances(ImmutableMap.of("helloService", server.getListenSockets().stream()
+                .map(listenSocket -> new DefaultServiceInstance(null, "helloService", ((InetSocketAddress) listenSocket).getHostString(), ((InetSocketAddress) listenSocket).getPort(), false))
+                .collect(toList())));
+        DiscoveryClient discoveryClient = new SimpleDiscoveryClient(simpleDiscoveryProperties);
+
         DiscoveryClientNameResolverProvider discoveryClientNameResolverProvider = new DiscoveryClientNameResolverProvider(discoveryClient);
-        ServiceInstance serviceInstance = mock(ServiceInstance.class);
-        when(serviceInstance.getHost()).thenReturn("localhost");
-        when(serviceInstance.getPort()).thenReturn(server.getPort());
-        when(discoveryClient.getInstances("localhost")).thenReturn(Collections.singletonList(serviceInstance));
 
         assertThat(discoveryClientNameResolverProvider.getDefaultScheme()).isEqualTo("discovery");
         assertThat(discoveryClientNameResolverProvider.isAvailable()).isTrue();
         assertThat(discoveryClientNameResolverProvider.priority()).isEqualTo(8);
 
-        HelloWorldClient helloWorldClient = new HelloWorldClient("discovery://localhost:" + server.getPort(), discoveryClientNameResolverProvider, grpcCleanup);
+        HelloWorldClient helloWorldClient = new HelloWorldClient("discovery://helloService", grpcCleanup);
 
         GreeterGrpc.GreeterBlockingStub greeterBlockingStub = helloWorldClient.getBlockingStub();
         HelloReply reply = greeterBlockingStub.sayHello(HelloRequest.newBuilder().setName("test name").build());

@@ -4,21 +4,18 @@ load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
 load("@rules_java//java:defs.bzl", "java_library", "java_proto_library", "java_test")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
-filegroup(
-    name = "rpc_java_srcs",
-    srcs = glob(["src/main/java/**/*.java"]),
-)
-
-filegroup(
-    name = "rpc_java_resources",
-    srcs = glob(["src/main/resources/**"]),
-)
-
 maven_library(
     name = "rpc",
-    srcs = [":rpc_java_srcs"],
+    srcs = [
+        "src/main/java/com/cgi/eoss/eopp/rpc/GrpcClient.java",
+        "src/main/java/com/cgi/eoss/eopp/rpc/GrpcMethod.java",
+    ],
     artifact_name = "libeopp :: rpc",
     root_packages = ["com.cgi.eoss.eopp.rpc"],
+    sq_srcs = glob(["src/main/java/**/*.java"]),
+    sq_targets = [
+        ":grpc-discovery-client-name-resolver",
+    ],
     test_suite = [":rpc_tests"],
     deps = [
         "//third_party/grpc:core",
@@ -26,9 +23,23 @@ maven_library(
         "//third_party/grpc:stub",
         "//third_party/protobuf:protobuf_java",
         "//util",
-        "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:com_google_guava_guava",
         "@maven//:org_slf4j_slf4j_api",
+    ],
+)
+
+maven_library(
+    name = "grpc-discovery-client-name-resolver",
+    srcs = [
+        "src/main/java/com/cgi/eoss/eopp/rpc/DiscoveryClientNameResolver.java",
+        "src/main/java/com/cgi/eoss/eopp/rpc/DiscoveryClientNameResolverProvider.java",
+    ],
+    artifact_name = "libeopp :: rpc :: grpc-discovery-client-name-resolver",
+    generate_sonarqube_project = False,
+    root_packages = ["com.cgi.eoss.eopp.rpc"],
+    deps = [
+        "//third_party/grpc:api",
+        "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:org_springframework_cloud_spring_cloud_commons",
         "@maven//:org_springframework_spring_core",
     ],
@@ -38,6 +49,7 @@ gen_java_tests(
     name = "rpc_tests",
     srcs = glob(["src/test/java/**/*.java"]),
     deps = [
+        ":grpc-discovery-client-name-resolver",
         ":helloworld_java_grpc",
         ":helloworld_java_proto",
         ":rpc",

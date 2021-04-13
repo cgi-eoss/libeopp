@@ -20,8 +20,6 @@ import com.cgi.eoss.eopp.util.Lazy;
 import io.grpc.ConnectivityState;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.NameResolver;
-import io.grpc.NameResolverRegistry;
 import io.grpc.inprocess.InProcessChannelBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,19 +34,13 @@ public abstract class GrpcClient {
 
     private final String serviceUri;
     private final ReentrantLock channelLock = new ReentrantLock();
-    private final NameResolver.Factory nameResolverFactory;
     // Instantiate a Supplier<ManagedChannel> so that this client can be switched between in-process and standard rpc,
     // and do it lazily so its creation can access gRpcServerProperties
     private final Supplier<Supplier<ManagedChannel>> channelSupplierSupplier = Lazy.lazily(this::buildChannelSupplier);
     private ManagedChannel channel;
 
     protected GrpcClient(String serviceUri) {
-        this(serviceUri, NameResolverRegistry.getDefaultRegistry().asFactory());
-    }
-
-    protected GrpcClient(String serviceUri, NameResolver.Factory nameResolverFactory) {
         this.serviceUri = serviceUri;
-        this.nameResolverFactory = nameResolverFactory;
     }
 
     protected ManagedChannel getChannel() {
@@ -69,7 +61,6 @@ public abstract class GrpcClient {
             return () -> InProcessChannelBuilder.forName(serviceUri.substring(12)).build();
         } else {
             return () -> ManagedChannelBuilder.forTarget(serviceUri)
-                    .nameResolverFactory(nameResolverFactory)
                     .usePlaintext() // TODO TLS
                     .build();
         }
