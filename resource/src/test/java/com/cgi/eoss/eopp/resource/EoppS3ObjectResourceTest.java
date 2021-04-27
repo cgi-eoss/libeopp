@@ -101,10 +101,34 @@ public class EoppS3ObjectResourceTest {
                 .isEqualTo(FileMetas.get(testfile).getLastModified());
         assertThat(resource.contentLength()).isEqualTo(Files.size(testfile));
         assertThat(resource.isCacheable()).isTrue();
-        assertThat(resource.contentLength()).isEqualTo(Files.size(testfile));
         assertThat(resource.shouldRetry(null)).isFalse();
         assertThat(resource.exists()).isTrue();
         assertThat(resource.isReadable()).isTrue();
+        assertThat(resource.getURI()).isEqualTo(URI.create("s3://EODATA/testfile"));
+        assertThat(resource.createRelative("otherfile").getURI()).isEqualTo(URI.create("s3://EODATA/otherfile"));
+
+        try {
+            resource.getFile();
+            fail("Expected FileNotFoundException");
+        } catch (FileNotFoundException e) {
+            assertThat(e.getMessage()).isEqualTo("S3 resources may not be resolved as Files");
+        }
+    }
+
+    @Test
+    public void testResourceNotFound() throws IOException {
+        Path testfile = Files.createTempFile("testfile", null);
+        Files.write(testfile, Arrays.asList("first", "second", "third"));
+
+        server.enqueue(new MockResponse().setResponseCode(404));
+
+        EoppResource resource = new EoppS3ObjectResource(s3Client, "EODATA", "testfile");
+        ProtoTruth.assertThat(resource.getFileMeta()).isEqualTo(FileMeta.getDefaultInstance());
+        assertThat(resource.contentLength()).isEqualTo(-1);
+        assertThat(resource.isCacheable()).isTrue();
+        assertThat(resource.shouldRetry(null)).isFalse();
+        assertThat(resource.exists()).isFalse();
+        assertThat(resource.isReadable()).isFalse();
         assertThat(resource.getURI()).isEqualTo(URI.create("s3://EODATA/testfile"));
         assertThat(resource.createRelative("otherfile").getURI()).isEqualTo(URI.create("s3://EODATA/otherfile"));
 

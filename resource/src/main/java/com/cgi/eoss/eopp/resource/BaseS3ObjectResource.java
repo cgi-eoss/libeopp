@@ -183,7 +183,11 @@ abstract class BaseS3ObjectResource implements com.cgi.eoss.eopp.resource.EoppRe
 
                     return builder.build();
                 })
-                .orElseGet(() -> com.cgi.eoss.eopp.resource.ResourceMetadataWrapper.builder().build());
+                .orElseGet(() -> com.cgi.eoss.eopp.resource.ResourceMetadataWrapper.builder()
+                        .exists(false)
+                        .readable(false)
+                        .fileMeta(FileMeta.getDefaultInstance())
+                        .build());
     }
 
     protected abstract InputStream doGetInputStream(GetObjectRequest request) throws IOException;
