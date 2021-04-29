@@ -65,9 +65,16 @@ public final class StepInstances {
      * executed directly.
      */
     public static boolean hasMultiplicity(StepInstance stepInstance) {
+        return stepInstance.getConfiguration().getExecuteCase() == StepConfiguration.ExecuteCase.NESTED_WORKFLOW
+                || hasParallelConfiguration(stepInstance);
+    }
+
+    /**
+     * @return True if the given StepInstance has any parameters marked for parallel processing.
+     */
+    public static boolean hasParallelConfiguration(StepInstance stepInstance) {
         StepConfiguration configuration = stepInstance.getConfiguration();
-        return configuration.getExecuteCase() == StepConfiguration.ExecuteCase.NESTED_WORKFLOW
-                || configuration.getInputLinksList().stream().anyMatch(StepConfiguration.InputLink::getParallel)
+        return configuration.getInputLinksList().stream().anyMatch(StepConfiguration.InputLink::getParallel)
                 || configuration.getParameterLinksList().stream().anyMatch(StepConfiguration.ParameterLink::getParallel);
     }
 

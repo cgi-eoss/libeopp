@@ -114,7 +114,7 @@ public abstract class AbstractStepOperator implements StepOperator {
             log.debug("{}::{} executing", stepInstance.getJobUuid(), stepInstance.getIdentifier());
 
             ListenableFuture<StepInstance> stepFuture;
-            if (StepInstances.hasMultiplicity(stepInstance) && Strings.isNullOrEmpty(stepInstance.getParentIdentifier())) {
+            if (Strings.isNullOrEmpty(stepInstance.getParentIdentifier()) && StepInstances.hasMultiplicity(stepInstance)) {
                 stepFuture = submitLightweight(stepInstanceId, getParentStepCallable(stepInstance));
             } else {
                 if (!Strings.isNullOrEmpty(stepInstance.getParentIdentifier())) {

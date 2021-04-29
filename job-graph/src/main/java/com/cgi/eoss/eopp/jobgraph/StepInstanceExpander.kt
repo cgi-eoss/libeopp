@@ -103,7 +103,8 @@ internal fun expandParallelParameters(step: StepInstance): List<StepInstance> = 
     .ifEmpty { listOf(step) }
 
 internal fun renameExpandedSteps(parentStep: StepInstance, expandedSteps: List<StepInstance>): List<StepInstance> =
-    if (expandedSteps.size > 1)
+    // If this is a parallel configuration, index each sub-step to avoid identifier collisions
+    if (StepInstances.hasParallelConfiguration(parentStep))
         expandedSteps
             .mapIndexed { idx, stepInstance ->
                 stepInstance.toBuilder()
@@ -111,8 +112,7 @@ internal fun renameExpandedSteps(parentStep: StepInstance, expandedSteps: List<S
                     .setParentIdentifier(parentStep.identifier)
                     .build()
             }
-    else
-        expandedSteps
+    else expandedSteps
 
 private fun padIndex(idx: Int, max: Int): String =
     idx.toString().padStart(max.toString().length, '0')

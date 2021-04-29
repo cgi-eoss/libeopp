@@ -584,4 +584,45 @@ public class StepInstanceExpanderParallelTest {
                 .build());
     }
 
+    @Test
+    public void testExpandParallelSingle() {
+        StepInstance stepInstance = baseStepInstance.toBuilder()
+                .setConfiguration(StepConfiguration.newBuilder()
+                        .addInputLinks(StepConfiguration.InputLink.newBuilder()
+                                .setIdentifier("first-input")
+                                .setParallel(true)
+                                .build())
+                        .build())
+                .setInputs(0, baseStepInstance.getInputs(0).toBuilder()
+                        .setStepInput(StepInput.newBuilder()
+                                .addSources(StepDataSet.newBuilder()
+                                        .setStepIdentifier("source-step")
+                                        .setIdentifier("first-source")
+                                        .setStepOutput(StepOutput.newBuilder()
+                                                .addFilePaths("file1")
+                                                .build())
+                                        .build())
+                                .build())
+                        .build())
+                .build();
+
+        List<StepInstance> stepInstances = JobGraph.expandStepInstance(stepInstance);
+
+        assertThat(stepInstances).hasSize(1);
+        assertThat(stepInstances.get(0)).isEqualTo(stepInstance.toBuilder()
+                .setIdentifier("test-step-1")
+                .setParentIdentifier(stepInstance.getIdentifier())
+                .setInputs(0, StepDataSet.newBuilder()
+                        .setIdentifier("first-input")
+                        .setStepInput(StepInput.newBuilder()
+                                .addSources(StepDataSet.newBuilder()
+                                        .setStepIdentifier("source-step")
+                                        .setIdentifier("first-source")
+                                        .setStepOutput(StepOutput.newBuilder().addFilePaths("file1").build())
+                                        .build())
+                                .build())
+                        .build())
+                .build());
+    }
+
 }
