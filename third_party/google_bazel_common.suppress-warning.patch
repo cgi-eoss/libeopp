@@ -1,0 +1,13 @@
+diff --git a/tools/jarjar/jarjar_runner.sh b/tools/jarjar/jarjar_runner.sh
+index 20dbbc9..9a2c456 100755
+--- a/tools/jarjar/jarjar_runner.sh
++++ b/tools/jarjar/jarjar_runner.sh
+@@ -47,7 +47,7 @@ done
+ # build-data.properties is emitted by Bazel with target information that can
+ # cause conflicts. Delete it since it doesn't make sense to keep in the merged
+ # jar anyway.
+-rm build-data.properties*
++rm -f build-data.properties*
+ rm META-INF/MANIFEST.MF*
+ rm -rf META-INF/maven/
+ duplicate_files="$(find * -type f -regex '.*~[0-9]*$')"

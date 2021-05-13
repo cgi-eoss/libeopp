@@ -1,5 +1,5 @@
 load(
-    "@io_bazel_rules_kotlin//kotlin:kotlin.bzl",
+    "@io_bazel_rules_kotlin//kotlin:repositories.bzl",
     _kotlin_repositories = "kotlin_repositories",
 )
 

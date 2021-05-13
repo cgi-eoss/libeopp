@@ -1,6 +1,6 @@
 load("@rules_jvm_external//:defs.bzl", "javadoc")
 load("@google_bazel_common//tools/maven:pom_file.bzl", default_pom_file = "pom_file")
-load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "kt_jvm_library")
+load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 load("@bazel_sonarqube//:defs.bzl", "sq_project")
 load("@rules_java//java:defs.bzl", "java_library")
 
