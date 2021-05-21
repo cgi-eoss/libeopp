@@ -1,32 +1,30 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-GRPC_JAVA_VERSION = "1.34.1"
+GRPC_JAVA_VERSION = "1.39.0"
 
-REACTOR_GRPC_VERSION = "1.0.1"
+REACTOR_GRPC_VERSION = "1.1.0"
 
 def grpc_repositories():
     http_archive(
         name = "io_grpc_grpc_java",
-        sha256 = "46c1dfc1adda2a149239bcb74ec21bc50d5e03d47d35201f619b464decfa8f9a",
+        sha256 = "9c4fd0c3a316c2921d2cd9b17d24c3b103578054da5a09ef1a0696c317af57ea",
         strip_prefix = "grpc-java-%s" % GRPC_JAVA_VERSION,
         urls = ["https://github.com/grpc/grpc-java/archive/v%s.zip" % GRPC_JAVA_VERSION],
     )
 
     http_archive(
         name = "com_salesforce_servicelibs_reactive_grpc",
-        sha256 = "9cc3a2ad992d0f15a90f28dd974cff631ead35b8b8d2bcfacf23ea42b283cedf",
+        sha256 = "4047c2f883eaadd6e373a560023c33a0d0d5d4a5abf75952ef292efd682b6f2b",
         strip_prefix = "reactive-grpc-%s" % REACTOR_GRPC_VERSION,
         urls = ["https://github.com/salesforce/reactive-grpc/archive/v%s.zip" % REACTOR_GRPC_VERSION],
-        patches = ["@com_cgi_eoss_eopp//third_party/grpc:reactor-grpc-3.4-compatibility.patch"],
-        patch_args = ["-p1"],
     )
 
     # From https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl
     http_archive(
         name = "io_grpc_grpc_proto",
-        sha256 = "5848a4e034126bece0c37c16554fb80625615aedf1acad4e2a3cdbaaa76944eb",
-        strip_prefix = "grpc-proto-cf828d0e1155e5ea58b46d7184ee5596e03ddcb8",
-        urls = ["https://github.com/grpc/grpc-proto/archive/cf828d0e1155e5ea58b46d7184ee5596e03ddcb8.zip"],
+        sha256 = "464e97a24d7d784d9c94c25fa537ba24127af5aae3edd381007b5b98705a0518",
+        strip_prefix = "grpc-proto-08911e9d585cbda3a55eb1dcc4b99c89aebccff8",
+        urls = ["https://github.com/grpc/grpc-proto/archive/08911e9d585cbda3a55eb1dcc4b99c89aebccff8.zip"],
     )
 
 IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS = {

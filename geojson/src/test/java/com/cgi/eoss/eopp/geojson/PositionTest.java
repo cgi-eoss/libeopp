@@ -68,14 +68,14 @@ public class PositionTest {
             OBJECT_MAPPER.readValue("[0,{}]", Position.class);
             fail("Expected JsonMappingException");
         } catch (JsonMappingException e) {
-            assertThat(e.getMessage()).startsWith("Cannot deserialize instance of `java.math.BigDecimal` out of START_OBJECT token");
+            assertThat(e.getMessage()).startsWith("Cannot deserialize value of type `java.math.BigDecimal` from Object value (token `JsonToken.START_OBJECT`)");
         }
 
         try {
             OBJECT_MAPPER.readValue("{\"longitude\":0,\"latitude\":0}", Position.class);
             fail("Expected JsonMappingException");
         } catch (JsonMappingException e) {
-            assertThat(e.getMessage()).startsWith("Cannot deserialize instance of `[Ljava.math.BigDecimal;` out of FIELD_NAME token");
+            assertThat(e.getMessage()).startsWith("Cannot deserialize value of type `[Ljava.math.BigDecimal;` from Object value (token `JsonToken.FIELD_NAME`)");
         }
     }
 

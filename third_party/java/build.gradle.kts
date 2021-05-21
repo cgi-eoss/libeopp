@@ -1,7 +1,7 @@
 plugins {
     base
     id("com.github.zetten.bazel-dependencies-plugin") version "1.8.0"
-    id("com.github.ben-manes.versions") version "0.36.0"
+    id("com.github.ben-manes.versions") version "0.39.0"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
 }
 
@@ -15,27 +15,26 @@ bazelDependencies {
 }
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 
-extra["aws-sdk-v2.version"] = "2.15.66"
-extra["commons-compress.version"] = "1.20"
-extra["docker-java.version"] = "3.2.7"
-extra["google-common-protos.version"] = "2.0.1"
-extra["grpc-java.version"] = "1.34.1" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
-extra["guava.version"] = "30.1-jre"
+extra["aws-sdk-v2.version"] = "2.17.3"
+extra["commons-compress.version"] = "1.21"
+extra["docker-java.version"] = "3.2.11"
+extra["google-common-protos.version"] = "2.3.2"
+extra["grpc-java.version"] = "1.39.0" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
+extra["guava.version"] = "30.1.1-jre"
 extra["j2objc-annotations.version"] = "1.3"
 extra["jimfs.version"] = "1.2"
-extra["json-schema-validator.version"] = "1.0.47"
-extra["jts-core.version"] = "1.18.0"
-extra["kotlin.version"] = "1.4.21"
-extra["okhttp.version"] = "4.9.0"
-extra["protobuf-java.version"] = "3.14.0"
-extra["reactor-grpc.version"] = "1.0.1"
-extra["spring-boot.version"] = "2.4.2"
-extra["spring-cloud.version"] = "2020.0.0"
-extra["truth.version"] = "1.1"
+extra["json-schema-validator.version"] = "1.0.57"
+extra["jts-core.version"] = "1.18.1"
+extra["kotlin.version"] = "1.5.21"
+extra["okhttp.version"] = "4.9.1"
+extra["protobuf-java.version"] = "3.17.3"
+extra["reactor-grpc.version"] = "1.1.0"
+extra["spring-boot.version"] = "2.5.3"
+extra["spring-cloud.version"] = "2020.0.3"
+extra["truth.version"] = "1.1.3"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
 
 dependencyManagement {
@@ -109,5 +108,6 @@ dependencies {
     generate("org.springframework.cloud:spring-cloud-commons")
     generate("org.springframework:spring-core")
     generate("org.springframework:spring-web")
+    generate("org.springframework.boot:spring-boot")
     generate("software.amazon.awssdk:s3")
 }

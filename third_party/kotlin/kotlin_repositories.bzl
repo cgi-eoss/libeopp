@@ -3,8 +3,8 @@ load(
     _kotlin_repositories = "kotlin_repositories",
 )
 
-KOTLIN_VERSION = "1.4.21"
-KOTLINC_RELEASE_SHA = "46720991a716e90bfc0cf3f2c81b2bd735c14f4ea6a5064c488e04fd76e6b6c7"
+KOTLIN_VERSION = "1.5.21"
+KOTLINC_RELEASE_SHA = "f3313afdd6abf1b8c75c6292f4e41f2dbafefc8f6c72762c7ba9b3daeef5da59"
 
 KOTLINC_RELEASE = {
     "urls": [

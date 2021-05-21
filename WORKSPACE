@@ -88,7 +88,6 @@ load("//third_party/java:java_repositories.bzl", "ARTIFACTS", "REPOSITORIES")
 load("//third_party/kotlin:kotlin_repositories.bzl", "kotlin_repositories", "kt_register_toolchains")
 load("//third_party/protobuf:protobuf_repositories.bzl", "COM_GOOGLE_PROTOBUF_JAVA_OVERRIDE_TARGETS", "protobuf_repositories")
 load("//third_party/grpc:grpc_repositories.bzl", "IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS", "grpc_repositories")
-load("//third_party/grpc:grpc_dependency_repositories.bzl", "grpc_dependency_repositories")
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 
 maven_install(
@@ -122,6 +121,8 @@ kt_register_toolchains()
 protobuf_repositories()
 
 grpc_repositories()
+
+load("//third_party/grpc:grpc_dependency_repositories.bzl", "grpc_dependency_repositories")
 
 grpc_dependency_repositories()
 
