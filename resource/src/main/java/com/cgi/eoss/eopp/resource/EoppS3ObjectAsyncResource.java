@@ -62,7 +62,11 @@ public class EoppS3ObjectAsyncResource extends BaseS3ObjectResource implements E
     private final DataBufferFactory dataBufferFactory;
 
     public EoppS3ObjectAsyncResource(S3AsyncClient s3AsyncClient, String bucket, String key) {
-        super(bucket, key);
+        this(s3AsyncClient, bucket, key, false);
+    }
+
+    public EoppS3ObjectAsyncResource(S3AsyncClient s3AsyncClient, String bucket, String key, boolean requesterPays) {
+        super(bucket, key, requesterPays);
         this.s3AsyncClient = s3AsyncClient;
         this.dataBufferFactory = DEFAULT_DATA_BUFFER_FACTORY;
     }

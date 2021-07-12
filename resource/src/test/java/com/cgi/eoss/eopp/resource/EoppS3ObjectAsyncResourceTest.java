@@ -37,6 +37,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -137,6 +138,69 @@ public class EoppS3ObjectAsyncResourceTest {
             fail("Expected FileNotFoundException");
         } catch (FileNotFoundException e) {
             assertThat(e.getMessage()).isEqualTo("S3 resources may not be resolved as Files");
+        }
+    }
+
+    @Test
+    public void testRequesterPays() throws Exception {
+        Path testfile = Files.createTempFile("testfile", null);
+        Files.write(testfile, Arrays.asList("first", "second", "third"));
+
+        server.setDispatcher(new RequesterPaysDispatcher());
+
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())
+                .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
+                .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
+                .setHeader("x-amz-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader(), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
+        );
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(new String(Files.readAllBytes(testfile)))
+        );
+
+        EoppResource resource = new EoppS3ObjectAsyncResource(asyncS3Client, "EODATA", "testfile", true);
+        ProtoTruth.assertThat(resource.getFileMeta()) // S3 HTTP response won't contain nanos, so match only seconds
+                .withPartialScope(FieldScopes.ignoringFields(FileMeta.LAST_MODIFIED_FIELD_NUMBER))
+                .isEqualTo(FileMetas.get(testfile));
+        ProtoTruth.assertThat(resource.getFileMeta().getLastModified())
+                .withPartialScope(FieldScopes.ignoringFields(Timestamp.NANOS_FIELD_NUMBER))
+                .isEqualTo(FileMetas.get(testfile).getLastModified());
+        assertThat(resource.contentLength()).isEqualTo(Files.size(testfile));
+        assertThat(resource.isCacheable()).isTrue();
+        assertThat(resource.shouldRetry(null)).isFalse();
+        assertThat(resource.exists()).isTrue();
+        assertThat(resource.isReadable()).isTrue();
+        assertThat(resource.getURI()).isEqualTo(URI.create("s3://EODATA/testfile"));
+        assertThat(resource.createRelative("otherfile").getURI()).isEqualTo(URI.create("s3://EODATA/otherfile"));
+    }
+
+    @Test
+    public void testRequesterPaysError() throws Exception {
+        Path testfile = Files.createTempFile("testfile", null);
+        Files.write(testfile, Arrays.asList("first", "second", "third"));
+
+        server.setDispatcher(new RequesterPaysDispatcher());
+
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())
+                .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
+                .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
+                .setHeader("x-amz-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader(), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
+        );
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(new String(Files.readAllBytes(testfile)))
+        );
+
+        EoppResource resource = new EoppS3ObjectAsyncResource(asyncS3Client, "EODATA", "testfile");
+        try {
+            resource.getFileMeta();
+        } catch (Exception expected) {
+            assertThat(expected).hasCauseThat().isInstanceOf(S3Exception.class);
+            assertThat(expected).hasCauseThat().hasMessageThat().contains("Status Code: 403");
         }
     }
 

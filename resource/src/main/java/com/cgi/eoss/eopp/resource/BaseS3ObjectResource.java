@@ -27,6 +27,7 @@ import org.springframework.util.StringUtils;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
+import software.amazon.awssdk.services.s3.model.RequestPayer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,11 +47,17 @@ abstract class BaseS3ObjectResource implements com.cgi.eoss.eopp.resource.EoppRe
 
     private final String bucket;
     private final String key;
+    private final boolean requesterPays;
     private final Supplier<com.cgi.eoss.eopp.resource.ResourceMetadataWrapper> metadata = Lazy.lazily(this::getS3ObjectMetadata);
 
     BaseS3ObjectResource(String bucket, String key) {
+        this(bucket, key, false);
+    }
+
+    public BaseS3ObjectResource(String bucket, String key, boolean requesterPays) {
         this.bucket = bucket;
         this.key = key;
+        this.requesterPays = requesterPays;
     }
 
     @Override
@@ -120,11 +127,13 @@ abstract class BaseS3ObjectResource implements com.cgi.eoss.eopp.resource.EoppRe
 
     @Override
     public InputStream getInputStream() throws IOException {
-        GetObjectRequest request = GetObjectRequest.builder()
+        GetObjectRequest.Builder request = GetObjectRequest.builder()
                 .bucket(bucket)
-                .key(key)
-                .build();
-        return doGetInputStream(request);
+                .key(key);
+        if (requesterPays) {
+            request.requestPayer(RequestPayer.REQUESTER);
+        }
+        return doGetInputStream(request.build());
     }
 
     @Override
@@ -139,10 +148,13 @@ abstract class BaseS3ObjectResource implements com.cgi.eoss.eopp.resource.EoppRe
     }
 
     protected com.cgi.eoss.eopp.resource.ResourceMetadataWrapper getS3ObjectMetadata() {
-        return headObject(HeadObjectRequest.builder()
+        HeadObjectRequest.Builder request = HeadObjectRequest.builder()
                 .bucket(bucket)
-                .key(key)
-                .build())
+                .key(key);
+        if (requesterPays) {
+            request.requestPayer(RequestPayer.REQUESTER);
+        }
+        return headObject(request.build())
                 .map(response -> {
 
                     com.cgi.eoss.eopp.resource.ResourceMetadataWrapper.ResourceMetadataWrapperBuilder builder = com.cgi.eoss.eopp.resource.ResourceMetadataWrapper.builder();
@@ -173,7 +185,7 @@ abstract class BaseS3ObjectResource implements com.cgi.eoss.eopp.resource.EoppRe
                             Optional.ofNullable(response.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader().toLowerCase())),
                             Optional.ofNullable(response.contentDisposition()).flatMap(EoppHeaders.FILENAME_FROM_HTTP_HEADER))
                             .filter(Optional::isPresent).map(Optional::get).findFirst()
-                            .orElse(StringUtils.getFilename(key)));
+                            .orElse(StringUtils.getFilename(this.key)));
 
                     Stream.of(fileMeta.map(FileMeta::getChecksum),
                             Optional.ofNullable(response.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader())),

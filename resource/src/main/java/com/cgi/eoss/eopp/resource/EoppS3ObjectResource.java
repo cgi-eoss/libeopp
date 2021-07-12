@@ -38,7 +38,11 @@ public class EoppS3ObjectResource extends BaseS3ObjectResource implements EoppRe
     private final S3Client s3Client;
 
     public EoppS3ObjectResource(S3Client s3Client, String bucket, String key) {
-        super(bucket, key);
+        this(s3Client, bucket, key, false);
+    }
+
+    public EoppS3ObjectResource(S3Client s3Client, String bucket, String key, boolean requesterPays) {
+        super(bucket, key, requesterPays);
         this.s3Client = s3Client;
     }
 
@@ -52,7 +56,7 @@ public class EoppS3ObjectResource extends BaseS3ObjectResource implements EoppRe
         try {
             return s3Client.getObject(request);
         } catch (Exception e) {
-            throw new EoppResourceException("S3 resource HEAD request interrupted");
+            throw new EoppResourceException("Failed to complete S3 resource GET request", e);
         }
     }
 
@@ -63,7 +67,7 @@ public class EoppS3ObjectResource extends BaseS3ObjectResource implements EoppRe
         } catch (NoSuchKeyException e) {
             return Optional.empty();
         } catch (Exception e) {
-            throw new EoppResourceException("S3 resource HEAD request interrupted");
+            throw new EoppResourceException("Failed to complete S3 resource HEAD request", e);
         }
     }
 
