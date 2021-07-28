@@ -43,7 +43,7 @@ import java.util.stream.Stream;
 /**
  * <p>An {@link EoppResource} representing data in an S3 (or S3-compatible) bucket.</p>
  */
-abstract class BaseS3ObjectResource implements com.cgi.eoss.eopp.resource.EoppResource {
+abstract class BaseS3ObjectResource implements EoppResource {
 
     private final String bucket;
     private final String key;

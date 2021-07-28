@@ -47,7 +47,7 @@ public class FileMetasTest {
         assertThat(fileMeta).isEqualTo(FileMeta.newBuilder()
                 .setFilename("testfile")
                 .setSize(19L)
-                .setChecksum("murmur3_128:82e72d37fbdc9b9109778d40f07aa303")
+                .setChecksum("md5:a5890ace30a3e84d9118196c161aeec2")
                 .setExecutable(false)
                 .setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(testfile).toInstant()))
                 .build());
@@ -61,7 +61,7 @@ public class FileMetasTest {
         assertThat(fileMeta).isEqualTo(FileMeta.newBuilder()
                 .setFilename("testfile")
                 .setSize(19L)
-                .setChecksum("murmur3_128:82e72d37fbdc9b9109778d40f07aa303")
+                .setChecksum("md5:a5890ace30a3e84d9118196c161aeec2")
                 .setExecutable(false)
                 .putProperties("foo", Any.pack(StringValue.of("bar")))
                 .setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(testfile).toInstant()))
@@ -76,9 +76,23 @@ public class FileMetasTest {
         assertThat(fileMeta).isEqualTo(FileMeta.newBuilder()
                 .setFilename("testfile")
                 .setSize(19L)
-                .setChecksum("murmur3_128:82e72d37fbdc9b9109778d40f07aa303")
+                .setChecksum("md5:a5890ace30a3e84d9118196c161aeec2")
                 .setExecutable(true)
                 .putProperties("foo", Any.pack(StringValue.of("bar")))
+                .setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(testfile).toInstant()))
+                .build());
+    }
+
+    @Test
+    public void testGetMurmur3_128() throws IOException {
+        Path testfile = Files.createTempDirectory("testdata").resolve("testfile");
+        Files.copy(getClass().getResourceAsStream("/testfile"), testfile, REPLACE_EXISTING);
+        FileMeta fileMeta = FileMetas.get(testfile, Hashing.murmur3_128());
+        assertThat(fileMeta).isEqualTo(FileMeta.newBuilder()
+                .setFilename("testfile")
+                .setSize(19L)
+                .setChecksum("murmur3_128:82e72d37fbdc9b9109778d40f07aa303")
+                .setExecutable(false)
                 .setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(testfile).toInstant()))
                 .build());
     }
@@ -92,6 +106,20 @@ public class FileMetasTest {
                 .setFilename("testfile")
                 .setSize(19L)
                 .setChecksum("sha256:5881707e54b0112f901bc83a1ffbacac8fab74ea46a6f706a3efc5f7d4c1c625")
+                .setExecutable(false)
+                .setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(testfile).toInstant()))
+                .build());
+    }
+
+    @Test
+    public void testGetSipHash24() throws IOException {
+        Path testfile = Files.createTempDirectory("testdata").resolve("testfile");
+        Files.copy(getClass().getResourceAsStream("/testfile"), testfile, REPLACE_EXISTING);
+        FileMeta fileMeta = FileMetas.get(testfile, Hashing.sipHash24());
+        assertThat(fileMeta).isEqualTo(FileMeta.newBuilder()
+                .setFilename("testfile")
+                .setSize(19L)
+                .setChecksum("sipHash24:1b135005aeeb96f1")
                 .setExecutable(false)
                 .setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(testfile).toInstant()))
                 .build());
@@ -120,7 +148,7 @@ public class FileMetasTest {
         FileMeta expected = FileMeta.newBuilder()
                 .setFilename("testfile")
                 .setSize(19L)
-                .setChecksum("murmur3_128:82e72d37fbdc9b9109778d40f07aa303")
+                .setChecksum("md5:a5890ace30a3e84d9118196c161aeec2")
                 .setExecutable(false)
                 .setLastModified(Timestamps.timestampFromInstant(Files.getLastModifiedTime(testfile).toInstant()))
                 .build();

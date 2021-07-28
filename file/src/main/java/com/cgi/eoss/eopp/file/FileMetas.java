@@ -44,15 +44,21 @@ public final class FileMetas {
 
     /**
      * <p>The default HashFunction used for calculating FileMeta checksum attributes.</p>
+     * <p>Despite the caveats around md5's security, using this as the default checksum algorithm allows easier
+     * interoperability with other services such as S3.</p>
      */
-    public static final HashFunction DEFAULT_HASH_FUNCTION = Hashing.murmur3_128();
+    @SuppressWarnings("deprecation")
+    public static final HashFunction DEFAULT_HASH_FUNCTION = Hashing.md5();
 
     /**
      * <p>Checksum HashFunctions with their well-known prefix strings.</p>
      */
+    @SuppressWarnings("deprecation")
     private static final BiMap<HashFunction, String> HASH_FUNCTIONS = ImmutableBiMap.<HashFunction, String>builder()
-            .put(Hashing.sha256(), "sha256")
+            .put(Hashing.md5(), "md5")
             .put(Hashing.murmur3_128(), "murmur3_128")
+            .put(Hashing.sha256(), "sha256")
+            .put(Hashing.sipHash24(), "sipHash24")
             .build();
 
     private FileMetas() {
