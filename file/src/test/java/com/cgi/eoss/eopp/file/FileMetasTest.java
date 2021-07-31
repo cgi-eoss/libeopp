@@ -18,6 +18,7 @@ package com.cgi.eoss.eopp.file;
 
 import com.cgi.eoss.eopp.util.Timestamps;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.protobuf.Any;
 import com.google.protobuf.StringValue;
@@ -32,6 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth8.assertThat;
 import static com.google.common.truth.extensions.proto.ProtoTruth.assertThat;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.junit.Assert.fail;
@@ -154,6 +156,47 @@ public class FileMetasTest {
                 .build();
         assertThat(base64).isEqualTo(FileMetas.toBase64(expected));
         assertThat(FileMetas.fromBase64(base64)).isEqualTo(expected);
+    }
+
+    @Test
+    public void testHashFunction() throws IOException {
+        Path testfile = Files.createTempDirectory("testdata").resolve("testfile");
+        Files.copy(getClass().getResourceAsStream("/testfile"), testfile, REPLACE_EXISTING);
+        FileMeta fileMeta = FileMetas.get(testfile);
+
+        assertThat(FileMetas.hashFunction(fileMeta)).hasValue(FileMetas.DEFAULT_HASH_FUNCTION);
+    }
+
+    @Test
+    public void testHashFunctionSha256() throws IOException {
+        Path testfile = Files.createTempDirectory("testdata").resolve("testfile");
+        Files.copy(getClass().getResourceAsStream("/testfile"), testfile, REPLACE_EXISTING);
+        FileMeta fileMeta = FileMetas.get(testfile, Hashing.sha256());
+
+        assertThat(FileMetas.hashFunction(fileMeta)).hasValue(Hashing.sha256());
+    }
+
+    @Test
+    public void testHashFunctionUnrecognisedHashFunction() throws IOException {
+        Path testfile = Files.createTempDirectory("testdata").resolve("testfile");
+        Files.copy(getClass().getResourceAsStream("/testfile"), testfile, REPLACE_EXISTING);
+        FileMeta fileMeta = FileMetas.get(testfile, Hashing.goodFastHash(32));
+
+        assertThat(FileMetas.hashFunction(fileMeta)).isEmpty();
+    }
+
+    @Test
+    public void testHashFunctionEmpty() throws IOException {
+        FileMeta fileMeta = FileMeta.getDefaultInstance();
+
+        assertThat(FileMetas.hashFunction(fileMeta)).isEmpty();
+    }
+
+    @Test
+    public void testHashFunctionUnrecognisedChecksumString() throws IOException {
+        FileMeta fileMeta = FileMeta.newBuilder().setChecksum("some unrecognised checksum string").build();
+
+        assertThat(FileMetas.hashFunction(fileMeta)).isEmpty();
     }
 
 }

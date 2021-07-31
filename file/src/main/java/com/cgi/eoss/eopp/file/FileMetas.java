@@ -36,6 +36,7 @@ import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * <p>Utility methods for working with {@link FileMeta} objects.</p>
@@ -54,7 +55,7 @@ public final class FileMetas {
      * <p>Checksum HashFunctions with their well-known prefix strings.</p>
      */
     @SuppressWarnings("deprecation")
-    private static final BiMap<HashFunction, String> HASH_FUNCTIONS = ImmutableBiMap.<HashFunction, String>builder()
+    public static final BiMap<HashFunction, String> HASH_FUNCTIONS = ImmutableBiMap.<HashFunction, String>builder()
             .put(Hashing.md5(), "md5")
             .put(Hashing.murmur3_128(), "murmur3_128")
             .put(Hashing.sha256(), "sha256")
@@ -205,5 +206,16 @@ public final class FileMetas {
     public static String checksum(HashCode hashCode, HashFunction checksumFunction) {
         return HASH_FUNCTIONS.get(checksumFunction) + ":" + hashCode.toString();
     }
+
+    /**
+     * @param fileMeta A FileMeta object referencing hashed data.
+     * @return The {@link HashFunction} which was used to calculate the FileMeta's checksum. Returns an empty Optional
+     * if no checksum is set on the FileMeta, or if the checksum is not in the recognised format with a known
+     * HashFunction.
+     */
+    public static Optional<HashFunction> hashFunction(FileMeta fileMeta) {
+        return Optional.ofNullable(HASH_FUNCTIONS.inverse().get(fileMeta.getChecksum().split(":", 2)[0]));
+    }
+
 
 }

@@ -81,6 +81,7 @@ gen_java_tests(
         "@maven//:com_google_guava_guava",
         "@maven//:com_google_truth_extensions_truth_proto_extension",
         "@maven//:com_google_truth_truth",
+        "@maven//:com_google_truth_extensions_truth_java8_extension",
         "@maven//:junit_junit",
     ],
 )
