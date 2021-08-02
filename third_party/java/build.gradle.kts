@@ -1,6 +1,6 @@
 plugins {
     base
-    id("com.github.zetten.bazel-dependencies-plugin") version "1.8.0"
+    id("com.github.zetten.bazel-dependencies-plugin") version "2.0.2"
     id("com.github.ben-manes.versions") version "0.39.0"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
 }
@@ -10,8 +10,8 @@ val generate by configurations.creating
 bazelDependencies {
     configuration.set(generate)
     outputFile.set(project.rootDir.resolve("java_repositories.bzl"))
-    createMavenInstallJson.set(true)
     sourcesChecksums.set(true)
+    rulesJvmExternalVersion.set("4.1.0")
 }
 
 repositories {
