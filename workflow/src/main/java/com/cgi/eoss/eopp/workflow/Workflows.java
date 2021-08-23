@@ -30,6 +30,7 @@ import java.io.Reader;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
@@ -107,13 +108,16 @@ public final class Workflows {
         yamlTransformers.forEach(it -> it.transform(yamlObject));
 
         // Link the Writer (for Jackson to serialise JSON) and the Reader (for JsonFormat.parser() to deserialise)
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
         try (PipedWriter pipedWriter = new PipedWriter(); PipedReader protobufReader = new PipedReader(pipedWriter)) {
             // Do the write in a new thread to avoid blocking on the pipe
-            Executors.newSingleThreadExecutor().submit((Callable<Void>) () -> {
+            executorService.submit((Callable<Void>) () -> {
                 new JsonMapper().getFactory().createGenerator(pipedWriter).writeTree(yamlObject);
                 return null;
             });
             JsonFormat.parser().merge(protobufReader, builder);
+        } finally {
+            executorService.shutdownNow();
         }
     }
 
