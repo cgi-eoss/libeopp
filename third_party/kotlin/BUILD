@@ -2,6 +2,7 @@ load("@io_bazel_rules_kotlin//kotlin:kotlin.bzl", "define_kt_toolchain", "kt_jav
 
 licenses(["notice"])
 
+# 1.5 breaks Bazel's embedded jacoco
 KOTLIN_LANGUAGE_LEVEL = "1.4"
 
 JAVA_LANGUAGE_LEVEL = "11"

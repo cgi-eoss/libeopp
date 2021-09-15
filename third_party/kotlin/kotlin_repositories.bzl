@@ -2,16 +2,18 @@ load(
     "@io_bazel_rules_kotlin//kotlin:repositories.bzl",
     _kotlin_repositories = "kotlin_repositories",
 )
+load("@io_bazel_rules_kotlin//src/main/starlark/core/repositories:versions.bzl", "version")
 
-KOTLIN_VERSION = "1.5.21"
-KOTLINC_RELEASE_SHA = "f3313afdd6abf1b8c75c6292f4e41f2dbafefc8f6c72762c7ba9b3daeef5da59"
+KOTLIN_VERSION = "1.5.31"
+KOTLINC_RELEASE_SHA = "661111286f3e5ac06aaf3a9403d869d9a96a176b62b141814be626a47249fe9e"
 
-KOTLINC_RELEASE = {
-    "urls": [
-        "https://github.com/JetBrains/kotlin/releases/download/v{v}/kotlin-compiler-{v}.zip".format(v = KOTLIN_VERSION),
+KOTLINC_RELEASE = version(
+    version = KOTLIN_VERSION,
+    url_templates = [
+        "https://github.com/JetBrains/kotlin/releases/download/v{version}/kotlin-compiler-{version}.zip",
     ],
-    "sha256": KOTLINC_RELEASE_SHA,
-}
+    sha256 = KOTLINC_RELEASE_SHA,
+)
 
 def kotlin_repositories():
     _kotlin_repositories(compiler_release = KOTLINC_RELEASE)

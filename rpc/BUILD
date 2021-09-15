@@ -18,7 +18,7 @@ maven_library(
     ],
     test_suite = [":rpc_tests"],
     deps = [
-        "//third_party/grpc:core",
+        "//third_party/grpc:api",
         "//third_party/grpc:core_inprocess",
         "//third_party/grpc:stub",
         "//third_party/protobuf:protobuf_java",

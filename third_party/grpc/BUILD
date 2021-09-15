@@ -6,6 +6,16 @@ licenses(["notice"])
 # Re-exports with Maven coordinates for POM generation
 
 java_library(
+    name = "alts",
+    tags = [
+        "manual",
+        "maven_coordinates=io.grpc:grpc-alts:" + GRPC_JAVA_VERSION,
+    ],
+    visibility = ["//visibility:public"],
+    exports = ["@io_grpc_grpc_java//alts"],
+)
+
+java_library(
     name = "api",
     tags = [
         "manual",
@@ -13,6 +23,26 @@ java_library(
     ],
     visibility = ["//visibility:public"],
     exports = ["@io_grpc_grpc_java//api"],
+)
+
+java_library(
+    name = "auth",
+    tags = [
+        "manual",
+        "maven_coordinates=io.grpc:grpc-auth:" + GRPC_JAVA_VERSION,
+    ],
+    visibility = ["//visibility:public"],
+    exports = ["@io_grpc_grpc_java//auth"],
+)
+
+java_library(
+    name = "census",
+    tags = [
+        "manual",
+        "maven_coordinates=io.grpc:grpc-census:" + GRPC_JAVA_VERSION,
+    ],
+    visibility = ["//visibility:public"],
+    exports = ["@io_grpc_grpc_java//census"],
 )
 
 java_library(
@@ -28,27 +58,13 @@ java_library(
 # Several targets are part of io.grpc:grpc-core, so tag them the same
 
 java_library(
-    name = "all_core",
-    tags = [
-        "manual",
-        "maven_coordinates=io.grpc:grpc-core:" + GRPC_JAVA_VERSION,
-    ],
-    visibility = ["//visibility:public"],
-    exports = [
-        "@io_grpc_grpc_java//core",
-        "@io_grpc_grpc_java//core:inprocess",
-        "@io_grpc_grpc_java//core:util",
-    ],
-)
-
-java_library(
     name = "core",
     tags = [
         "manual",
         "maven_coordinates=io.grpc:grpc-core:" + GRPC_JAVA_VERSION,
     ],
     visibility = ["//visibility:public"],
-    exports = ["@io_grpc_grpc_java//core"],
+    exports = ["@io_grpc_grpc_java//core:core_maven"],
 )
 
 java_library(
@@ -69,6 +85,16 @@ java_library(
     ],
     visibility = ["//visibility:public"],
     exports = ["@io_grpc_grpc_java//core:util"],
+)
+
+java_library(
+    name = "grpclb",
+    tags = [
+        "manual",
+        "maven_coordinates=io.grpc:grpc-grpclb:" + GRPC_JAVA_VERSION,
+    ],
+    visibility = ["//visibility:public"],
+    exports = ["@io_grpc_grpc_java//grpclb"],
 )
 
 java_library(
