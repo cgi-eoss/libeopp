@@ -17,21 +17,22 @@
 package com.cgi.eoss.eopp.executor;
 
 import com.cgi.eoss.eopp.job.StepInstance;
-import com.google.common.util.concurrent.ListenableFuture;
+
+import java.util.concurrent.CompletableFuture;
 
 public interface StepOperator {
 
     /**
      * <p>Execute this {@link StepInstance} in the configured environment.</p>
      * <p>Implementations of this method are expected to launch the StepInstance asynchronously and eagerly return the
-     * {@link ListenableFuture}, unless otherwise specified by the implementing class.</p>
+     * {@link CompletableFuture}, unless otherwise specified by the implementing class.</p>
      *
      * @param stepInstance The configured step to be executed.
-     * @return A {@link ListenableFuture} resolving to the completed {@link StepInstance}, i.e. with final results for
-     * {@link StepInstance#getOutputsList()}. If the StepInstance fails to complete nominally, the ListenableFuture will
-     * throw a {@link StepExecutionException}.
+     * @return A {@link CompletableFuture} resolving to the completed {@link StepInstance}, i.e. with final results for
+     * {@link StepInstance#getOutputsList()}. If the StepInstance fails to complete nominally, the CompletableFuture
+     * will throw a {@link StepExecutionException}.
      */
-    ListenableFuture<StepInstance> execute(StepInstance stepInstance);
+    CompletableFuture<StepInstance> execute(StepInstance stepInstance);
 
     /**
      * <p>Clean up any active resources associated with this step.</p>
@@ -47,10 +48,10 @@ public interface StepOperator {
      * things are true, the step is restarted from a clean state.</p>
      *
      * @param stepInstance The configured step to be synchronised or executed if necessary.
-     * @return A {@link ListenableFuture} resolving to the completed {@link StepInstance}, i.e. with final results for
-     * {@link StepInstance#getOutputsList()}. If the StepInstance fails to complete nominally, the ListenableFuture will
-     * throw a {@link StepExecutionException}.
+     * @return A {@link CompletableFuture} resolving to the completed {@link StepInstance}, i.e. with final results for
+     * {@link StepInstance#getOutputsList()}. If the StepInstance fails to complete nominally, the CompletableFuture
+     * will throw a {@link StepExecutionException}.
      */
-    ListenableFuture<StepInstance> ensureScheduled(StepInstance stepInstance);
+    CompletableFuture<StepInstance> ensureScheduled(StepInstance stepInstance);
 
 }

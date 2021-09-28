@@ -24,12 +24,6 @@ import com.cgi.eoss.eopp.workflow.StepConfiguration;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.ListeningScheduledExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Striped;
 import org.slf4j.Logger;
 
@@ -37,12 +31,16 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -61,10 +59,9 @@ public abstract class AbstractStepOperator implements StepOperator {
     private static final EventBus SUB_STEP_NOTIFICATION_BUS = new EventBus("sub-step-event-bus");
 
     private final StepOperatorEventDispatcher stepOperatorEventDispatcher;
-    private final ConcurrentMap<StepInstanceId, ListenableFuture<StepInstance>> stepFutures = new ConcurrentHashMap<>();
-    private final ListeningExecutorService stepExecutorService;
-    private final ListeningExecutorService lightweightStepExecutorService;
-    private final ListeningScheduledExecutorService stepTimeoutExecutorService;
+    private final ConcurrentMap<StepInstanceId, CompletableFuture<StepInstance>> stepFutures = new ConcurrentHashMap<>();
+    private final ExecutorService stepExecutorService;
+    private final ExecutorService lightweightStepExecutorService;
     private final Duration stepExecutionTimeout;
     private final Striped<Lock> stepExecuteLock;
 
@@ -73,7 +70,7 @@ public abstract class AbstractStepOperator implements StepOperator {
      *
      * @param stepOperatorEventDispatcher A handler for events emitted by this operator.
      */
-    public AbstractStepOperator(StepOperatorEventDispatcher stepOperatorEventDispatcher) {
+    protected AbstractStepOperator(StepOperatorEventDispatcher stepOperatorEventDispatcher) {
         this(stepOperatorEventDispatcher, 8, Duration.ofSeconds(-1));
     }
 
@@ -84,17 +81,16 @@ public abstract class AbstractStepOperator implements StepOperator {
      * @param maxConcurrentSteps          The maximum number of concurrent steps to run.
      * @param stepExecutionTimeout        The maximum duration before cancellation for any single step. If this is negative,
      */
-    public AbstractStepOperator(StepOperatorEventDispatcher stepOperatorEventDispatcher, int maxConcurrentSteps, Duration stepExecutionTimeout) {
+    protected AbstractStepOperator(StepOperatorEventDispatcher stepOperatorEventDispatcher, int maxConcurrentSteps, Duration stepExecutionTimeout) {
         this.stepOperatorEventDispatcher = stepOperatorEventDispatcher;
-        this.stepExecutorService = MoreExecutors.listeningDecorator(Executors.newWorkStealingPool(maxConcurrentSteps));
-        this.stepTimeoutExecutorService = MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(maxConcurrentSteps));
-        this.lightweightStepExecutorService = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
+        this.stepExecutorService = Executors.newWorkStealingPool(maxConcurrentSteps);
+        this.lightweightStepExecutorService = Executors.newCachedThreadPool();
         this.stepExecutionTimeout = stepExecutionTimeout;
         this.stepExecuteLock = Striped.lazyWeakLock(1);
     }
 
     @Override
-    public ListenableFuture<StepInstance> execute(StepInstance stepInstance) {
+    public CompletableFuture<StepInstance> execute(StepInstance stepInstance) {
         StepInstanceId stepInstanceId = StepInstances.getId(stepInstance);
         Lock lock = stepExecuteLock.get(stepInstanceId);
 
@@ -113,25 +109,25 @@ public abstract class AbstractStepOperator implements StepOperator {
         try {
             log.debug("{}::{} executing", stepInstance.getJobUuid(), stepInstance.getIdentifier());
 
-            ListenableFuture<StepInstance> stepFuture;
+            CompletableFuture<StepInstance> stepFuture;
             if (Strings.isNullOrEmpty(stepInstance.getParentIdentifier()) && StepInstances.hasMultiplicity(stepInstance)) {
-                stepFuture = submitLightweight(stepInstanceId, getParentStepCallable(stepInstance));
+                stepFuture = submitLightweight(stepInstanceId, getParentStepSupplier(stepInstance));
             } else {
                 if (!Strings.isNullOrEmpty(stepInstance.getParentIdentifier())) {
                     // TODO Enable recursive multiplicity
                     log.debug("{}::{} has multiplicity, but expansion is skipped as it is already a sub-step", stepInstance.getJobUuid(), stepInstance.getIdentifier());
                 }
-                stepFuture = submit(stepInstanceId, getExecutionCallable(stepInstance));
+                stepFuture = submit(stepInstanceId, getExecutionSupplier(stepInstance));
             }
 
             if (!stepInstance.getParentIdentifier().isEmpty()) {
-                Futures.addCallback(stepFuture, getSubStepCallback(stepInstance), lightweightStepExecutorService);
+                stepFuture.whenCompleteAsync(getSubStepCallback(stepInstance), lightweightStepExecutorService);
             }
 
             return stepFuture;
         } catch (Exception e) {
             log.error("{}::{} execution failed to start", stepInstance.getJobUuid(), stepInstance.getIdentifier(), e);
-            return Futures.immediateFailedFuture(new StepExecutionException(String.format("%s::%s execution failed to start", stepInstance.getJobUuid(), stepInstance.getIdentifier()), stepInstance, StepInstance.Status.FAILED));
+            return CompletableFuture.failedFuture(new StepExecutionException(String.format("%s::%s execution failed to start", stepInstance.getJobUuid(), stepInstance.getIdentifier()), stepInstance, StepInstance.Status.FAILED));
         } finally {
             lock.unlock();
         }
@@ -147,7 +143,7 @@ public abstract class AbstractStepOperator implements StepOperator {
     }
 
     @Override
-    public ListenableFuture<StepInstance> ensureScheduled(StepInstance stepInstance) {
+    public CompletableFuture<StepInstance> ensureScheduled(StepInstance stepInstance) {
         log.debug("{}::{} ensuring scheduled", stepInstance.getJobUuid(), stepInstance.getIdentifier());
         return getStepFuture(StepInstances.getId(stepInstance))
                 .orElseGet(() -> {
@@ -158,40 +154,41 @@ public abstract class AbstractStepOperator implements StepOperator {
     }
 
     /**
-     * <p>Execute the given StepInstance callable on the default executor.</p>
+     * <p>Execute the given StepInstance supplier on the default executor.</p>
      * <p>This may be used by subclasses to reattach during {@link #ensureScheduled(StepInstance)} so that the new call
      * shares the configured timeout and concurrency parameters of this base class.</p>
      *
      * @param stepInstanceId The identifier of the step instance being returned by the task.
-     * @param task           The callable to return a completed step instance.
-     * @return The given callable as a {@link ListenableFuture}, with a timeout if configured.
+     * @param task           The supplier to return a completed step instance.
+     * @return The given supplier as a {@link CompletableFuture}, with a timeout if configured.
      */
-    protected ListenableFuture<StepInstance> submit(StepInstanceId stepInstanceId, Callable<StepInstance> task) {
+    protected CompletableFuture<StepInstance> submit(StepInstanceId stepInstanceId, Supplier<StepInstance> task) {
         return submit(stepInstanceId, task, stepExecutorService);
     }
 
     /**
-     * <p>Execute the given StepInstance callable on the 'lightweight' executor, not counting towards maximum step concurrency.</p>
+     * <p>Execute the given StepInstance supplier on the 'lightweight' executor, not counting towards maximum step
+     * concurrency.</p>
      * <p>This may be used by subclasses to reattach during {@link #ensureScheduled(StepInstance)} so that the new call
      * shares the configured timeout of this base class.</p>
      *
      * @param stepInstanceId The identifier of the step instance being returned by the task.
-     * @param task           The callable to return a completed step instance.
-     * @return The given callable as a {@link ListenableFuture}, with a timeout if configured.
+     * @param task           The supplier to return a completed step instance.
+     * @return The given supplier as a {@link CompletableFuture}, with a timeout if configured.
      */
-    protected ListenableFuture<StepInstance> submitLightweight(StepInstanceId stepInstanceId, Callable<StepInstance> task) {
+    protected CompletableFuture<StepInstance> submitLightweight(StepInstanceId stepInstanceId, Supplier<StepInstance> task) {
         return submit(stepInstanceId, task, lightweightStepExecutorService);
     }
 
     /**
-     * @return The ListenableFuture representing the given step instance, if an execution has been submitted.
+     * @return The CompletableFuture representing the given step instance, if an execution has been submitted.
      */
-    protected Optional<ListenableFuture<StepInstance>> getStepFuture(StepInstanceId stepInstanceId) {
+    protected Optional<CompletableFuture<StepInstance>> getStepFuture(StepInstanceId stepInstanceId) {
         return Optional.ofNullable(stepFutures.get(stepInstanceId));
     }
 
-    private ListenableFuture<StepInstance> submit(StepInstanceId stepInstanceId, Callable<StepInstance> task, ListeningExecutorService stepExecutorService) {
-        ListenableFuture<StepInstance> stepExecutionFuture = stepExecutorService.submit(task);
+    private CompletableFuture<StepInstance> submit(StepInstanceId stepInstanceId, Supplier<StepInstance> task, ExecutorService stepExecutorService) {
+        CompletableFuture<StepInstance> stepExecutionFuture = CompletableFuture.supplyAsync(task, stepExecutorService);
         return executeWithTimeout(stepInstanceId, stepExecutionFuture, stepExecutionTimeout);
     }
 
@@ -204,24 +201,24 @@ public abstract class AbstractStepOperator implements StepOperator {
      *                            if negative.
      * @return The given stepExecutionFuture, wrapped with the given timeout.
      */
-    private ListenableFuture<StepInstance> executeWithTimeout(StepInstanceId stepInstanceId, ListenableFuture<StepInstance> stepExecutionFuture, Duration timeout) {
-        ListenableFuture<StepInstance> stepFuture;
+    private CompletableFuture<StepInstance> executeWithTimeout(StepInstanceId stepInstanceId, CompletableFuture<StepInstance> stepExecutionFuture, Duration timeout) {
+        CompletableFuture<StepInstance> stepFuture;
         if (timeout.isNegative()) {
             stepFuture = stepExecutionFuture;
         } else {
-            stepFuture = Futures.withTimeout(stepExecutionFuture, timeout, stepTimeoutExecutorService);
+            stepFuture = stepExecutionFuture.orTimeout(timeout.toMillis(), TimeUnit.MILLISECONDS);
         }
         stepFutures.put(stepInstanceId, stepFuture);
         return stepFuture;
     }
 
     /**
-     * <p>Construct a Callable which executes the given StepInstance. This should block until the step has finished
+     * <p>Construct a Supplier which executes the given StepInstance. This should block until the step has finished
      * executing, and return the completed StepInstance, i.e. with final results for
      * {@link StepInstance#getOutputsList()}.</p>
-     * <p>The Callable should throw {@link StepExecutionException} in the event of non-nominal execution.</p>
+     * <p>The Supplier should throw {@link StepExecutionException} in the event of non-nominal execution.</p>
      */
-    protected abstract Callable<StepInstance> getExecutionCallable(StepInstance stepInstance);
+    protected abstract Supplier<StepInstance> getExecutionSupplier(StepInstance stepInstance);
 
     /**
      * <p>Perform any operator-specific cleanup for the given StepInstance.</p>
@@ -235,7 +232,7 @@ public abstract class AbstractStepOperator implements StepOperator {
         return subSteps;
     }
 
-    private Callable<StepInstance> getParentStepCallable(StepInstance stepInstance) {
+    private Supplier<StepInstance> getParentStepSupplier(StepInstance stepInstance) {
         List<StepInstance> subSteps = expandStep(stepInstance);
         ParentStepMonitor parentStepMonitor = new ParentStepMonitor(stepInstance, subSteps);
         SUB_STEP_NOTIFICATION_BUS.register(parentStepMonitor);
@@ -243,19 +240,18 @@ public abstract class AbstractStepOperator implements StepOperator {
         return parentStepMonitor;
     }
 
-    private FutureCallback<StepInstance> getSubStepCallback(StepInstance stepInstance) {
-        return new FutureCallback<StepInstance>() {
-            @Override
-            public void onSuccess(StepInstance result) {
+    private BiConsumer<StepInstance, Throwable> getSubStepCallback(StepInstance stepInstance) {
+        return (result, throwable) -> {
+            if (result != null) {
                 log.debug("{}::{} Notifying parent step listener of completion", stepInstance.getJobUuid(), stepInstance.getIdentifier());
                 SUB_STEP_NOTIFICATION_BUS.post(result);
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
+            } else if (throwable != null) {
                 log.debug("{}::{} Notifying parent step listener of error", stepInstance.getJobUuid(), stepInstance.getIdentifier(), throwable);
-                ListenableFuture<StepInstance> parentStepFuture = stepFutures.get(StepInstanceId.newBuilder().setJobUuid(stepInstance.getJobUuid()).setIdentifier(stepInstance.getParentIdentifier()).build());
+                CompletableFuture<StepInstance> parentStepFuture = stepFutures.get(StepInstanceId.newBuilder().setJobUuid(stepInstance.getJobUuid()).setIdentifier(stepInstance.getParentIdentifier()).build());
                 parentStepFuture.cancel(true);
+            } else {
+                // This should never actually happen
+                log.warn("{}::{} Sub-step callback received null result and exception", stepInstance.getJobUuid(), stepInstance.getIdentifier());
             }
         };
     }
@@ -265,7 +261,7 @@ public abstract class AbstractStepOperator implements StepOperator {
      * <p>Stores a reference to all expected sub-steps, and waits for StepInstance events signifying their completion.
      * These events should be posted by the callback in {@link #execute(StepInstance)}.</p>
      */
-    private static class ParentStepMonitor implements Callable<StepInstance> {
+    private static class ParentStepMonitor implements Supplier<StepInstance> {
         private final StepInstance.Builder step;
         private final Set<StepInstanceId> subStepIds;
         private final CountDownLatch subStepsLatch;
@@ -277,10 +273,16 @@ public abstract class AbstractStepOperator implements StepOperator {
         }
 
         @Override
-        public StepInstance call() throws Exception {
-            subStepsLatch.await();
-            log.debug("{}::{} all sub-steps completed", step.getJobUuid(), step.getIdentifier());
-            return step.build();
+        public StepInstance get() {
+            try {
+                subStepsLatch.await();
+                log.debug("{}::{} all sub-steps completed", step.getJobUuid(), step.getIdentifier());
+                return step.build();
+            } catch (InterruptedException e) {
+                log.error("{}::{} interrupted waiting for sub-steps", step.getJobUuid(), step.getIdentifier());
+                Thread.currentThread().interrupt();
+                throw new StepExecutionException("Interrupted waiting for sub-steps", step.build(), StepInstance.Status.FAILED);
+            }
         }
 
         @Subscribe
@@ -288,10 +290,8 @@ public abstract class AbstractStepOperator implements StepOperator {
             // avoid collecting events from other parent steps
             if (subStepIds.contains(StepInstances.getId(subStep))) {
                 // collect sub-step outputs - only NESTED_WORKFLOW OUTPUT steps, or all sub-steps
-                if (step.getConfiguration().getExecuteCase() == StepConfiguration.ExecuteCase.NESTED_WORKFLOW
-                        && subStep.getType() == StepInstance.Type.OUTPUT) {
-                    step.addAllOutputs(subStep.getOutputsList());
-                } else if (step.getConfiguration().getExecuteCase() == StepConfiguration.ExecuteCase.STEP) {
+                if ((step.getConfiguration().getExecuteCase() == StepConfiguration.ExecuteCase.NESTED_WORKFLOW && subStep.getType() == StepInstance.Type.OUTPUT)
+                        || step.getConfiguration().getExecuteCase() == StepConfiguration.ExecuteCase.STEP) {
                     step.addAllOutputs(subStep.getOutputsList());
                 }
                 subStepsLatch.countDown();

@@ -38,5 +38,6 @@ gen_java_tests(
         "@maven//:com_google_guava_guava",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
+        "@maven//:org_awaitility_awaitility",
     ],
 )

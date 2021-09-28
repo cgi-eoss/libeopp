@@ -17,11 +17,12 @@
 package com.cgi.eoss.eopp.executor;
 
 import com.cgi.eoss.eopp.job.StepInstance;
-import com.google.common.util.concurrent.ListenableFuture;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * <p>An Exception thrown by a {@link StepOperator} during the execution of a {@link StepInstance}.</p>
- * <p>This may be extracted from the {@link ListenableFuture}&lt;{@link StepInstance}&gt; in the event of non-nominal
+ * <p>This may be extracted from the {@link CompletableFuture}&lt;{@link StepInstance}&gt; in the event of non-nominal
  * execution.</p>
  */
 public class StepExecutionException extends RuntimeException {

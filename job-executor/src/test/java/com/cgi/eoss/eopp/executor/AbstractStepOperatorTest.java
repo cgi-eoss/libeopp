@@ -34,10 +34,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+import org.awaitility.Awaitility;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,12 +44,13 @@ import org.junit.runners.JUnit4;
 import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.function.IntFunction;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -71,7 +70,7 @@ public class AbstractStepOperatorTest {
     public void testExecute() throws Exception {
         TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
         TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService);
-        ListenableFuture<StepInstance> execute = stepOperator.execute(StepInstance.newBuilder()
+        CompletableFuture<StepInstance> execute = stepOperator.execute(StepInstance.newBuilder()
                 .setIdentifier("test-step")
                 .setJobUuid(jobId)
                 .build());
@@ -83,7 +82,7 @@ public class AbstractStepOperatorTest {
     public void testExecuteWithFailure() throws Exception {
         TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
         TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService);
-        ListenableFuture<StepInstance> execute = stepOperator.execute(StepInstance.newBuilder()
+        CompletableFuture<StepInstance> execute = stepOperator.execute(StepInstance.newBuilder()
                 .setIdentifier("test-step")
                 .setJobUuid(jobId)
                 .addParameters(StepParameterValue.newBuilder()
@@ -107,7 +106,7 @@ public class AbstractStepOperatorTest {
         TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
         TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService);
         Stopwatch stopwatch = Stopwatch.createStarted();
-        ListenableFuture<List<StepInstance>> futures = Futures.allAsList(IntStream.range(1, 9)
+        CompletableFuture<Void> futures = CompletableFuture.allOf(IntStream.range(1, 9)
                 .mapToObj(i -> StepInstance.newBuilder()
                         .setIdentifier("test-step-" + i)
                         .setJobUuid(jobId)
@@ -117,7 +116,7 @@ public class AbstractStepOperatorTest {
                                 .build())
                         .build())
                 .map(stepOperator::execute)
-                .toArray((IntFunction<ListenableFuture<StepInstance>[]>) ListenableFuture[]::new));
+                .toArray(CompletableFuture[]::new));
 
         futures.get();
         Duration elapsed = stopwatch.stop().elapsed();
@@ -130,7 +129,7 @@ public class AbstractStepOperatorTest {
     public void testExecuteWithTimeout() throws Exception {
         TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
         TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService, Duration.ofMillis(100));
-        ListenableFuture<StepInstance> execute = stepOperator.execute(StepInstance.newBuilder()
+        CompletableFuture<StepInstance> execute = stepOperator.execute(StepInstance.newBuilder()
                 .setIdentifier("test-step")
                 .setJobUuid(jobId)
                 .addParameters(StepParameterValue.newBuilder()
@@ -140,10 +139,10 @@ public class AbstractStepOperatorTest {
                 .build());
         try {
             StepInstance stepInstance = execute.get();
-            fail("Expected TimeoutFutureException");
+            fail("Expected TimeoutException");
         } catch (Exception e) {
             assertThat(e).isInstanceOf(ExecutionException.class);
-            assertThat(e).hasMessageThat().contains("Timed out");
+            assertThat(e).hasCauseThat().isInstanceOf(TimeoutException.class);
         }
     }
 
@@ -160,17 +159,12 @@ public class AbstractStepOperatorTest {
                         .build())
                 .build();
 
-        ListenableFuture<StepInstance> execute = stepOperator.execute(stepInstance);
-        Futures.addCallback(execute, new FutureCallback<StepInstance>() {
-            @Override
-            public void onSuccess(StepInstance result) {
+        CompletableFuture<StepInstance> execute = stepOperator.execute(stepInstance);
+        execute.whenCompleteAsync((result, t) -> {
+            if (result != null) {
                 fail("Expected ListenableFuture to be cancelled");
             }
-
-            @Override
-            public void onFailure(Throwable t) {
-                assertThat(t).isInstanceOf(CancellationException.class);
-            }
+            assertThat(t).isInstanceOf(CancellationException.class);
         }, MoreExecutors.directExecutor());
 
         stepOperator.cleanUp(stepInstance);
@@ -256,7 +250,7 @@ public class AbstractStepOperatorTest {
                         .build())
                 .build();
 
-        ListenableFuture<StepInstance> parentStepFuture = stepOperator.execute(stepInstance);
+        CompletableFuture<StepInstance> parentStepFuture = stepOperator.execute(stepInstance);
         StepInstance finished = parentStepFuture.get(5, TimeUnit.SECONDS);
 
         assertThat(stepOperatorEventService.expanded).hasSize(6); // six total steps in the expanded parallel nested workflow
@@ -276,16 +270,14 @@ public class AbstractStepOperatorTest {
         }
 
         @Override
-        protected Callable<StepInstance> getExecutionCallable(StepInstance stepInstance) {
+        protected Supplier<StepInstance> getExecutionSupplier(StepInstance stepInstance) {
             return () -> {
                 ListMultimap<String, String> parameterValues = StepInstances.parameterValues(stepInstance);
                 parameterValues.get("SLEEP").stream().findFirst()
                         .ifPresent(sleepParameter -> {
-                            try {
-                                Thread.sleep(Long.parseLong(sleepParameter));
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            Awaitility.await().timeout(Duration.ofSeconds(30))
+                                    .pollDelay(Long.parseLong(sleepParameter), TimeUnit.MILLISECONDS)
+                                    .until(() -> true);
                         });
                 parameterValues.get("THROW").stream().findFirst()
                         .ifPresent(throwParameter -> {

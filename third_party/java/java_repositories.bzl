@@ -85,6 +85,7 @@ ARTIFACTS = [
     maven.artifact("net.bytebuddy", "byte-buddy", "1.10.22"),
     maven.artifact("net.bytebuddy", "byte-buddy-agent", "1.10.22"),
     maven.artifact("net.java.dev.jna", "jna", "5.8.0"),
+    maven.artifact("net.jodah", "failsafe", "2.4.4"),
     maven.artifact("org.apache.commons", "commons-compress", "1.21"),
     maven.artifact("org.apache.commons", "commons-lang3", "3.12.0"),
     maven.artifact("org.apache.httpcomponents", "httpclient", "4.5.13"),

@@ -21,6 +21,7 @@ repositories {
 extra["aws-sdk-v2.version"] = "2.17.53"
 extra["commons-compress.version"] = "1.21"
 extra["docker-java.version"] = "3.2.12"
+extra["failsafe.version"] = "2.4.4"
 extra["google-common-protos.version"] = "2.5.0"
 extra["grpc-java.version"] = "1.41.0" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
 extra["guava.version"] = "31.0.1-jre"
@@ -62,6 +63,7 @@ dependencyManagement {
         dependency("com.squareup.okhttp3:logging-interceptor:${property("okhttp.version")}")
         dependency("com.squareup.okhttp3:mockwebserver:${property("okhttp.version")}")
         dependency("com.squareup.okhttp3:okhttp:${property("okhttp.version")}")
+        dependency("net.jodah:failsafe:${property("failsafe.version")}")
         dependency("org.apache.commons:commons-compress:${property("commons-compress.version")}")
         dependency("org.apache.tomcat:annotations-api:${property("org.apache.tomcat:annotations-api.version")}")
         dependency("org.locationtech.jts:jts-core:${property("jts-core.version")}")
@@ -101,6 +103,7 @@ dependencies {
     generate("io.projectreactor:reactor-core")
     generate("javax.annotation:javax.annotation-api")
     generate("junit:junit")
+    generate("net.jodah:failsafe")
     generate("org.awaitility:awaitility")
     generate("org.apache.commons:commons-compress")
     generate("org.apache.tomcat:annotations-api")
