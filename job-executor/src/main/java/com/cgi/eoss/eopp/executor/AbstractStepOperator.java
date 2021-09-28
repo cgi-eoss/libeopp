@@ -21,10 +21,12 @@ import com.cgi.eoss.eopp.job.StepInstanceId;
 import com.cgi.eoss.eopp.job.StepInstances;
 import com.cgi.eoss.eopp.jobgraph.JobGraph;
 import com.cgi.eoss.eopp.workflow.StepConfiguration;
-import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.google.common.util.concurrent.Striped;
+import net.jodah.failsafe.Failsafe;
+import net.jodah.failsafe.FailsafeExecutor;
+import net.jodah.failsafe.RetryPolicy;
+import net.jodah.failsafe.Timeout;
 import org.slf4j.Logger;
 
 import java.time.Duration;
@@ -37,8 +39,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -61,9 +61,9 @@ public abstract class AbstractStepOperator implements StepOperator {
     private final StepOperatorEventDispatcher stepOperatorEventDispatcher;
     private final ConcurrentMap<StepInstanceId, CompletableFuture<StepInstance>> stepFutures = new ConcurrentHashMap<>();
     private final ExecutorService stepExecutorService;
-    private final ExecutorService lightweightStepExecutorService;
+    private final ExecutorService lightweightExecutorService;
     private final Duration stepExecutionTimeout;
-    private final Striped<Lock> stepExecuteLock;
+    private final RetryPolicy<StepInstance> retryPolicy;
 
     /**
      * <p>Create a new StepOperator with a maximum of 8 concurrent steps, with no timeout.</p>
@@ -82,55 +82,31 @@ public abstract class AbstractStepOperator implements StepOperator {
      * @param stepExecutionTimeout        The maximum duration before cancellation for any single step. If this is negative,
      */
     protected AbstractStepOperator(StepOperatorEventDispatcher stepOperatorEventDispatcher, int maxConcurrentSteps, Duration stepExecutionTimeout) {
+        this(stepOperatorEventDispatcher,
+                maxConcurrentSteps,
+                stepExecutionTimeout,
+                new RetryPolicy<StepInstance>().withMaxAttempts(1));
+    }
+
+    /**
+     * <p>Create a new StepOperator for parallel execution.</p>
+     *
+     * @param stepOperatorEventDispatcher A handler for events emitted by this operator.
+     * @param maxConcurrentSteps          The maximum number of concurrent steps to run.
+     * @param stepExecutionTimeout        The maximum duration before cancellation for any single step. If this is negative,
+     */
+    protected AbstractStepOperator(StepOperatorEventDispatcher stepOperatorEventDispatcher, int maxConcurrentSteps, Duration stepExecutionTimeout, RetryPolicy<StepInstance> retryPolicy) {
         this.stepOperatorEventDispatcher = stepOperatorEventDispatcher;
         this.stepExecutorService = Executors.newWorkStealingPool(maxConcurrentSteps);
-        this.lightweightStepExecutorService = Executors.newCachedThreadPool();
+        this.lightweightExecutorService = Executors.newCachedThreadPool();
         this.stepExecutionTimeout = stepExecutionTimeout;
-        this.stepExecuteLock = Striped.lazyWeakLock(1);
+        this.retryPolicy = retryPolicy;
     }
 
     @Override
     public CompletableFuture<StepInstance> execute(StepInstance stepInstance) {
         StepInstanceId stepInstanceId = StepInstances.getId(stepInstance);
-        Lock lock = stepExecuteLock.get(stepInstanceId);
-
-        // If the step is already executing, or we can't get a lock for execution,
-        // wait until the other thread releases, then return the same future
-        if (stepFutures.containsKey(stepInstanceId) || !lock.tryLock()) {
-            log.debug("{}::{} is already executing, preventing duplication", stepInstance.getJobUuid(), stepInstance.getIdentifier());
-            lock.lock();
-            try {
-                return stepFutures.get(stepInstanceId);
-            } finally {
-                lock.unlock();
-            }
-        }
-
-        try {
-            log.debug("{}::{} executing", stepInstance.getJobUuid(), stepInstance.getIdentifier());
-
-            CompletableFuture<StepInstance> stepFuture;
-            if (Strings.isNullOrEmpty(stepInstance.getParentIdentifier()) && StepInstances.hasMultiplicity(stepInstance)) {
-                stepFuture = submitLightweight(stepInstanceId, getParentStepSupplier(stepInstance));
-            } else {
-                if (!Strings.isNullOrEmpty(stepInstance.getParentIdentifier())) {
-                    // TODO Enable recursive multiplicity
-                    log.debug("{}::{} has multiplicity, but expansion is skipped as it is already a sub-step", stepInstance.getJobUuid(), stepInstance.getIdentifier());
-                }
-                stepFuture = submit(stepInstanceId, getExecutionSupplier(stepInstance));
-            }
-
-            if (!stepInstance.getParentIdentifier().isEmpty()) {
-                stepFuture.whenCompleteAsync(getSubStepCallback(stepInstance), lightweightStepExecutorService);
-            }
-
-            return stepFuture;
-        } catch (Exception e) {
-            log.error("{}::{} execution failed to start", stepInstance.getJobUuid(), stepInstance.getIdentifier(), e);
-            return CompletableFuture.failedFuture(new StepExecutionException(String.format("%s::%s execution failed to start", stepInstance.getJobUuid(), stepInstance.getIdentifier()), stepInstance, StepInstance.Status.FAILED));
-        } finally {
-            lock.unlock();
-        }
+        return stepFutures.computeIfAbsent(stepInstanceId, it -> computeStepFuture(stepInstance));
     }
 
     @Override
@@ -158,26 +134,40 @@ public abstract class AbstractStepOperator implements StepOperator {
      * <p>This may be used by subclasses to reattach during {@link #ensureScheduled(StepInstance)} so that the new call
      * shares the configured timeout and concurrency parameters of this base class.</p>
      *
-     * @param stepInstanceId The identifier of the step instance being returned by the task.
-     * @param task           The supplier to return a completed step instance.
+     * @param stepInstance The step instance being executed by the task.
+     * @param task         The supplier to return a completed step instance.
      * @return The given supplier as a {@link CompletableFuture}, with a timeout if configured.
      */
-    protected CompletableFuture<StepInstance> submit(StepInstanceId stepInstanceId, Supplier<StepInstance> task) {
-        return submit(stepInstanceId, task, stepExecutorService);
+    protected CompletableFuture<StepInstance> submit(StepInstance stepInstance, Supplier<StepInstance> task) {
+        RetryPolicy<StepInstance> cleanupRetryPolicy = retryPolicy
+                .onFailedAttempt(event -> log.trace("{}::{} failed attempt {}/{}", stepInstance.getJobUuid(), stepInstance.getIdentifier(), event.getAttemptCount(), retryPolicy.getMaxAttempts(), event.getLastFailure()))
+                .onRetry(event -> {
+                    log.debug("{}::{} cleaning and retrying (attempt {}/{})", stepInstance.getJobUuid(), stepInstance.getIdentifier(), event.getAttemptCount() + 1, retryPolicy.getMaxAttempts());
+                    operatorCleanUp(stepInstance);
+                });
+
+        FailsafeExecutor<StepInstance> failsafeExecutor;
+        if (stepExecutionTimeout.isNegative()) {
+            failsafeExecutor = Failsafe.with(cleanupRetryPolicy);
+        } else {
+            failsafeExecutor = Failsafe.with(cleanupRetryPolicy, Timeout.of(stepExecutionTimeout));
+        }
+
+        return failsafeExecutor.getStageAsync(() -> CompletableFuture.supplyAsync(task, stepExecutorService));
     }
 
     /**
      * <p>Execute the given StepInstance supplier on the 'lightweight' executor, not counting towards maximum step
-     * concurrency.</p>
-     * <p>This may be used by subclasses to reattach during {@link #ensureScheduled(StepInstance)} so that the new call
-     * shares the configured timeout of this base class.</p>
+     * concurrency, and ignoring the configured retry policy and timeout for this operator.</p>
      *
-     * @param stepInstanceId The identifier of the step instance being returned by the task.
-     * @param task           The supplier to return a completed step instance.
-     * @return The given supplier as a {@link CompletableFuture}, with a timeout if configured.
+     * @param stepInstance The step instance being executed by the task.
+     * @param task         The supplier to return a completed step instance.
+     * @return The given supplier as a {@link CompletableFuture}.
      */
-    protected CompletableFuture<StepInstance> submitLightweight(StepInstanceId stepInstanceId, Supplier<StepInstance> task) {
-        return submit(stepInstanceId, task, lightweightStepExecutorService);
+    protected CompletableFuture<StepInstance> submitLightweight(StepInstance stepInstance, Supplier<StepInstance> task) {
+        // Lightweight tasks shouldn't run with timeouts or retry policies as
+        // they should be connected internally to tasks which handle that logic
+        return CompletableFuture.supplyAsync(task, lightweightExecutorService);
     }
 
     /**
@@ -187,43 +177,45 @@ public abstract class AbstractStepOperator implements StepOperator {
         return Optional.ofNullable(stepFutures.get(stepInstanceId));
     }
 
-    private CompletableFuture<StepInstance> submit(StepInstanceId stepInstanceId, Supplier<StepInstance> task, ExecutorService stepExecutorService) {
-        CompletableFuture<StepInstance> stepExecutionFuture = CompletableFuture.supplyAsync(task, stepExecutorService);
-        return executeWithTimeout(stepInstanceId, stepExecutionFuture, stepExecutionTimeout);
-    }
-
-    /**
-     * <p>Execute the given StepInstance with a timeout. If the timeout parameter is negative, the step is executed with
-     * no timeout.</p>
-     *
-     * @param stepExecutionFuture The executing StepInstance.
-     * @param timeout             The timeout after which the executing stepExecutionFuture will be cancelled. Ignored
-     *                            if negative.
-     * @return The given stepExecutionFuture, wrapped with the given timeout.
-     */
-    private CompletableFuture<StepInstance> executeWithTimeout(StepInstanceId stepInstanceId, CompletableFuture<StepInstance> stepExecutionFuture, Duration timeout) {
-        CompletableFuture<StepInstance> stepFuture;
-        if (timeout.isNegative()) {
-            stepFuture = stepExecutionFuture;
-        } else {
-            stepFuture = stepExecutionFuture.orTimeout(timeout.toMillis(), TimeUnit.MILLISECONDS);
-        }
-        stepFutures.put(stepInstanceId, stepFuture);
-        return stepFuture;
-    }
-
     /**
      * <p>Construct a Supplier which executes the given StepInstance. This should block until the step has finished
-     * executing, and return the completed StepInstance, i.e. with final results for
-     * {@link StepInstance#getOutputsList()}.</p>
-     * <p>The Supplier should throw {@link StepExecutionException} in the event of non-nominal execution.</p>
+     * executing, and return the completed StepInstance, i.e. with final results for {@link StepInstance#getOutputsList()}.</p>
+     * <p>The Supplier should throw only {@link StepExecutionException} in the event of non-nominal execution.</p>
      */
     protected abstract Supplier<StepInstance> getExecutionSupplier(StepInstance stepInstance);
 
     /**
      * <p>Perform any operator-specific cleanup for the given StepInstance.</p>
+     * <p>This should ensure that all resources created by calls to {@link #getExecutionSupplier(StepInstance)} are
+     * cleaned up, for example threads, files, or external processes.</p>
      */
     protected abstract void operatorCleanUp(StepInstance stepInstance);
+
+    private CompletableFuture<StepInstance> computeStepFuture(StepInstance stepInstance) {
+        try {
+            log.debug("{}::{} executing", stepInstance.getJobUuid(), stepInstance.getIdentifier());
+
+            CompletableFuture<StepInstance> stepFuture;
+            if (stepInstance.getParentIdentifier().isEmpty() && StepInstances.hasMultiplicity(stepInstance)) {
+                stepFuture = submitLightweight(stepInstance, getParentStepSupplier(stepInstance));
+            } else {
+                if (!stepInstance.getParentIdentifier().isEmpty() && StepInstances.hasMultiplicity(stepInstance)) {
+                    // TODO Enable recursive multiplicity
+                    log.debug("{}::{} has multiplicity, but expansion is skipped as it is already a sub-step", stepInstance.getJobUuid(), stepInstance.getIdentifier());
+                }
+                stepFuture = submit(stepInstance, getExecutionSupplier(stepInstance));
+            }
+
+            if (!stepInstance.getParentIdentifier().isEmpty()) {
+                stepFuture.whenCompleteAsync(getSubStepCallback(stepInstance), lightweightExecutorService);
+            }
+
+            return stepFuture;
+        } catch (Exception e) {
+            log.error("{}::{} execution failed to start", stepInstance.getJobUuid(), stepInstance.getIdentifier(), e);
+            return CompletableFuture.failedFuture(new StepExecutionException(String.format("%s::%s execution failed to start", stepInstance.getJobUuid(), stepInstance.getIdentifier()), stepInstance, StepInstance.Status.FAILED));
+        }
+    }
 
     private List<StepInstance> expandStep(StepInstance step) {
         log.debug("{}::{} expanding", step.getJobUuid(), step.getIdentifier());
@@ -236,7 +228,7 @@ public abstract class AbstractStepOperator implements StepOperator {
         List<StepInstance> subSteps = expandStep(stepInstance);
         ParentStepMonitor parentStepMonitor = new ParentStepMonitor(stepInstance, subSteps);
         SUB_STEP_NOTIFICATION_BUS.register(parentStepMonitor);
-        stepOperatorEventDispatcher.stepExpanded(stepInstance, subSteps);
+        lightweightExecutorService.submit(() -> stepOperatorEventDispatcher.stepExpanded(stepInstance, subSteps));
         return parentStepMonitor;
     }
 

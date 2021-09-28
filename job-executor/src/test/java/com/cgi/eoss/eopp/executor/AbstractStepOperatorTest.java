@@ -35,21 +35,28 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.util.concurrent.MoreExecutors;
+import net.jodah.failsafe.RetryPolicy;
+import net.jodah.failsafe.TimeoutExceededException;
 import org.awaitility.Awaitility;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -111,7 +118,7 @@ public class AbstractStepOperatorTest {
                         .setIdentifier("test-step-" + i)
                         .setJobUuid(jobId)
                         .addParameters(StepParameterValue.newBuilder()
-                                .setIdentifier("SLEEP")
+                                .setIdentifier("DURATION")
                                 .addValues(String.valueOf(Duration.ofMillis(100).toMillis()))
                                 .build())
                         .build())
@@ -128,12 +135,12 @@ public class AbstractStepOperatorTest {
     @Test
     public void testExecuteWithTimeout() throws Exception {
         TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
-        TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService, Duration.ofMillis(100));
+        TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService, 8, Duration.ofMillis(100));
         CompletableFuture<StepInstance> execute = stepOperator.execute(StepInstance.newBuilder()
                 .setIdentifier("test-step")
                 .setJobUuid(jobId)
                 .addParameters(StepParameterValue.newBuilder()
-                        .setIdentifier("SLEEP")
+                        .setIdentifier("DURATION")
                         .addValues(String.valueOf(Duration.ofSeconds(10).toMillis()))
                         .build())
                 .build());
@@ -142,7 +149,7 @@ public class AbstractStepOperatorTest {
             fail("Expected TimeoutException");
         } catch (Exception e) {
             assertThat(e).isInstanceOf(ExecutionException.class);
-            assertThat(e).hasCauseThat().isInstanceOf(TimeoutException.class);
+            assertThat(e).hasCauseThat().isInstanceOf(TimeoutExceededException.class);
         }
     }
 
@@ -154,23 +161,37 @@ public class AbstractStepOperatorTest {
                 .setIdentifier("test-step")
                 .setJobUuid(jobId)
                 .addParameters(StepParameterValue.newBuilder()
-                        .setIdentifier("SLEEP")
+                        .setIdentifier("DURATION")
                         .addValues(String.valueOf(Duration.ofSeconds(10).toMillis()))
                         .build())
                 .build();
 
+        CountDownLatch assertedLatch = new CountDownLatch(1);
+
         CompletableFuture<StepInstance> execute = stepOperator.execute(stepInstance);
         execute.whenCompleteAsync((result, t) -> {
             if (result != null) {
-                fail("Expected ListenableFuture to be cancelled");
+                fail("Expected CompletableFuture to be cancelled");
             }
             assertThat(t).isInstanceOf(CancellationException.class);
+            assertedLatch.countDown();
         }, MoreExecutors.directExecutor());
+
+        // Wait for the step to start, then cancel it
+        Awaitility.await().atMost(Duration.ofSeconds(10))
+                .untilAsserted(() -> {
+                    assertThat(stepOperator.started).containsKey(StepInstances.getId(stepInstance));
+                    assertThat(stepOperator.started.get(StepInstances.getId(stepInstance)).get()).isEqualTo(1);
+                });
 
         stepOperator.cleanUp(stepInstance);
 
+        // Ensure we've done our assertions in the CompletableFuture callback
+        assertedLatch.await();
+
         assertThat(execute.isCancelled()).isTrue();
-        assertThat(stepOperator.cleanedUp).contains(StepInstances.getId(stepInstance));
+        assertThat(stepOperator.cleanedUp).containsKey(StepInstances.getId(stepInstance));
+        assertThat(stepOperator.cleanedUp.get(StepInstances.getId(stepInstance)).get()).isEqualTo(1);
     }
 
     @Test
@@ -186,9 +207,12 @@ public class AbstractStepOperatorTest {
 
         // because the ListenableFuture was not registered, the step was re-run
         // first cleanUp was called
-        assertThat(stepOperator.cleanedUp).contains(StepInstances.getId(stepInstance));
-        // then the step was executed
+        assertThat(stepOperator.cleanedUp).containsKey(StepInstances.getId(stepInstance));
+        assertThat(stepOperator.cleanedUp.get(StepInstances.getId(stepInstance)).get()).isEqualTo(1);
+        // then the step was executed once
         assertThat(result.getOutputsCount()).isEqualTo(1);
+        assertThat(stepOperator.started).containsKey(StepInstances.getId(stepInstance));
+        assertThat(stepOperator.started.get(StepInstances.getId(stepInstance)).get()).isEqualTo(1);
     }
 
     @Test
@@ -257,31 +281,207 @@ public class AbstractStepOperatorTest {
         assertThat(finished.getOutputsCount()).isEqualTo(3); // three OUTPUT steps in the expanded parallel nested workflow
     }
 
+    @Test
+    public void testRetryPolicySuccess() throws ExecutionException, InterruptedException {
+        TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
+        TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService, 8, Duration.ofSeconds(-1),
+                new RetryPolicy<StepInstance>().withMaxAttempts(3));
+
+        CompletableFuture<StepInstance> execute = stepOperator.execute(StepInstance.newBuilder()
+                .setIdentifier("test-step")
+                .setJobUuid(jobId)
+                .build());
+        StepInstance stepInstance = execute.get();
+        assertThat(stepInstance.getOutputsCount()).isEqualTo(1);
+
+        assertThat(stepOperator.started).containsKey(StepInstances.getId(stepInstance));
+        assertThat(stepOperator.started.get(StepInstances.getId(stepInstance)).get()).isEqualTo(1);
+        assertThat(stepOperator.cleanedUp).doesNotContainKey(StepInstances.getId(stepInstance));
+    }
+
+    @Test
+    public void testRetryPolicyMultipleAttempts() {
+        TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
+        TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService, 8, Duration.ofSeconds(-1),
+                new RetryPolicy<StepInstance>().withMaxAttempts(3));
+
+        StepInstance stepInstance = StepInstance.newBuilder()
+                .setIdentifier("test-step")
+                .setJobUuid(jobId)
+                .addParameters(StepParameterValue.newBuilder()
+                        .setIdentifier("THROW")
+                        .addValues("My failure message")
+                        .build())
+                .build();
+        CompletableFuture<StepInstance> execute = stepOperator.execute(stepInstance);
+
+        try {
+            execute.get();
+            fail("Expected StepExecutionException");
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(ExecutionException.class);
+            assertThat(e).hasCauseThat().isInstanceOf(StepExecutionException.class);
+            assertThat(e).hasCauseThat().hasMessageThat().isEqualTo("My failure message");
+            assertThat(((StepExecutionException) e.getCause()).getStatus()).isEqualTo(StepInstance.Status.FAILED);
+        }
+
+        assertThat(stepOperator.started).containsKey(StepInstances.getId(stepInstance));
+        assertThat(stepOperator.started.get(StepInstances.getId(stepInstance)).get()).isEqualTo(3);
+        assertThat(stepOperator.cleanedUp).containsKey(StepInstances.getId(stepInstance));
+        assertThat(stepOperator.cleanedUp.get(StepInstances.getId(stepInstance)).get()).isEqualTo(2); // one cleanup before each retry, the overall cleanup should be performed by the caller
+    }
+
+    @Test
+    public void testRetryPolicyHandleMatched() {
+        TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
+        TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService, 8, Duration.ofSeconds(-1),
+                new RetryPolicy<StepInstance>().withMaxAttempts(3)
+                        .handleIf(t -> t.getMessage().equals("My failure message")));
+
+        // Failsafe will enter retry logic if the exception matches the handleIf predicate
+        // i.e. we should see all 3 attempts
+
+        StepInstance stepInstance = StepInstance.newBuilder()
+                .setIdentifier("test-step")
+                .setJobUuid(jobId)
+                .addParameters(StepParameterValue.newBuilder()
+                        .setIdentifier("THROW")
+                        .addValues("My failure message")
+                        .build())
+                .build();
+        CompletableFuture<StepInstance> execute = stepOperator.execute(stepInstance);
+
+        try {
+            execute.get();
+            fail("Expected StepExecutionException");
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(ExecutionException.class);
+            assertThat(e).hasCauseThat().isInstanceOf(StepExecutionException.class);
+            assertThat(e).hasCauseThat().hasMessageThat().isEqualTo("My failure message");
+            assertThat(((StepExecutionException) e.getCause()).getStatus()).isEqualTo(StepInstance.Status.FAILED);
+        }
+
+        assertThat(stepOperator.started).containsKey(StepInstances.getId(stepInstance));
+        assertThat(stepOperator.started.get(StepInstances.getId(stepInstance)).get()).isEqualTo(3);
+        assertThat(stepOperator.cleanedUp).containsKey(StepInstances.getId(stepInstance));
+        assertThat(stepOperator.cleanedUp.get(StepInstances.getId(stepInstance)).get()).isEqualTo(2); // one cleanup before each retry, the overall cleanup should be performed by the caller
+    }
+
+    @Test
+    public void testRetryPolicyHandleUnmatched() {
+        TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
+        TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService, 8, Duration.ofSeconds(-1),
+                new RetryPolicy<StepInstance>().withMaxAttempts(3)
+                        .handleIf(t -> t.getCause() instanceof IOException));
+
+        // Failsafe will enter retry logic if the exception matches the handleIf predicate
+        // i.e. we should see only 1 attempt rather than 3
+
+        StepInstance stepInstance = StepInstance.newBuilder()
+                .setIdentifier("test-step")
+                .setJobUuid(jobId)
+                .addParameters(StepParameterValue.newBuilder()
+                        .setIdentifier("THROW")
+                        .addValues("My failure message")
+                        .build())
+                .build();
+        CompletableFuture<StepInstance> execute = stepOperator.execute(stepInstance);
+
+        try {
+            execute.get();
+            fail("Expected StepExecutionException");
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(ExecutionException.class);
+            assertThat(e).hasCauseThat().isInstanceOf(StepExecutionException.class);
+            assertThat(e).hasCauseThat().hasMessageThat().isEqualTo("My failure message");
+            assertThat(((StepExecutionException) e.getCause()).getStatus()).isEqualTo(StepInstance.Status.FAILED);
+        }
+
+        assertThat(stepOperator.started).containsKey(StepInstances.getId(stepInstance));
+        assertThat(stepOperator.started.get(StepInstances.getId(stepInstance)).get()).isEqualTo(1);
+        assertThat(stepOperator.cleanedUp).doesNotContainKey(StepInstances.getId(stepInstance));
+    }
+
+    @Test
+    public void testRetryPolicyAbortIfMatched() {
+        TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
+        TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService, 8, Duration.ofSeconds(-1),
+                new RetryPolicy<StepInstance>().withMaxAttempts(3)
+                        .abortIf((stepInstance, throwable) -> throwable.getCause() instanceof IOException));
+        stepOperator.throwCause.set(new IOException("Underlying failure"));
+
+        // Failsafe will abort if the result matches the abortIf predicate
+        // i.e. we should see only 1 attempt rather than 3
+
+        StepInstance stepInstance = StepInstance.newBuilder()
+                .setIdentifier("test-step")
+                .setJobUuid(jobId)
+                .addParameters(StepParameterValue.newBuilder()
+                        .setIdentifier("THROW")
+                        .addValues("My failure message")
+                        .build())
+                .build();
+        CompletableFuture<StepInstance> execute = stepOperator.execute(stepInstance);
+
+        try {
+            execute.get();
+            fail("Expected StepExecutionException");
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(ExecutionException.class);
+            assertThat(e).hasCauseThat().isInstanceOf(StepExecutionException.class);
+            assertThat(e).hasCauseThat().hasMessageThat().isEqualTo("My failure message");
+            assertThat(((StepExecutionException) e.getCause()).getStatus()).isEqualTo(StepInstance.Status.FAILED);
+        }
+
+        assertThat(stepOperator.started).containsKey(StepInstances.getId(stepInstance));
+        assertThat(stepOperator.started.get(StepInstances.getId(stepInstance)).get()).isEqualTo(1);
+        assertThat(stepOperator.cleanedUp).doesNotContainKey(StepInstances.getId(stepInstance));
+    }
+
     private static class TestStepOperator extends AbstractStepOperator {
-        private List<StepInstanceId> cleanedUp = new CopyOnWriteArrayList<>();
+        private final ConcurrentMap<StepInstanceId, AtomicInteger> started = new ConcurrentHashMap<>();
+        private final ConcurrentMap<StepInstanceId, AtomicInteger> cleanedUp = new ConcurrentHashMap<>();
+        private final AtomicReference<Throwable> throwCause = new AtomicReference<>();
 
         private TestStepOperator(TestStepOperatorEventDispatcher stepOperatorEventService) {
             super(stepOperatorEventService);
             stepOperatorEventService.attach(this);
         }
 
-        private TestStepOperator(StepOperatorEventDispatcher stepOperatorEventService, Duration stepExecutionTimeout) {
-            super(stepOperatorEventService, 8, stepExecutionTimeout);
+        private TestStepOperator(TestStepOperatorEventDispatcher stepOperatorEventService, int maxConcurrentSteps, Duration stepExecutionTimeout) {
+            super(stepOperatorEventService, maxConcurrentSteps, stepExecutionTimeout);
+            stepOperatorEventService.attach(this);
+        }
+
+        private TestStepOperator(TestStepOperatorEventDispatcher stepOperatorEventService, int maxConcurrentSteps, Duration stepExecutionTimeout, RetryPolicy<StepInstance> retryPolicy) {
+            super(stepOperatorEventService, maxConcurrentSteps, stepExecutionTimeout, retryPolicy);
+            stepOperatorEventService.attach(this);
         }
 
         @Override
         protected Supplier<StepInstance> getExecutionSupplier(StepInstance stepInstance) {
+            AtomicInteger startedCount = started.computeIfAbsent(StepInstances.getId(stepInstance), stepInstanceId -> new AtomicInteger());
             return () -> {
+                startedCount.incrementAndGet();
                 ListMultimap<String, String> parameterValues = StepInstances.parameterValues(stepInstance);
-                parameterValues.get("SLEEP").stream().findFirst()
+                parameterValues.get("DURATION").stream().findFirst()
                         .ifPresent(sleepParameter -> {
-                            Awaitility.await().timeout(Duration.ofSeconds(30))
-                                    .pollDelay(Long.parseLong(sleepParameter), TimeUnit.MILLISECONDS)
-                                    .until(() -> true);
+                            Duration duration = Duration.ofMillis(Long.parseLong(sleepParameter));
+                            Stopwatch stopwatch = Stopwatch.createStarted();
+                            Awaitility.await()
+                                    .pollInterval(Duration.ofMillis(1))
+                                    .until(() -> stopwatch.elapsed().compareTo(duration) >= 0);
                         });
                 parameterValues.get("THROW").stream().findFirst()
                         .ifPresent(throwParameter -> {
-                            throw new StepExecutionException(throwParameter, stepInstance, StepInstance.Status.FAILED);
+                            Optional.ofNullable(throwCause.get()).ifPresentOrElse(
+                                    throwable -> {
+                                        throw new StepExecutionException(throwParameter, stepInstance, StepInstance.Status.FAILED, throwable);
+                                    },
+                                    () -> {
+                                        throw new StepExecutionException(throwParameter, stepInstance, StepInstance.Status.FAILED);
+                                    }
+                            );
                         });
                 return stepInstance.toBuilder()
                         .addOutputs(StepDataSet.newBuilder()
@@ -298,7 +498,8 @@ public class AbstractStepOperatorTest {
 
         @Override
         protected void operatorCleanUp(StepInstance stepInstance) {
-            cleanedUp.add(StepInstances.getId(stepInstance));
+            cleanedUp.computeIfAbsent(StepInstances.getId(stepInstance), stepInstanceId -> new AtomicInteger())
+                    .incrementAndGet();
         }
     }
 

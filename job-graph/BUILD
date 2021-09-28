@@ -24,6 +24,7 @@ maven_library(
         "//job",
         "//workflow",
         "@maven//:com_google_guava_guava",
+        "@maven//:net_jodah_failsafe",
         "@maven//:org_slf4j_slf4j_api",
         "@maven//:org_springframework_spring_core",
     ],

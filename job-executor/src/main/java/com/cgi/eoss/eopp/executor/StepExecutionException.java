@@ -40,6 +40,15 @@ public class StepExecutionException extends RuntimeException {
     }
 
     /**
+     * <p>Create a new StepExecutionException associated with the given StepInstance, having the given Status.</p>
+     */
+    public StepExecutionException(String message, StepInstance stepInstance, StepInstance.Status status, Throwable cause) {
+        super(message, cause);
+        this.stepInstance = stepInstance;
+        this.status = status;
+    }
+
+    /**
      * @return The StepInstance which threw this execution during execution.
      */
     public StepInstance getStepInstance() {

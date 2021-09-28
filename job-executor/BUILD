@@ -19,6 +19,7 @@ maven_library(
         "//workflow",
         "@maven//:com_google_guava_guava",
         "@maven//:io_projectreactor_reactor_core",
+        "@maven//:net_jodah_failsafe",
         "@maven//:org_slf4j_slf4j_api",
         "@maven//:org_springframework_spring_core",
     ],
@@ -38,6 +39,7 @@ gen_java_tests(
         "@maven//:com_google_guava_guava",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
+        "@maven//:net_jodah_failsafe",
         "@maven//:org_awaitility_awaitility",
     ],
 )
