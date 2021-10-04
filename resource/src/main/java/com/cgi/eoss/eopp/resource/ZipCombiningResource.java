@@ -19,10 +19,10 @@ package com.cgi.eoss.eopp.resource;
 import com.google.common.io.ByteStreams;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
-import org.springframework.lang.Nullable;
 import org.springframework.util.unit.DataSize;
 
 import java.io.BufferedOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
@@ -31,6 +31,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
@@ -89,7 +90,7 @@ public class ZipCombiningResource extends AbstractResource {
         // the zip is written to the output buffer but nothing is consuming
         // from the associated pipe. Such behaviour would be fine if the total
         // output size is smaller than the buffer, but this is not guaranteed.
-        CompletableFuture.runAsync(() -> {
+        CompletableFuture<Void> pipeFuture = CompletableFuture.runAsync(() -> {
             try (ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(pos, zipBufferSize))) {
                 zos.setLevel(compressionLevel);
 
@@ -110,7 +111,24 @@ public class ZipCombiningResource extends AbstractResource {
             }
         });
 
-        return pis;
+        return new FilterInputStream(pis) {
+            @Override
+            public void close() throws IOException {
+                try {
+                    pipeFuture.join();
+                } catch (CompletionException e) {
+                    if (e.getCause() instanceof EoppResourceException) {
+                        throw (EoppResourceException) e.getCause();
+                    } else if (e.getCause() instanceof IOException) {
+                        throw (IOException) e.getCause();
+                    } else {
+                        throw new IOException(e);
+                    }
+                } finally {
+                    super.close();
+                }
+            }
+        };
     }
 
     @Override

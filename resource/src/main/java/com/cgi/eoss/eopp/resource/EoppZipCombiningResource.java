@@ -22,7 +22,6 @@ import com.cgi.eoss.eopp.util.Timestamps;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import org.springframework.core.io.Resource;
-import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -109,7 +108,7 @@ public class EoppZipCombiningResource extends ZipCombiningResource implements Eo
             this.lastModified = Instant.now();
             this.originalSize = -1L;
             this.zippedSize = -1L;
-            this.zipChecksum = null;
+            this.zipChecksum = "";
         }
     }
 
