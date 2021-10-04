@@ -79,6 +79,7 @@ public class ZipCombiningResource extends AbstractResource {
 
     @Override
     public InputStream getInputStream() throws IOException {
+        @SuppressWarnings("java:S2095") // no need to close pos explicitly here as it is closed along with the returned pis
         PipedOutputStream pos = new PipedOutputStream();
         PipedInputStream pis = new PipedInputStream(pos);
 

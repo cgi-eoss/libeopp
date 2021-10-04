@@ -54,7 +54,7 @@ abstract class BaseS3ObjectResource implements EoppResource {
         this(bucket, key, false);
     }
 
-    public BaseS3ObjectResource(String bucket, String key, boolean requesterPays) {
+    protected BaseS3ObjectResource(String bucket, String key, boolean requesterPays) {
         this.bucket = bucket;
         this.key = key;
         this.requesterPays = requesterPays;

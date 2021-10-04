@@ -18,7 +18,6 @@ package com.cgi.eoss.eopp.resolver;
 
 import com.cgi.eoss.eopp.resource.EoppPathResource;
 import com.cgi.eoss.eopp.resource.EoppResource;
-import com.google.common.collect.ImmutableSet;
 
 import java.net.URI;
 import java.nio.file.Paths;
@@ -31,7 +30,7 @@ import java.util.Set;
  */
 public class PathResolver implements Resolver {
 
-    private static final Set<String> PROTOCOLS = ImmutableSet.of("file");
+    private static final Set<String> PROTOCOLS = Set.of("file");
 
     @Override
     public boolean canResolve(URI uri) {

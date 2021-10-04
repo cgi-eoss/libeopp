@@ -68,10 +68,8 @@ public class EoppFileStreamResourceReactiveTest {
         EoppFileStreamResource<ReactorFileStreamTestServerGrpc.ReactorFileStreamTestServerStub, GetFileParam> resource = new EoppFileStreamResource<>(fileMeta, getFileMethod, reactiveFileServerStub::getFile);
 
         HashingCountingOutputStream target = new HashingCountingOutputStream(ByteStreams.nullOutputStream());
-        try {
+        try (target) {
             ByteStreams.copy(resource.getInputStream(), target);
-        } finally {
-            target.close();
         }
         assertThat(target.getCount()).isEqualTo(fileMeta.getSize());
         assertThat(target.checksum()).isEqualTo(fileMeta.getChecksum());
@@ -86,10 +84,8 @@ public class EoppFileStreamResourceReactiveTest {
         GetFileParam getFile = GetFileParam.newBuilder().setUri(testfile.toUri().toString()).build();
 
         HashingCountingOutputStream target = new HashingCountingOutputStream(ByteStreams.nullOutputStream());
-        try {
+        try (target) {
             FileStreams.writeToStream(Mono.just(getFile), reactiveFileServerStub::getFile, target);
-        } finally {
-            target.close();
         }
         assertThat(target.getCount()).isEqualTo(fileMeta.getSize());
         assertThat(target.checksum()).isEqualTo(fileMeta.getChecksum());

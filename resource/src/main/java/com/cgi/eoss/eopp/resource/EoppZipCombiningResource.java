@@ -97,10 +97,8 @@ public class EoppZipCombiningResource extends ZipCombiningResource implements Eo
             }
 
             HashingCountingOutputStream hashingCountingOutputStream = new HashingCountingOutputStream(ByteStreams.nullOutputStream());
-            try (InputStream inputStream = getInputStream()) {
+            try (hashingCountingOutputStream; InputStream inputStream = getInputStream()) {
                 ByteStreams.copy(inputStream, hashingCountingOutputStream);
-            } finally {
-                hashingCountingOutputStream.close();
             }
 
             this.lastModified = resourceLastModified;

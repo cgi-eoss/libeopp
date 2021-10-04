@@ -34,7 +34,7 @@ import java.nio.charset.StandardCharsets;
  * @param <P> Type of the parameter of the method, i.e. request message type.
  * @param <R> Type of the response of the method, i.e. response message type.
  */
-public final class GrpcMethod<S extends AbstractStub<S>, P, R> {
+public final class GrpcMethod<S extends AbstractStub<S>, P extends Message, R extends Message> {
 
     private final AbstractStub<S> stub;
     private final MethodDescriptor<P, R> methodDescriptor;
@@ -87,7 +87,7 @@ public final class GrpcMethod<S extends AbstractStub<S>, P, R> {
                 .append(stub.getChannel().authority()).append("/")
                 .append(methodDescriptor.getFullMethodName())
                 .append("?");
-        ((Message) request).getAllFields()
+        request.getAllFields()
                 .forEach((key, value) ->
                         uri.append(key.getName())
                                 .append("=")

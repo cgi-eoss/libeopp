@@ -75,10 +75,8 @@ public class EoppFileStreamResourceTest {
 
         // Checksum the streamed data to verify correctness
         HashingCountingOutputStream target = new HashingCountingOutputStream(ByteStreams.nullOutputStream());
-        try {
+        try (target) {
             ByteStreams.copy(resource.getInputStream(), target);
-        } finally {
-            target.close();
         }
         assertThat(target.getCount()).isEqualTo(fileMeta.getSize());
         assertThat(target.checksum()).isEqualTo(fileMeta.getChecksum());

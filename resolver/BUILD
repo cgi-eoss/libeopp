@@ -34,7 +34,6 @@ maven_library(
         ":resolver",
         "//resource",
         "//resource:path-resource",
-        "@maven//:com_google_guava_guava",
     ],
 )
 
@@ -48,7 +47,6 @@ maven_library(
         ":resolver",
         "//resource",
         "//resource:okhttp-resource",
-        "@maven//:com_google_guava_guava",
         "@maven//:com_squareup_okhttp3_okhttp",
     ],
 )

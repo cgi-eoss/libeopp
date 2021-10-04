@@ -18,7 +18,6 @@ package com.cgi.eoss.eopp.resolver;
 
 import com.cgi.eoss.eopp.resource.EoppOkHttpResource;
 import com.cgi.eoss.eopp.resource.EoppResource;
-import com.google.common.collect.ImmutableSet;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 
@@ -34,7 +33,7 @@ public class OkHttpResolver implements Resolver {
 
     private static final OkHttpClient DEFAULT_OKHTTP_CLIENT = new OkHttpClient.Builder().build();
 
-    private static final Set<String> PROTOCOLS = ImmutableSet.of("http", "https");
+    private static final Set<String> PROTOCOLS = Set.of("http", "https");
 
     private final ClientFactory clientFactory;
 

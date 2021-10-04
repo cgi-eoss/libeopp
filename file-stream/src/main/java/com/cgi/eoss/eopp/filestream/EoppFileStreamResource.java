@@ -21,6 +21,7 @@ import com.cgi.eoss.eopp.file.FileMeta;
 import com.cgi.eoss.eopp.resource.EoppResource;
 import com.cgi.eoss.eopp.rpc.GrpcMethod;
 import com.google.common.base.Preconditions;
+import com.google.protobuf.Message;
 import io.grpc.stub.AbstractStub;
 import io.grpc.stub.ClientCalls;
 import io.grpc.stub.StreamObserver;
@@ -48,7 +49,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @param <S> The gRPC service stub type.
  * @param <P> The gRPC service parameter (request) message type.
  */
-public class EoppFileStreamResource<S extends AbstractStub<S>, P> implements EoppResource {
+public class EoppFileStreamResource<S extends AbstractStub<S>, P extends Message> implements EoppResource {
 
     private static final Logger log = getLogger(EoppFileStreamResource.class);
 
@@ -65,7 +66,7 @@ public class EoppFileStreamResource<S extends AbstractStub<S>, P> implements Eop
      * @deprecated Use the reactive-enabled {@link #EoppFileStreamResource(FileMeta, GrpcMethod, Function)} to make use
      * of built-in flow control and other enhancements.
      */
-    @Deprecated
+    @Deprecated(forRemoval = false)
     public EoppFileStreamResource(FileMeta fileMeta, GrpcMethod<S, P, FileChunk> fileStreamMethod) {
         this(fileMeta, fileStreamMethod, null);
     }
@@ -140,6 +141,7 @@ public class EoppFileStreamResource<S extends AbstractStub<S>, P> implements Eop
 
     @Override
     public InputStream getInputStream() throws IOException {
+        @SuppressWarnings("java:S2095") // no need to close pos explicitly here as it is closed along with the returned pis
         // Set up a sink of data into which the gRPC StreamObserver<FileChunk> can write
         PipedOutputStream pos = new PipedOutputStream();
         // Pipe the sink stream to the caller
@@ -156,10 +158,8 @@ public class EoppFileStreamResource<S extends AbstractStub<S>, P> implements Eop
 
     private void streamReactiveStub(PipedOutputStream pos) throws IOException {
         log.debug("Receiving FileChunk stream as Flux from {}", fileStreamMethod);
-        try {
+        try (pos) {
             FileStreams.writeToStream(Mono.just(fileStreamMethod.getRequest()), reactiveMethodRef, pos);
-        } finally {
-            pos.close();
         }
     }
 
@@ -170,8 +170,8 @@ public class EoppFileStreamResource<S extends AbstractStub<S>, P> implements Eop
 
         // Start receiving data to the connected PipedOutputStream
         ClientCalls.asyncServerStreamingCall(fileStreamMethod.getStub().getChannel().newCall(
-                fileStreamMethod.getMethodDescriptor(),
-                fileStreamMethod.getStub().getCallOptions()),
+                        fileStreamMethod.getMethodDescriptor(),
+                        fileStreamMethod.getStub().getCallOptions()),
                 fileStreamMethod.getRequest(),
                 responseObserver);
     }
