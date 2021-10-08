@@ -32,8 +32,8 @@ import java.io.OutputStream;
 public class HashingCountingOutputStream extends OutputStream {
 
     private final HashFunction hashFunction;
-    private CountingOutputStream countingOutputStream;
-    private HashingOutputStream hashingOutputStream;
+    private final CountingOutputStream countingOutputStream;
+    private final HashingOutputStream hashingOutputStream;
 
     public HashingCountingOutputStream(OutputStream outputStream) {
         this(FileMetas.DEFAULT_HASH_FUNCTION, outputStream);

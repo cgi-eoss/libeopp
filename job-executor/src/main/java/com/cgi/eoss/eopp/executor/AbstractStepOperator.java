@@ -79,7 +79,9 @@ public abstract class AbstractStepOperator implements StepOperator {
      *
      * @param stepOperatorEventDispatcher A handler for events emitted by this operator.
      * @param maxConcurrentSteps          The maximum number of concurrent steps to run.
-     * @param stepExecutionTimeout        The maximum duration before cancellation for any single step. If this is negative,
+     * @param stepExecutionTimeout        The maximum duration before cancellation for any single step. If this is
+     *                                    negative, no timeout is enforced. This is not enforced for steps which expand
+     *                                    to multiple sub-steps, although each sub-step will run with a timeout.
      */
     protected AbstractStepOperator(StepOperatorEventDispatcher stepOperatorEventDispatcher, int maxConcurrentSteps, Duration stepExecutionTimeout) {
         this(stepOperatorEventDispatcher,
@@ -93,7 +95,9 @@ public abstract class AbstractStepOperator implements StepOperator {
      *
      * @param stepOperatorEventDispatcher A handler for events emitted by this operator.
      * @param maxConcurrentSteps          The maximum number of concurrent steps to run.
-     * @param stepExecutionTimeout        The maximum duration before cancellation for any single step. If this is negative,
+     * @param stepExecutionTimeout        The maximum duration before cancellation for any single step. If this is
+     *                                    negative, no timeout is enforced. This is not enforced for steps which expand
+     *                                    to multiple sub-steps, although each sub-step will run with a timeout.
      */
     protected AbstractStepOperator(StepOperatorEventDispatcher stepOperatorEventDispatcher, int maxConcurrentSteps, Duration stepExecutionTimeout, RetryPolicy<StepInstance> retryPolicy) {
         this.stepOperatorEventDispatcher = stepOperatorEventDispatcher;

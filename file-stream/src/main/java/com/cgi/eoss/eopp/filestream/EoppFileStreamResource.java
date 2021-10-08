@@ -105,7 +105,7 @@ public class EoppFileStreamResource<S extends AbstractStub<S>, P extends Message
     }
 
     @Override
-    public URL getURL() throws IOException {
+    public URL getURL() {
         throw new UnsupportedOperationException("gRPC URI may not be represented as a java.net.URL");
     }
 

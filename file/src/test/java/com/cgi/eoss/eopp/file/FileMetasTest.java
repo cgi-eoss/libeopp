@@ -18,7 +18,6 @@ package com.cgi.eoss.eopp.file;
 
 import com.cgi.eoss.eopp.util.Timestamps;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.protobuf.Any;
 import com.google.protobuf.StringValue;

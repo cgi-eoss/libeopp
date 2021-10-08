@@ -30,5 +30,5 @@ public enum GeoJSONType {
     Polygon,
     MultiPolygon,
     Geometry,
-    GeometryCollection;
+    GeometryCollection
 }

@@ -106,7 +106,7 @@ abstract class BaseS3ObjectResource implements EoppResource {
     }
 
     @Override
-    public Resource createRelative(String relativePath) throws IOException {
+    public Resource createRelative(String relativePath) {
         return doCreateRelative(bucket, StringUtils.applyRelativePath(key, relativePath));
     }
 

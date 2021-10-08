@@ -113,7 +113,7 @@ public class EoppZipCombiningResource extends ZipCombiningResource implements Eo
     }
 
     @Override
-    public long lastModified() throws IOException {
+    public long lastModified() {
         return lastModified.toEpochMilli();
     }
 

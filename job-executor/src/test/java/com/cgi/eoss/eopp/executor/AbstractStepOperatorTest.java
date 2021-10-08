@@ -504,7 +504,7 @@ public class AbstractStepOperatorTest {
     }
 
     private static class TestStepOperatorEventDispatcher implements StepOperatorEventDispatcher {
-        private SetMultimap<StepInstanceId, StepInstanceId> expanded = Multimaps.synchronizedSetMultimap(HashMultimap.create());
+        private final SetMultimap<StepInstanceId, StepInstanceId> expanded = Multimaps.synchronizedSetMultimap(HashMultimap.create());
         private TestStepOperator testStepOperator;
 
         @Override

@@ -221,7 +221,7 @@ class JobGraph private constructor(
         }
 
         private fun getStep(stepIdentifier: String): Step =
-            steps[stepIdentifier]?: throw GraphBuildFailureException("No Step found with identifier: $stepIdentifier")
+            steps[stepIdentifier] ?: throw GraphBuildFailureException("No Step found with identifier: $stepIdentifier")
 
         private fun populateDefaultParameters(network: MutableNetwork<Step, DataConnector>) {
             network.nodes().filterIsInstance<ProcessStep>().forEach { step ->
@@ -251,10 +251,10 @@ class JobGraph private constructor(
                 .forEach { network.removeNode(it) }
 
             // Trim steps with no predecessors that are not permitted to be source steps and steps with no successors that are not permitted to be sink steps
-            var illegalSources: List<Step> = listOf()
+            var illegalSources: List<Step>
             var illegalSinks: List<Step> = listOf()
-            while ({ illegalSources = stepHasNoSources(network); illegalSources }().isNotEmpty()
-                || { illegalSinks = stepHasNoSinks(network); illegalSinks }().isNotEmpty()
+            while (run { illegalSources = stepHasNoSources(network); illegalSources.isNotEmpty() }
+                || run { illegalSinks = stepHasNoSinks(network); illegalSinks.isNotEmpty() }
             ) {
                 if (illegalSources.isNotEmpty()) {
                     log.debug("Removing steps without predecessors: {}", illegalSources)

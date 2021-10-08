@@ -18,7 +18,6 @@ package com.cgi.eoss.eopp.resolver;
 
 import com.cgi.eoss.eopp.resource.EoppResource;
 
-import java.io.IOException;
 import java.net.URI;
 
 /**
@@ -39,7 +38,7 @@ public interface Resolver {
      * @param uri The URI to be retrieved
      * @return An object implementing {@link EoppResource}
      */
-    EoppResource resolveUri(URI uri) throws IOException;
+    EoppResource resolveUri(URI uri);
 
     /**
      * <p>Find the priority with which this resolver should be used for the given URI.</p>

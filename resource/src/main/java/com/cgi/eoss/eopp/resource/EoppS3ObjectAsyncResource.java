@@ -111,9 +111,9 @@ public class EoppS3ObjectAsyncResource extends BaseS3ObjectResource implements E
      * <p>Transforms the {@link SdkPublisher}&lt;{@link ByteBuffer}&gt; from the S3 SDK into an InputStream.</p>
      */
     private static class GetObjectInputStream implements AsyncResponseTransformer<GetObjectResponse, InputStream> {
+        private final DataBufferFactory dataBufferFactory;
         private PipedOutputStream pipedOutputStream;
         private CompletableFuture<InputStream> completableFuture;
-        private DataBufferFactory dataBufferFactory;
 
         public GetObjectInputStream(DataBufferFactory dataBufferFactory) {
             this.dataBufferFactory = dataBufferFactory;

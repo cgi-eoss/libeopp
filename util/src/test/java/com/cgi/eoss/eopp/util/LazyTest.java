@@ -83,7 +83,7 @@ public class LazyTest {
             lazyResult.get();
             fail("Expected NullPointerException");
         } catch (NullPointerException e) {
-            assertThat(e).hasMessageThat().isNull();
+            assertThat(e).hasMessageThat().isEqualTo("supplier.get()");
         }
     }
 

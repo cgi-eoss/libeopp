@@ -29,6 +29,13 @@ public class AbortableCountDownLatch extends CountDownLatch {
     private String message;
     private Throwable cause;
 
+    /**
+     * Constructs an {@code AbortableCountDownLatch} initialized with the given count.
+     *
+     * @param count the number of times {@link #countDown} must be invoked
+     *              before threads can pass through {@link #await}
+     * @throws IllegalArgumentException if {@code count} is negative
+     */
     public AbortableCountDownLatch(int count) {
         super(count);
     }

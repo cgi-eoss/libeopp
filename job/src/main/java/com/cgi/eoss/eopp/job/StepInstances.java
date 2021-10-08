@@ -79,8 +79,8 @@ public final class StepInstances {
     }
 
     public static StepDataSet getStepInput(StepInstance step, String identifier) {
-        return Iterables.find(step.getInputsList(),
-                it -> identifier.equals(Objects.requireNonNull(it).getIdentifier()));
+        return step.getInputsList().stream()
+                .filter(it -> identifier.equals(Objects.requireNonNull(it).getIdentifier())).findFirst().orElseThrow();
     }
 
     public static int getStepInputIdx(StepInstance step, String identifier) {
@@ -89,8 +89,8 @@ public final class StepInstances {
     }
 
     public static StepParameterValue getStepParameter(StepInstance step, String identifier) {
-        return Iterables.find(step.getParametersList(),
-                it -> identifier.equals(Objects.requireNonNull(it).getIdentifier()));
+        return step.getParametersList().stream()
+                .filter(it -> identifier.equals(Objects.requireNonNull(it).getIdentifier())).findFirst().orElseThrow();
     }
 
     public static int getStepParameterIdx(StepInstance step, String identifier) {

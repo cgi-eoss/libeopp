@@ -40,7 +40,7 @@ public final class Lazy {
      * Supplier.
      */
     public static <Z> Supplier<Z> lazily(Supplier<Z> supplier) {
-        return new Supplier<Z>() {
+        return new Supplier<>() {
             private final AtomicReference<Z> value = new AtomicReference<>();
             private final Lock lock = new ReentrantLock();
 
@@ -52,10 +52,9 @@ public final class Lazy {
                     try {
                         // Another thread may have entered between (result == null) and lock.lock(), so we check again
                         result = value.get();
-                        if (result != null) {
-                            return result;
-                        }
-                        return Objects.requireNonNull(value.updateAndGet(x -> supplier.get()));
+                        return Objects.requireNonNullElseGet(
+                                result,
+                                () -> value.updateAndGet(x -> supplier.get()));
                     } finally {
                         lock.unlock();
                     }

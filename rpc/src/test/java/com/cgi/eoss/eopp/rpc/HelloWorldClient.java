@@ -17,7 +17,6 @@
 package com.cgi.eoss.eopp.rpc;
 
 import io.grpc.ManagedChannel;
-import io.grpc.NameResolver;
 import io.grpc.examples.helloworld.GreeterGrpc;
 import io.grpc.testing.GrpcCleanupRule;
 

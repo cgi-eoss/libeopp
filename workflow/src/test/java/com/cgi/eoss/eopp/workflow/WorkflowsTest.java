@@ -185,7 +185,7 @@ public class WorkflowsTest {
                 workflowNode -> Stream.concat(Stream.of(workflowNode), Optional.ofNullable((ArrayNode) workflowNode.get("step_configurations"))
                         .map(stepConfigurations -> StreamSupport.stream(stepConfigurations.spliterator(), false)
                                 .flatMap(stepConfig -> Optional.ofNullable(stepConfig.has("step") ? stepConfig.get("step") : stepConfig.get("nested_workflow"))
-                                        .map(Stream::of).orElse(Stream.empty())))
+                                        .stream()))
                         .orElse(Stream.empty()))
                         .forEach(it -> {
                             String identifier = it.get("identifier").textValue();
