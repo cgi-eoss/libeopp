@@ -1,6 +1,5 @@
 load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
-load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
 load("@rules_java//java:defs.bzl", "java_library", "java_proto_library", "java_test")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
@@ -48,14 +47,11 @@ maven_library(
 )
 
 # Bundle the proto-derived classes for the Maven artifact
-jarjar_library(
-    name = "libfile_deploy",
-    jars = [
+java_library(
+    name = "file_deploy",
+    resource_jars = [
         ":file",
         ":file_java_proto",
-    ],
-    rules = [
-        "zap com.google.protobuf.**",
     ],
     tags = [
         "maven_artifact",

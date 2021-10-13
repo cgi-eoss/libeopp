@@ -35,9 +35,9 @@ public class DockerClientRule extends ExternalResource {
     //@VisibleForTesting
     static final String DEFAULT_DOCKER_HOST = "unix:///var/run/docker.sock";
 
-    private final DockerClient dockerClient;
     private final String dockerHostUrl;
     private final boolean skipIfUnusable;
+    private DockerClient dockerClient;
 
     /**
      * <p>Create a new Docker client, connecting to an Engine running on the local Docker socket, skipping tests if it
@@ -56,26 +56,29 @@ public class DockerClientRule extends ExternalResource {
     }
 
     /**
-     * <p>Create a new Docker client, connecting to an Engine running at the specified URL, optionally skipping tests if
+     * <p>Prepare a new Docker client connection to an Engine running at the specified URL, optionally skipping tests if
      * it is unusable.</p>
      */
     public DockerClientRule(String dockerHostUrl, boolean skipIfUnusable) {
         this.dockerHostUrl = dockerHostUrl;
         this.skipIfUnusable = skipIfUnusable;
-        DefaultDockerClientConfig dockerClientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder()
-                .withApiVersion(RemoteApiVersion.VERSION_1_24)
-                .withDockerHost(dockerHostUrl)
-                .build();
-        DockerHttpClient dockerHttpClient = new ZerodepDockerHttpClient.Builder()
-                .dockerHost(dockerClientConfig.getDockerHost())
-                .sslConfig(dockerClientConfig.getSSLConfig())
-                .build();
-        this.dockerClient = DockerClientImpl.getInstance(dockerClientConfig, dockerHttpClient);
     }
 
     @Override
     protected void before() throws Throwable {
         try {
+            if (dockerHostUrl.startsWith("unix://") && System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+                throw new UnsupportedOperationException("Docker client on Windows cannot connect to engine via unix socket");
+            }
+            DefaultDockerClientConfig dockerClientConfig = DefaultDockerClientConfig.createDefaultConfigBuilder()
+                    .withApiVersion(RemoteApiVersion.VERSION_1_24)
+                    .withDockerHost(dockerHostUrl)
+                    .build();
+            DockerHttpClient dockerHttpClient = new ZerodepDockerHttpClient.Builder()
+                    .dockerHost(dockerClientConfig.getDockerHost())
+                    .sslConfig(dockerClientConfig.getSSLConfig())
+                    .build();
+            this.dockerClient = DockerClientImpl.getInstance(dockerClientConfig, dockerHttpClient);
             dockerClient.infoCmd().exec();
         } catch (Exception e) {
             if (skipIfUnusable) {

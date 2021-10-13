@@ -67,7 +67,8 @@ public class DiscoveryClientNameResolverProviderTest {
 
     @Test
     public void testRealServerAndReconnection() throws IOException {
-        Server server = NettyServerBuilder.forPort(getRandomPort()).addService(serviceImpl).build().start();
+        Server server = NettyServerBuilder.forAddress(new InetSocketAddress("localhost", getRandomPort()))
+                .addService(serviceImpl).build().start();
         grpcCleanup.register(server);
 
         // Set up a spring-cloud discovery environment matching the local gRPC server instance
