@@ -64,6 +64,11 @@ public class DiscoveryClientNameResolverProvider extends NameResolverProvider {
     }
 
     @Override
+    protected String getScheme() {
+        return SCHEME;
+    }
+
+    @Override
     public String getDefaultScheme() {
         return SCHEME;
     }
