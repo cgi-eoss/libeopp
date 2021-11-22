@@ -9,16 +9,16 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/util/AbortedException.java",
         "src/main/java/com/cgi/eoss/eopp/util/Lazy.java",
     ],
-    artifact_name = "libeopp :: util",
-    generate_pitest_coverage_target = True,
-    root_packages = ["com.cgi.eoss.eopp.util"],
-    sq_srcs = glob(["src/main/java/**"]),
-    sq_targets = [
+    analysis_srcs = glob(["src/main/java/**"]),
+    analysis_targets = [
         ":util",
         ":timestamps",
         ":eopp-headers",
         ":io",
     ],
+    artifact_name = "libeopp :: util",
+    generate_pitest_coverage_target = True,
+    root_packages = ["com.cgi.eoss.eopp.util"],
     test_suite = [":util_tests"],
 )
 

@@ -10,13 +10,14 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/rpc/GrpcClient.java",
         "src/main/java/com/cgi/eoss/eopp/rpc/GrpcMethod.java",
     ],
+    analysis_srcs = glob(["src/main/java/**/*.java"]),
+    analysis_targets = [
+        ":rpc",
+        ":grpc-discovery-client-name-resolver",
+    ],
     artifact_name = "libeopp :: rpc",
     generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.rpc"],
-    sq_srcs = glob(["src/main/java/**/*.java"]),
-    sq_targets = [
-        ":grpc-discovery-client-name-resolver",
-    ],
     test_suite = [":rpc_tests"],
     deps = [
         "//third_party/grpc:api",

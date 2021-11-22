@@ -9,15 +9,15 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/resolver/Resolver.java",
         "src/main/java/com/cgi/eoss/eopp/resolver/ResolverFacade.java",
     ],
-    artifact_name = "libeopp :: resolver",
-    generate_pitest_coverage_target = True,
-    root_packages = ["com.cgi.eoss.eopp.resolver"],
-    sq_srcs = glob(["src/main/java/**"]),
-    sq_targets = [
+    analysis_srcs = glob(["src/main/java/**"]),
+    analysis_targets = [
         ":okhttp-resolver",
         ":path-resolver",
         ":resolver",
     ],
+    artifact_name = "libeopp :: resolver",
+    generate_pitest_coverage_target = True,
+    root_packages = ["com.cgi.eoss.eopp.resolver"],
     test_suite = [":resolver_tests"],
     deps = [
         "//resource",

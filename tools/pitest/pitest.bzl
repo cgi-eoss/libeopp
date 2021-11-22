@@ -1,7 +1,6 @@
-load("@rules_java//java:defs.bzl", "java_binary", "java_library", "java_test")
+load("@rules_java//java:defs.bzl", "java_test")
 load("@rules_pkg//:pkg.bzl", "pkg_zip")
-load("@rules_pkg//:path.bzl", "compute_data_path", "dest_path")
-load("@rules_pkg//:mappings.bzl", "pkg_attributes", "pkg_filegroup", "pkg_files", "pkg_mkdirs", "strip_prefix")
+load("@rules_pkg//:mappings.bzl", "pkg_filegroup", "pkg_files", "strip_prefix")
 
 def _quote(filename, protect = "="):
     """Quote the filename, by escaping = by \\= and \\ by \\\\"""
@@ -33,13 +32,23 @@ _java_transitive_runtime_dependencies = rule(
     implementation = _java_transitive_runtime_dependencies_impl,
 )
 
-def pitest_mutation_coverage_test(name, target_classes, target_tests, srcs = [], libraries = [], test_srcs = [], test_targets = [], data = [], tags = []):
+def pitest_mutation_coverage_test(
+        name,
+        target_classes,
+        target_tests,
+        srcs = [],
+        libraries = [],
+        test_srcs = [],
+        test_targets = [],
+        data = [],
+        tags = []):
     pkg_files(
         name = "_%s_data_srcs" % name,
         prefix = "srcs",
         strip_prefix = strip_prefix.from_root(),
         srcs = srcs,
         testonly = True,
+        tags = ["manual"],
     )
 
     pkg_files(
@@ -48,6 +57,7 @@ def pitest_mutation_coverage_test(name, target_classes, target_tests, srcs = [],
         strip_prefix = strip_prefix.from_root(),
         srcs = test_srcs,
         testonly = True,
+        tags = ["manual"],
     )
 
     pkg_files(
@@ -56,6 +66,7 @@ def pitest_mutation_coverage_test(name, target_classes, target_tests, srcs = [],
         strip_prefix = strip_prefix.from_root(),
         srcs = libraries,
         testonly = True,
+        tags = ["manual"],
     )
 
     pkg_files(
@@ -64,12 +75,14 @@ def pitest_mutation_coverage_test(name, target_classes, target_tests, srcs = [],
         strip_prefix = strip_prefix.from_root(),
         srcs = test_targets,
         testonly = True,
+        tags = ["manual"],
     )
 
     _java_transitive_runtime_dependencies(
         name = "_%s_data_test_dependencies_files" % name,
         targets = test_targets,
         testonly = True,
+        tags = ["manual"],
     )
 
     pkg_files(
@@ -78,6 +91,7 @@ def pitest_mutation_coverage_test(name, target_classes, target_tests, srcs = [],
         strip_prefix = strip_prefix.from_root(),
         srcs = [":_%s_data_test_dependencies_files" % name],
         testonly = True,
+        tags = ["manual"],
     )
 
     pkg_filegroup(
@@ -90,12 +104,14 @@ def pitest_mutation_coverage_test(name, target_classes, target_tests, srcs = [],
             "_%s_data_test_dependencies" % name,
         ],
         testonly = True,
+        tags = ["manual"],
     )
 
     pkg_zip(
         name = "_%s_data" % name,
         srcs = ["_%s_data_filegroup" % name],
         testonly = True,
+        tags = ["manual"],
     )
 
     java_test(
@@ -115,5 +131,6 @@ def pitest_mutation_coverage_test(name, target_classes, target_tests, srcs = [],
     native.filegroup(
         name = "%s_pitest_report_support_files",
         srcs = srcs,
+        tags = ["manual"],
         visibility = ["//visibility:public"],
     )

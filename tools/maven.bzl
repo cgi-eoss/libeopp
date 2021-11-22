@@ -23,8 +23,8 @@ def maven_library(
         deploy_java_library = True,
         build_kt_jvm_library = False,
         build_javadoc_library = True,
-        sq_srcs = None,
-        sq_targets = None,
+        analysis_srcs = None,
+        analysis_targets = None,
         test_srcs = [],
         test_targets = [],
         test_suite = None,
@@ -88,11 +88,11 @@ def maven_library(
     if generate_sonarqube_project:
         sonarqube_project(
             name,
-            sq_srcs if sq_srcs else srcs,
+            analysis_srcs if analysis_srcs else srcs,
             artifact_name,
             artifact_id,
             group_id,
-            targets = sq_targets if sq_targets else [":%s" % name],
+            targets = analysis_targets if analysis_targets else [":%s" % name],
             test_srcs = _test_srcs,
             test_targets = _test_targets,
         )
@@ -100,8 +100,8 @@ def maven_library(
     if generate_pitest_coverage_target:
         pitest_mutation_coverage_test(
             name = "%s_pitest" % name,
-            srcs = srcs,
-            libraries = [":%s" % name],
+            srcs = analysis_srcs if analysis_srcs else srcs,
+            libraries = analysis_targets if analysis_targets else [":%s" % name],
             target_classes = ",".join(["%s.*" % p for p in root_packages]),
             target_tests = ",".join(["%s.*" % p for p in root_packages]),
             test_srcs = _test_srcs,

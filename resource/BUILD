@@ -12,16 +12,16 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/resource/WritableEoppResource.java",
         "src/main/java/com/cgi/eoss/eopp/resource/ZipCombiningResource.java",
     ],
-    artifact_name = "libeopp :: resource",
-    generate_pitest_coverage_target = True,
-    root_packages = ["com.cgi.eoss.eopp.resource"],
-    sq_srcs = glob(["src/main/java/**"]),
-    sq_targets = [
+    analysis_srcs = glob(["src/main/java/**"]),
+    analysis_targets = [
         ":okhttp-resource",
         ":path-resource",
         ":resource",
         ":s3-resource",
     ],
+    artifact_name = "libeopp :: resource",
+    generate_pitest_coverage_target = True,
+    root_packages = ["com.cgi.eoss.eopp.resource"],
     test_suite = [":resource_tests"],
     deps = [
         "//file",
