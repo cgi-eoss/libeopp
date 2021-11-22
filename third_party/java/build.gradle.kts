@@ -18,24 +18,24 @@ repositories {
     mavenCentral()
 }
 
-extra["aws-sdk-v2.version"] = "2.17.53"
+extra["aws-sdk-v2.version"] = "2.17.95"
 extra["commons-compress.version"] = "1.21"
 extra["docker-java.version"] = "3.2.12"
 extra["failsafe.version"] = "2.4.4"
-extra["google-common-protos.version"] = "2.5.0"
-extra["grpc-java.version"] = "1.41.0" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
+extra["google-common-protos.version"] = "2.7.0"
+extra["grpc-java.version"] = "1.42.1" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
 extra["guava.version"] = "31.0.1-jre"
 extra["j2objc-annotations.version"] = "1.3"
 extra["jimfs.version"] = "1.2"
-extra["json-schema-validator.version"] = "1.0.57"
+extra["json-schema-validator.version"] = "1.0.64"
 extra["jts-core.version"] = "1.18.2"
 extra["kotlin.version"] = "1.5.31"
-extra["okhttp.version"] = "4.9.1"
-extra["pitest.version"] = "1.7.2"
-extra["protobuf-java.version"] = "3.17.3"
-extra["reactor-grpc.version"] = "1.2.0"
-extra["spring-boot.version"] = "2.5.5"
-extra["spring-cloud.version"] = "2020.0.4"
+extra["okhttp.version"] = "4.9.2"
+extra["pitest.version"] = "1.7.3"
+extra["protobuf-java.version"] = "3.19.1"
+extra["reactor-grpc.version"] = "1.2.3"
+extra["spring-boot.version"] = "2.6.1"
+extra["spring-cloud.version"] = "2021.0.0"
 extra["truth.version"] = "1.1.3"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
 

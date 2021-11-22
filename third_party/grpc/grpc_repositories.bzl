@@ -1,20 +1,20 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-GRPC_JAVA_VERSION = "1.41.0"
+GRPC_JAVA_VERSION = "1.42.1"
 
-REACTOR_GRPC_VERSION = "1.2.0"
+REACTOR_GRPC_VERSION = "1.2.3"
 
 def grpc_repositories():
     http_archive(
         name = "io_grpc_grpc_java",
-        sha256 = "a61a678f995f1d612bb23d5fb721d83b6960508cc1e0b0dc3c164d6d8d8d24e0",
+        sha256 = "8ca70cc6114b24fcd220fbd5ee8d570f89e74447bd655b0923d5d01ca357f28c",
         strip_prefix = "grpc-java-%s" % GRPC_JAVA_VERSION,
         urls = ["https://github.com/grpc/grpc-java/archive/v%s.zip" % GRPC_JAVA_VERSION],
     )
 
     http_archive(
         name = "com_salesforce_servicelibs_reactive_grpc",
-        sha256 = "d65989d5ecf8b739c653263e6dc1b06fbbf8fab11f8aeb6df4abf5e5de7abab8",
+        sha256 = "b446bbb5341ea1166dba47bc5c07fbe7afadb8b303c309baef7b58fff4e0dcc7",
         strip_prefix = "reactive-grpc-%s" % REACTOR_GRPC_VERSION,
         urls = ["https://github.com/salesforce/reactive-grpc/archive/v%s.zip" % REACTOR_GRPC_VERSION],
     )

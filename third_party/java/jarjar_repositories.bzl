@@ -13,7 +13,6 @@
 # limitations under the License.
 """A subset of the google_bazel_common repositories for jarjar dependencies only"""
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:java.bzl", "java_import_external")
 
 _MAVEN_MIRRORS = [

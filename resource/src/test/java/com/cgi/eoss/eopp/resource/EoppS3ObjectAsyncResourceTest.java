@@ -66,7 +66,7 @@ public class EoppS3ObjectAsyncResourceTest {
 
         asyncS3Client = S3AsyncClient.builder()
                 .endpointOverride(server.url("/").uri())
-                .region(Region.of("LOCAL"))
+                .region(Region.EU_WEST_1)
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("default", "default")))
                 .build();
     }
