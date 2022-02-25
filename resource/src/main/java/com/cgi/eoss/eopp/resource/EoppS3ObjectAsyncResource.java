@@ -148,6 +148,7 @@ public class EoppS3ObjectAsyncResource extends BaseS3ObjectResource implements E
                     .map(dataBufferFactory::wrap);
             DataBufferUtils
                     .write(dataBufferFlux, pipedOutputStream)
+                    .publishOn(Schedulers.boundedElastic())
                     .doFinally(type -> {
                         try {
                             pipedOutputStream.close();

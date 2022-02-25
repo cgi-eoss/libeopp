@@ -1,13 +1,13 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-GRPC_JAVA_VERSION = "1.42.1"
+GRPC_JAVA_VERSION = "1.45.0"
 
 REACTOR_GRPC_VERSION = "1.2.3"
 
 def grpc_repositories():
     http_archive(
         name = "io_grpc_grpc_java",
-        sha256 = "8ca70cc6114b24fcd220fbd5ee8d570f89e74447bd655b0923d5d01ca357f28c",
+        sha256 = "0a2aebd9b4980c3d555246a27d365349aa9327acf1bc3ed3b545c3cc9594f2e9",
         strip_prefix = "grpc-java-%s" % GRPC_JAVA_VERSION,
         urls = ["https://github.com/grpc/grpc-java/archive/v%s.zip" % GRPC_JAVA_VERSION],
     )
@@ -36,6 +36,7 @@ IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS = {
     "io.grpc:grpc-core": "@com_cgi_eoss_eopp//third_party/grpc:core",
     "io.grpc:grpc-grpclb": "@com_cgi_eoss_eopp//third_party/grpc:grpclb",
     "io.grpc:grpc-netty": "@com_cgi_eoss_eopp//third_party/grpc:netty",
+    "io.grpc:grpc-netty-shaded": "@com_cgi_eoss_eopp//third_party/grpc:netty-shaded",
     "io.grpc:grpc-protobuf": "@com_cgi_eoss_eopp//third_party/grpc:protobuf",
     "io.grpc:grpc-protobuf-lite": "@com_cgi_eoss_eopp//third_party/grpc:protobuf_lite",
     # TODO Override the bazel grpc-services target when they fix deprecation warnings (or we can suppress them)

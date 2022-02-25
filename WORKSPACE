@@ -6,17 +6,17 @@ http_archive(
     name = "google_bazel_common",
     patch_args = ["-p1"],
     patches = ["//third_party:google_bazel_common.suppress-warning.patch"],
-    sha256 = "12c4ffe760f7b867aeb105374e0f91be0d70c41ef076764139f46bbb804c7b2a",
-    strip_prefix = "bazel-common-d0877c70dab70684355a93ec63b2b2150529c2df",
-    urls = ["https://github.com/google/bazel-common/archive/d0877c70dab70684355a93ec63b2b2150529c2df.zip"],
+    sha256 = "207317ec7f3acaa9e4e33f11eb45effdda2c3506edbe6fbdbffcff32be6fe16a",
+    strip_prefix = "bazel-common-f538027ae7f9133d1796eb6b970fb78eff58e4b5",
+    urls = ["https://github.com/google/bazel-common/archive/f538027ae7f9133d1796eb6b970fb78eff58e4b5.zip"],
 )
 
 http_archive(
     name = "bazel_skylib",
-    sha256 = "c6966ec828da198c5d9adbaa94c05e3a1c7f21bd012a0b29ba8ddbccb2c93b0d",
+    sha256 = "f7be3474d42aae265405a592bb7da8e171919d74c16f082a5457840f06054728",
     urls = [
-        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.1.1/bazel-skylib-1.1.1.tar.gz",
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.1.1/bazel-skylib-1.1.1.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.2.1/bazel-skylib-1.2.1.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.2.1/bazel-skylib-1.2.1.tar.gz",
     ],
 )
 
@@ -26,10 +26,10 @@ bazel_skylib_workspace()
 
 http_archive(
     name = "rules_pkg",
-    sha256 = "a89e203d3cf264e564fcb96b6e06dd70bc0557356eb48400ce4b5d97c2c3720d",
+    sha256 = "62eeb544ff1ef41d786e329e1536c1d541bb9bcad27ae984d57f18f314018e66",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.5.1/rules_pkg-0.5.1.tar.gz",
-        "https://github.com/bazelbuild/rules_pkg/releases/download/0.5.1/rules_pkg-0.5.1.tar.gz",
+        "https://github.com/bazelbuild/rules_pkg/releases/download/0.6.0/rules_pkg-0.6.0.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.6.0/rules_pkg-0.6.0.tar.gz",
     ],
 )
 
@@ -39,8 +39,9 @@ rules_pkg_dependencies()
 
 http_archive(
     name = "rules_java",
-    sha256 = "34b41ec683e67253043ab1a3d1e8b7c61e4e8edefbcad485381328c934d072fe",
-    urls = ["https://github.com/bazelbuild/rules_java/releases/download/4.0.0/rules_java-4.0.0.tar.gz"],
+    sha256 = "ddc9e11f4836265fea905d2845ac1d04ebad12a255f791ef7fd648d1d2215a5b",
+    strip_prefix = "rules_java-5.0.0",
+    urls = ["https://github.com/bazelbuild/rules_java/archive/refs/tags/5.0.0.tar.gz"],
 )
 
 load("@rules_java//java:repositories.bzl", "rules_java_dependencies", "rules_java_toolchains")
@@ -51,20 +52,21 @@ rules_java_toolchains()
 
 http_archive(
     name = "rules_proto",
-    sha256 = "20b240eba17a36be4b0b22635aca63053913d5c1ee36e16be36499d167a2f533",
-    strip_prefix = "rules_proto-11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8",
-    urls = ["https://github.com/bazelbuild/rules_proto/archive/11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8.tar.gz"],
+    sha256 = "c22cfcb3f22a0ae2e684801ea8dfed070ba5bed25e73f73580564f250475e72d",
+    strip_prefix = "rules_proto-4.0.0-3.19.2",
+    urls = ["https://github.com/bazelbuild/rules_proto/archive/refs/tags/4.0.0-3.19.2.tar.gz"],
 )
 
 http_archive(
     name = "rules_python",
-    sha256 = "cd6730ed53a002c56ce4e2f396ba3b3be262fd7cb68339f0377a45e8227fe332",
-    url = "https://github.com/bazelbuild/rules_python/releases/download/0.5.0/rules_python-0.5.0.tar.gz",
+    sha256 = "15f84594af9da06750ceb878abbf129241421e3abbd6e36893041188db67f2fb",
+    strip_prefix = "rules_python-0.7.0",
+    url = "https://github.com/bazelbuild/rules_python/archive/refs/tags/0.7.0.tar.gz",
 )
 
-RULES_JVM_EXTERNAL_TAG = "4.1"
+RULES_JVM_EXTERNAL_TAG = "4.2"
 
-RULES_JVM_EXTERNAL_SHA = "f36441aa876c4f6427bfb2d1f2d723b48e9d930b62662bf723ddfb8fc80f0140"
+RULES_JVM_EXTERNAL_SHA = "cd1a77b7b02e8e008439ca76fd34f5b07aecb8c752961f9640dea15e9e5ba1ca"
 
 http_archive(
     name = "rules_jvm_external",
@@ -73,9 +75,9 @@ http_archive(
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
 
-rules_kotlin_version = "v1.5.0-beta-4"
+rules_kotlin_version = "v1.5.0"
 
-rules_kotlin_sha = "6cbd4e5768bdfae1598662e40272729ec9ece8b7bded8f0d2c81c8ff96dc139d"
+rules_kotlin_sha = "12d22a3d9cbcf00f2e2d8f0683ba87d3823cb8c7f6837568dd7e48846e023307"
 
 http_archive(
     name = "io_bazel_rules_kotlin",
@@ -139,6 +141,6 @@ jarjar_repositories()
 load("@bazel_sonarqube//:repositories.bzl", "bazel_sonarqube_repositories")
 
 bazel_sonarqube_repositories(
-    sonar_scanner_cli_sha256 = "344bfeff44b09a11082b4a4646b1ed14f213feb00a5cd6d01c86f3767cb32471",
-    sonar_scanner_cli_version = "4.6.2.2472",
+    sonar_scanner_cli_sha256 = "8e116018669ac97cab0555d17145f6de9f0d8ab7a2521b378a19388d0625ec55",
+    sonar_scanner_cli_version = "4.7.0.2747",
 )

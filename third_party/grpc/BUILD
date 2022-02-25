@@ -108,6 +108,16 @@ java_library(
 )
 
 java_library(
+    name = "netty-shaded",
+    tags = [
+        "manual",
+        "maven_coordinates=io.grpc:grpc-netty-shaded:" + GRPC_JAVA_VERSION,
+    ],
+    visibility = ["//visibility:public"],
+    exports = ["@io_grpc_grpc_java//netty:shaded_maven"],
+)
+
+java_library(
     name = "protobuf",
     tags = [
         "manual",

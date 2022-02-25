@@ -69,14 +69,14 @@ def jarjar_repositories():
         sha256 = "91c77044a50c481636c32d916fd89c9118a72195390452c81065080f957de7ff",
     )
 
-    ASM_VERSION = "7.2"
+    ASM_VERSION = "9.2"
 
     maven_import(
         group_id = "org.ow2.asm",
         artifact_id = "asm-tree",
         version = ASM_VERSION,
         licenses = ["notice"],
-        sha256 = "c063f5a67fa03cdc9bd79fd1c2ea6816cc4a19473ecdfbd9e9153b408c6f2656",
+        sha256 = "aabf9bd23091a4ebfc109c1f3ee7cf3e4b89f6ba2d3f51c5243f16b3cffae011",
     )
 
     maven_import(
@@ -84,7 +84,7 @@ def jarjar_repositories():
         artifact_id = "asm-commons",
         version = ASM_VERSION,
         licenses = ["notice"],
-        sha256 = "0e86b8b179c5fb223d1a880a0ff4960b6978223984b94e62e71135f2d8ea3558",
+        sha256 = "be4ce53138a238bb522cd781cf91f3ba5ce2f6ca93ec62d46a162a127225e0a6",
     )
 
     maven_import(
