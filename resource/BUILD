@@ -18,6 +18,7 @@ maven_library(
         ":path-resource",
         ":resource",
         ":s3-resource",
+        ":azure-blob-resource",
     ],
     artifact_name = "libeopp :: resource",
     generate_pitest_coverage_target = True,
@@ -88,6 +89,30 @@ maven_library(
     ],
 )
 
+maven_library(
+    name = "azure-blob-resource",
+    srcs = [
+        "src/main/java/com/cgi/eoss/eopp/resource/BaseAzureBlobResource.java",
+        "src/main/java/com/cgi/eoss/eopp/resource/EoppAzureBlobAsyncResource.java",
+        "src/main/java/com/cgi/eoss/eopp/resource/EoppAzureBlobResource.java",
+    ],
+    artifact_name = "libeopp :: resource :: azure-blob",
+    generate_sonarqube_project = False,
+    root_packages = ["com.cgi.eoss.eopp.resource"],
+    deps = [
+        ":resource",
+        "//file",
+        "//util",
+        "//util:eopp-headers",
+        "//util:timestamps",
+        "@maven//:com_azure_azure_storage_blob",
+        "@maven//:io_projectreactor_reactor_core",
+        "@maven//:org_reactivestreams_reactive_streams",
+        "@maven//:org_slf4j_slf4j_api",
+        "@maven//:org_springframework_spring_core",
+    ],
+)
+
 gen_java_tests(
     name = "resource_tests",
     srcs = glob(["src/test/java/**/*.java"]),
@@ -95,19 +120,24 @@ gen_java_tests(
         "@maven//:ch_qos_logback_logback_classic",
     ],
     deps = [
+        ":azure-blob-resource",
         ":okhttp-resource",
         ":path-resource",
         ":resource",
         ":s3-resource",
         "//file",
         "//util:eopp-headers",
+        "//util:io",
         "@com_google_protobuf//:protobuf_java",
+        "@maven//:com_azure_azure_storage_blob",
+        "@maven//:com_azure_azure_storage_common",
         "@maven//:com_google_guava_guava",
         "@maven//:com_google_jimfs_jimfs",
         "@maven//:com_google_truth_extensions_truth_proto_extension",
         "@maven//:com_google_truth_truth",
         "@maven//:com_squareup_okhttp3_mockwebserver",
         "@maven//:com_squareup_okhttp3_okhttp",
+        "@maven//:com_squareup_okio_okio",
         "@maven//:junit_junit",
         "@maven//:org_slf4j_slf4j_api",
         "@maven//:software_amazon_awssdk_auth",

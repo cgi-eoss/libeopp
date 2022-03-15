@@ -26,6 +26,7 @@ import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import software.amazon.awssdk.core.async.AsyncResponseTransformer;
 import software.amazon.awssdk.core.async.SdkPublisher;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
@@ -154,6 +155,7 @@ public class EoppS3ObjectAsyncResource extends BaseS3ObjectResource implements E
                             throw Exceptions.propagate(e);
                         }
                     })
+                    .subscribeOn(Schedulers.boundedElastic())
                     .subscribe(DataBufferUtils.releaseConsumer());
         }
 

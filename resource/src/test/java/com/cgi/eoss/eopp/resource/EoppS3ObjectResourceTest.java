@@ -19,6 +19,8 @@ package com.cgi.eoss.eopp.resource;
 import com.cgi.eoss.eopp.file.FileMeta;
 import com.cgi.eoss.eopp.file.FileMetas;
 import com.cgi.eoss.eopp.util.EoppHeaders;
+import com.cgi.eoss.eopp.util.HashingCountingOutputStream;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.MoreFiles;
 import com.google.common.net.HttpHeaders;
 import com.google.common.truth.extensions.proto.FieldScopes;
@@ -39,6 +41,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -84,10 +87,6 @@ public class EoppS3ObjectResourceTest {
                 .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
                 .setHeader("x-amz-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader(), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
         );
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody(new String(Files.readAllBytes(testfile)))
-        );
 
         EoppResource resource = new EoppS3ObjectResource(s3Client, "EODATA", "testfile");
         ProtoTruth.assertThat(resource.getFileMeta()) // S3 HTTP response won't contain nanos, so match only seconds
@@ -110,6 +109,18 @@ public class EoppS3ObjectResourceTest {
         } catch (FileNotFoundException e) {
             assertThat(e.getMessage()).isEqualTo("S3 resources may not be resolved as Files");
         }
+
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(new String(Files.readAllBytes(testfile)))
+        );
+
+        HashingCountingOutputStream os = new HashingCountingOutputStream(ByteStreams.nullOutputStream());
+        try (InputStream is = resource.getInputStream(); os) {
+            ByteStreams.copy(is, os);
+        }
+        assertThat(os.getCount()).isEqualTo(FileMetas.get(testfile).getSize());
+        assertThat(os.checksum()).isEqualTo(FileMetas.get(testfile).getChecksum());
     }
 
     @Test

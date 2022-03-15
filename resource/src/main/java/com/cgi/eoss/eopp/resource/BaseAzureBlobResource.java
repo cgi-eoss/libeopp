@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 The libeopp Team
+ * Copyright 2022 The libeopp Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.cgi.eoss.eopp.resource;
 
+import com.azure.storage.blob.models.BlobProperties;
 import com.cgi.eoss.eopp.file.FileMeta;
 import com.cgi.eoss.eopp.file.FileMetas;
 import com.cgi.eoss.eopp.util.EoppHeaders;
@@ -24,10 +25,6 @@ import com.cgi.eoss.eopp.util.Timestamps;
 import org.springframework.core.io.Resource;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
-import software.amazon.awssdk.services.s3.model.RequestPayer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,23 +38,17 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * <p>An {@link EoppResource} representing data in an S3 (or S3-compatible) bucket.</p>
+ * <p>An {@link EoppResource} representing data in an Azure Blob Storage container.</p>
  */
-abstract class BaseS3ObjectResource implements EoppResource {
+abstract class BaseAzureBlobResource implements EoppResource {
 
-    private final String bucket;
-    private final String key;
-    private final boolean requesterPays;
-    private final Supplier<ResourceMetadataWrapper> metadata = Lazy.lazily(this::getS3ObjectMetadata);
+    private final String container;
+    private final String name;
+    private final Supplier<ResourceMetadataWrapper> metadata = Lazy.lazily(this::getAzureBlobMetadata);
 
-    BaseS3ObjectResource(String bucket, String key) {
-        this(bucket, key, false);
-    }
-
-    protected BaseS3ObjectResource(String bucket, String key, boolean requesterPays) {
-        this.bucket = bucket;
-        this.key = key;
-        this.requesterPays = requesterPays;
+    protected BaseAzureBlobResource(String container, String name) {
+        this.container = container;
+        this.name = name;
     }
 
     @Override
@@ -77,12 +68,12 @@ abstract class BaseS3ObjectResource implements EoppResource {
 
     @Override
     public URI getURI() {
-        return URI.create("s3://" + bucket + "/" + key);
+        return doGetURI(container, name);
     }
 
     @Override
     public File getFile() throws IOException {
-        throw new FileNotFoundException("S3 resources may not be resolved as Files");
+        throw new FileNotFoundException("Azure Blob resources may not be resolved as Files");
     }
 
     @Override
@@ -107,7 +98,7 @@ abstract class BaseS3ObjectResource implements EoppResource {
 
     @Override
     public Resource createRelative(String relativePath) {
-        return doCreateRelative(bucket, StringUtils.applyRelativePath(key, relativePath));
+        return doCreateRelative(container, StringUtils.applyRelativePath(name, relativePath));
     }
 
     @Override
@@ -117,7 +108,7 @@ abstract class BaseS3ObjectResource implements EoppResource {
 
     @Override
     public String getDescription() {
-        return "S3Object [" + getURI() + "]";
+        return "AzureBlobResource [" + getURI() + "]";
     }
 
     @Override
@@ -127,13 +118,7 @@ abstract class BaseS3ObjectResource implements EoppResource {
 
     @Override
     public InputStream getInputStream() throws IOException {
-        GetObjectRequest.Builder request = GetObjectRequest.builder()
-                .bucket(bucket)
-                .key(key);
-        if (requesterPays) {
-            request.requestPayer(RequestPayer.REQUESTER);
-        }
-        return doGetInputStream(request.build());
+        return doGetInputStream(container, name);
     }
 
     @Override
@@ -147,48 +132,42 @@ abstract class BaseS3ObjectResource implements EoppResource {
         return getDescription().hashCode();
     }
 
-    protected ResourceMetadataWrapper getS3ObjectMetadata() {
-        HeadObjectRequest.Builder request = HeadObjectRequest.builder()
-                .bucket(bucket)
-                .key(key);
-        if (requesterPays) {
-            request.requestPayer(RequestPayer.REQUESTER);
-        }
-        return headObject(request.build())
-                .map(response -> {
+    protected ResourceMetadataWrapper getAzureBlobMetadata() {
+        return getBlobProperties(container, name)
+                .map(properties -> {
                     ResourceMetadataWrapper.ResourceMetadataWrapperBuilder builder = ResourceMetadataWrapper.builder();
 
                     builder.exists(true);
                     builder.readable(true);
 
                     // Prefer the metadata attributes from the complete stored FileMeta, if it's available
-                    Optional<FileMeta> fileMeta = Optional.ofNullable(response.metadata().get(EoppHeaders.FILE_META.getHeader().toLowerCase()))
+                    Optional<FileMeta> fileMeta = Optional.ofNullable(properties.getMetadata().get(EoppHeaders.FILE_META.getHeader()))
                             .map(FileMetas::fromBase64);
 
                     fileMeta.ifPresent(builder::fileMeta);
 
                     Stream.of(fileMeta.map(FileMeta::getLastModified).map(Timestamps::instantFromTimestamp).map(Instant::toEpochMilli),
-                            Optional.ofNullable(response.lastModified()).map(Instant::toEpochMilli))
+                                    Optional.ofNullable(properties.getLastModified()).map(t -> t.toInstant().toEpochMilli()))
                             .filter(Optional::isPresent).map(Optional::get).findFirst()
                             .ifPresent(builder::lastModified);
 
                     Stream.of(fileMeta.map(FileMeta::getSize),
-                            Optional.ofNullable(response.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader())).map(Long::valueOf),
-                            Optional.ofNullable(response.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader().toLowerCase())).map(Long::valueOf),
-                            Optional.ofNullable(response.contentLength()))
+                                    Optional.ofNullable(properties.getMetadata().get(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader())).map(Long::valueOf),
+                                    Optional.ofNullable(properties.getMetadata().get(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader().toLowerCase())).map(Long::valueOf),
+                                    Optional.of(properties.getBlobSize()))
                             .filter(Optional::isPresent).map(Optional::get).findFirst()
                             .ifPresent(builder::contentLength);
 
                     builder.filename(Stream.of(fileMeta.map(FileMeta::getFilename),
-                            Optional.ofNullable(response.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader())),
-                            Optional.ofNullable(response.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader().toLowerCase())),
-                            Optional.ofNullable(response.contentDisposition()).flatMap(EoppHeaders.FILENAME_FROM_HTTP_HEADER))
+                                    Optional.ofNullable(properties.getMetadata().get(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader())),
+                                    Optional.ofNullable(properties.getMetadata().get(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader().toLowerCase())),
+                                    Optional.ofNullable(properties.getContentDisposition()).flatMap(EoppHeaders.FILENAME_FROM_HTTP_HEADER))
                             .filter(Optional::isPresent).map(Optional::get).findFirst()
-                            .orElse(StringUtils.getFilename(this.key)));
+                            .orElse(StringUtils.getFilename(this.name)));
 
                     Stream.of(fileMeta.map(FileMeta::getChecksum),
-                            Optional.ofNullable(response.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader())),
-                            Optional.ofNullable(response.metadata().get(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader().toLowerCase())))
+                                    Optional.ofNullable(properties.getMetadata().get(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader())),
+                                    Optional.ofNullable(properties.getMetadata().get(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader().toLowerCase())))
                             .filter(Optional::isPresent).map(Optional::get).findFirst()
                             .ifPresent(builder::checksum);
 
@@ -201,10 +180,12 @@ abstract class BaseS3ObjectResource implements EoppResource {
                         .build());
     }
 
-    protected abstract InputStream doGetInputStream(GetObjectRequest request) throws IOException;
+    protected abstract URI doGetURI(String container, String name);
 
-    protected abstract Optional<HeadObjectResponse> headObject(HeadObjectRequest headObjectRequest);
+    protected abstract InputStream doGetInputStream(String container, String name);
 
-    protected abstract Resource doCreateRelative(String bucket, String key);
+    protected abstract Optional<BlobProperties> getBlobProperties(String container, String name);
+
+    protected abstract Resource doCreateRelative(String container, String name);
 
 }

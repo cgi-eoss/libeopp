@@ -19,6 +19,7 @@ repositories {
 }
 
 extra["aws-sdk-v2.version"] = "2.17.95"
+extra["azure-sdk-bom.version"] = "1.1.1"
 extra["commons-compress.version"] = "1.21"
 extra["docker-java.version"] = "3.2.12"
 extra["failsafe.version"] = "2.4.4"
@@ -47,6 +48,7 @@ dependencyManagement {
         mavenBom("io.grpc:grpc-bom:${property("grpc-java.version")}")
         mavenBom("org.jetbrains.kotlin:kotlin-bom:${property("kotlin.version")}")
         mavenBom("software.amazon.awssdk:bom:${property("aws-sdk-v2.version")}")
+        mavenBom("com.azure:azure-sdk-bom:${property("azure-sdk-bom.version")}")
     }
     dependencies {
         dependency("com.github.docker-java:docker-java-core:${property("docker-java.version")}")
@@ -77,6 +79,7 @@ dependencyManagement {
 
 dependencies {
     generate("ch.qos.logback:logback-classic")
+    generate("com.azure:azure-storage-blob")
     generate("com.github.docker-java:docker-java-core")
     generate("com.github.docker-java:docker-java-transport-zerodep")
     generate("com.fasterxml.jackson.core:jackson-databind")

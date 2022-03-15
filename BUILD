@@ -35,11 +35,11 @@ filegroup(
 MODULES = [
     "file",
     "file-stream",
-    "identifier",
     "geojson",
-    "job",
+    "identifier",
     "job-executor",
     "job-graph",
+    "job",
     "resolver",
     "resource",
     "rpc",
@@ -51,13 +51,15 @@ NON_SQ_TARGETS = [
     "//geojson:geojson-schema",
     "//resolver:okhttp-resolver",
     "//resolver:path-resolver",
+    "//resource:azure-blob-resource",
     "//resource:okhttp-resource",
     "//resource:path-resource",
     "//resource:s3-resource",
+    "//rpc:grpc-discovery-client-name-resolver",
     "//testing:docker-junit-rules",
     "//util:eopp-headers",
-    "//util:timestamps",
     "//util:io",
+    "//util:timestamps",
 ]
 
 java_library(
