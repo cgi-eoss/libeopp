@@ -44,8 +44,6 @@ import java.util.Optional;
  * resources.</p>
  */
 public class EoppAzureBlobAsyncResource extends BaseAzureBlobResource {
-    private static final Logger log = LoggerFactory.getLogger(EoppAzureBlobAsyncResource.class);
-
     private final BlobServiceAsyncClient blobServiceAsyncClient;
 
     protected EoppAzureBlobAsyncResource(BlobServiceAsyncClient blobServiceAsyncClient, String container, String name) {

@@ -81,7 +81,7 @@ public class EoppAzureBlobResourceTest {
                 .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())
                 .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
                 .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
-                .setHeader("x-ms-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader(), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
+                .setHeader("x-ms-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader().replace('-', '_'), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
         );
 
         EoppResource resource = new EoppAzureBlobResource(blobServiceClient, "EODATA", "testfile");
@@ -112,7 +112,7 @@ public class EoppAzureBlobResourceTest {
                 .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())
                 .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
                 .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
-                .setHeader("x-ms-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader(), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
+                .setHeader("x-ms-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader().replace('-', '_'), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
         );
         server.enqueue(new MockResponse()
                 .setResponseCode(200)
@@ -120,7 +120,7 @@ public class EoppAzureBlobResourceTest {
                 .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
                 .setHeader(HttpHeaders.CONTENT_LENGTH, new String(Files.readAllBytes(testfile)).getBytes().length)
                 .setHeader(HttpHeaders.CONTENT_RANGE, String.format("0-%d/%d", Files.size(testfile)-1, Files.size(testfile)))
-                .setHeader("x-ms-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader(), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
+                .setHeader("x-ms-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader().replace('-', '_'), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
                 .setBody(new String(Files.readAllBytes(testfile)))
         );
 

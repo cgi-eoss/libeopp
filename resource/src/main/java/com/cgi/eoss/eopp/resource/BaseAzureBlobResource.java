@@ -141,7 +141,7 @@ abstract class BaseAzureBlobResource implements EoppResource {
                     builder.readable(true);
 
                     // Prefer the metadata attributes from the complete stored FileMeta, if it's available
-                    Optional<FileMeta> fileMeta = Optional.ofNullable(properties.getMetadata().get(EoppHeaders.FILE_META.getHeader()))
+                    Optional<FileMeta> fileMeta = Optional.ofNullable(properties.getMetadata().get(azureHeader(EoppHeaders.FILE_META)))
                             .map(FileMetas::fromBase64);
 
                     fileMeta.ifPresent(builder::fileMeta);
@@ -152,22 +152,19 @@ abstract class BaseAzureBlobResource implements EoppResource {
                             .ifPresent(builder::lastModified);
 
                     Stream.of(fileMeta.map(FileMeta::getSize),
-                                    Optional.ofNullable(properties.getMetadata().get(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader())).map(Long::valueOf),
-                                    Optional.ofNullable(properties.getMetadata().get(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader().toLowerCase())).map(Long::valueOf),
+                                    Optional.ofNullable(properties.getMetadata().get(azureHeader(EoppHeaders.PRODUCT_ARCHIVE_SIZE))).map(Long::valueOf),
                                     Optional.of(properties.getBlobSize()))
                             .filter(Optional::isPresent).map(Optional::get).findFirst()
                             .ifPresent(builder::contentLength);
 
                     builder.filename(Stream.of(fileMeta.map(FileMeta::getFilename),
-                                    Optional.ofNullable(properties.getMetadata().get(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader())),
-                                    Optional.ofNullable(properties.getMetadata().get(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader().toLowerCase())),
+                                    Optional.ofNullable(properties.getMetadata().get(azureHeader(EoppHeaders.PRODUCT_ARCHIVE_NAME))),
                                     Optional.ofNullable(properties.getContentDisposition()).flatMap(EoppHeaders.FILENAME_FROM_HTTP_HEADER))
                             .filter(Optional::isPresent).map(Optional::get).findFirst()
                             .orElse(StringUtils.getFilename(this.name)));
 
                     Stream.of(fileMeta.map(FileMeta::getChecksum),
-                                    Optional.ofNullable(properties.getMetadata().get(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader())),
-                                    Optional.ofNullable(properties.getMetadata().get(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader().toLowerCase())))
+                                    Optional.ofNullable(properties.getMetadata().get(azureHeader(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM))))
                             .filter(Optional::isPresent).map(Optional::get).findFirst()
                             .ifPresent(builder::checksum);
 
@@ -187,5 +184,9 @@ abstract class BaseAzureBlobResource implements EoppResource {
     protected abstract Optional<BlobProperties> getBlobProperties(String container, String name);
 
     protected abstract Resource doCreateRelative(String container, String name);
+
+    private String azureHeader(EoppHeaders eoppHeader) {
+        return eoppHeader.getHeader().replace('-', '_');
+    }
 
 }
