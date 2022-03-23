@@ -60,6 +60,7 @@ gen_java_tests(
         "@io_grpc_grpc_java//netty",
         "@io_grpc_grpc_java//stub",
         "@io_grpc_grpc_java//testing",
+        "@maven//:com_google_guava_guava",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
         "@maven//:org_mockito_mockito_core",

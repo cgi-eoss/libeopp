@@ -19,6 +19,9 @@ build --tool_java_runtime_version=remotejdk_11
 # TODO Remove when https://github.com/salesforce/reactive-grpc/issues/294 is resolved
 build --noincompatible_java_common_parameters
 
+# Prevent leaking Bazel test runner into IntellIJ classpath
+build --explicit_java_test_deps
+
 test --test_env=http_proxy
 test --test_env=https_proxy
 test --test_env=no_proxy
