@@ -3,7 +3,6 @@
 set -eu
 
 version_name=$1
-shift 1
 
 if [[ "$version_name" =~ " " ]]; then
   echo "Version name must not have any spaces"
@@ -12,11 +11,14 @@ fi
 
 echo -e "Deploying to CGI-EOSS Nexus...\n"
 
-bash "$(dirname "$0")"/execute-deploy.sh \
-  "deploy:deploy-file" \
-  "$version_name" \
-  "-DrepositoryId=maven-cgi-eoss" \
-  "-Durl=https://nexus.observing.earth/repository/maven-cgi-eoss/" \
-  "$@"
+for target in $(bazel query 'kind(maven_publish, //...)' 2>/dev/null); do
+  bazel run \
+    --stamp \
+    --define=pom_version="$version_name" \
+    --define=maven_repo="https://nexus.observing.earth/repository/maven-cgi-eoss" \
+    --define=maven_user="${MAVEN_USER}" \
+    --define=maven_password="${MAVEN_PASSWORD}" \
+    "$target"
+done
 
 echo -e "Deployed to CGI-EOSS Nexus"

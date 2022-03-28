@@ -4,8 +4,12 @@ load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 load("@bazel_sonarqube//:defs.bzl", "sq_project")
 load("@rules_java//java:defs.bzl", "java_library")
 load("//tools/pitest:pitest.bzl", "pitest_mutation_coverage_test")
+load("//tools/maven_publish:maven_publish.bzl", "maven_publish")
 
-POM_VERSION = "${project.version}"
+POM_VERSION = "{pom_version}"
+
+def maven_coordinates(name, group_id = "com.cgi.eoss.eopp", artifact_id = None):
+    return "%s:%s:%s" % (group_id, (artifact_id or name), POM_VERSION)
 
 def maven_coordinates_tag(name, group_id = "com.cgi.eoss.eopp", artifact_id = None):
     return "maven_coordinates=%s:%s:%s" % (group_id, (artifact_id or name), POM_VERSION)
@@ -30,42 +34,54 @@ def maven_library(
         test_suite = None,
         generate_pitest_coverage_target = False,
         **kwargs):
-    maven_coordinates = maven_coordinates_tag(name, group_id, artifact_id)
+    _maven_coordinates = maven_coordinates(name, group_id, artifact_id)
+    _maven_coordinates_tag = maven_coordinates_tag(name, group_id, artifact_id)
 
     if build_kt_jvm_library:
         kt_jvm_library(
             name = name,
             srcs = srcs,
-            tags = (["maven_artifact"] if deploy_java_library else []) + [maven_coordinates],
+            tags = (["maven_artifact"] if deploy_java_library else []) + [_maven_coordinates_tag],
             visibility = visibility,
             **kwargs
+        )
+
+        # kt_jvm_library emits two files in the default outputgroup, so we select the jar for publishing
+        native.filegroup(
+            name = "_%s_maven_artifact" % name,
+            srcs = [":%s.jar" % name],
         )
 
         java_library(
             name = "%s_srcjar" % name,
             resources = srcs,
-            tags = ["manual", "maven_srcjar", maven_coordinates],
+            tags = ["manual", "maven_srcjar", _maven_coordinates_tag],
         )
     else:
         java_library(
             name = name,
             srcs = srcs,
-            tags = (["maven_artifact"] if deploy_java_library else []) + [maven_coordinates],
+            tags = (["maven_artifact"] if deploy_java_library else []) + [_maven_coordinates_tag],
             visibility = visibility,
             **kwargs
+        )
+
+        native.filegroup(
+            name = "_%s_maven_artifact" % name,
+            srcs = [":%s" % name],
         )
 
         native.alias(
             name = "%s_srcjar" % name,
             actual = ":lib%s-src.jar" % name,
-            tags = ["manual", "maven_srcjar", maven_coordinates],
+            tags = ["manual", "maven_srcjar", _maven_coordinates_tag],
         )
 
     if build_javadoc_library:
         javadoc(
             name = "lib%s-javadoc" % name,
             deps = [":%s" % name],
-            tags = ["manual", "maven_javadoc", maven_coordinates],
+            tags = ["manual", "maven_javadoc", _maven_coordinates_tag],
         )
 
     pom_file(
@@ -75,7 +91,18 @@ def maven_library(
         artifact_id = artifact_id or name,
         group_id = group_id,
         packaging = packaging,
-        tags = ["manual", maven_coordinates],
+        tags = ["manual", _maven_coordinates_tag],
+    )
+
+    maven_publish(
+        name = "%s.publish" % name,
+        coordinates = _maven_coordinates,
+        pom = ":%s_pom" % name,
+        javadocs = ":lib%s-javadoc" % name if build_javadoc_library else None,
+        artifact_jar = ":_%s_maven_artifact" % name,
+        source_jar = ":%s_srcjar" % name,
+        visibility = visibility,
+        tags = ["manual", _maven_coordinates_tag],
     )
 
     _test_srcs = test_srcs if test_srcs else native.glob(["src/test/java/**/*.java"])

@@ -64,8 +64,8 @@ pipeline {
       when { tag '' }
       steps {
         container('libeopp-build') {
-          configFileProvider([configFile(fileId: 'b756e5e9-d77e-4627-ac35-2cbd08efac8b', variable: 'MAVEN_SETTINGS')]) {
-            sh "./scripts/deploy/deploy-nexus.sh ${TAG_NAME} -s ${MAVEN_SETTINGS}"
+          withCredentials([usernamePassword(credentialsId: '597ee7f1-63fc-4036-be52-0cea3e3d8d37', passwordVariable: 'MAVEN_PASSWORD', usernameVariable: 'MAVEN_USER')]) {
+            sh "./scripts/deploy/deploy-nexus.sh ${TAG_NAME}"
           }
         }
       }
