@@ -7,7 +7,7 @@ build --action_env=NO_PROXY
 build --action_env=NPM_CONFIG_REGISTRY
 
 build --java_language_version=11
-build --tool_java_language_version=8
+build --tool_java_language_version=11
 
 # Download a bazel-defined jdk11 for reproducible builds
 build --java_runtime_version=remotejdk_11

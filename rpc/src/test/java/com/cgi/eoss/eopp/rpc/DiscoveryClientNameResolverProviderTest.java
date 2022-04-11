@@ -16,7 +16,6 @@
 
 package com.cgi.eoss.eopp.rpc;
 
-import com.google.common.collect.ImmutableMap;
 import io.grpc.ManagedChannel;
 import io.grpc.Server;
 import io.grpc.examples.helloworld.GreeterGrpc;
@@ -39,6 +38,7 @@ import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryProperti
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.util.Map;
 
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.stream.Collectors.toList;
@@ -73,7 +73,7 @@ public class DiscoveryClientNameResolverProviderTest {
 
         // Set up a spring-cloud discovery environment matching the local gRPC server instance
         SimpleDiscoveryProperties simpleDiscoveryProperties = new SimpleDiscoveryProperties();
-        simpleDiscoveryProperties.setInstances(ImmutableMap.of("helloService", server.getListenSockets().stream()
+        simpleDiscoveryProperties.setInstances(Map.of("helloService", server.getListenSockets().stream()
                 .map(listenSocket -> new DefaultServiceInstance(null, "helloService", ((InetSocketAddress) listenSocket).getHostString(), ((InetSocketAddress) listenSocket).getPort(), false))
                 .collect(toList())));
         DiscoveryClient discoveryClient = new SimpleDiscoveryClient(simpleDiscoveryProperties);

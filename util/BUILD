@@ -1,6 +1,5 @@
 load("//tools:maven.bzl", "maven_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
-load("@rules_java//java:defs.bzl", "java_library", "java_test")
 
 maven_library(
     name = "util",
@@ -28,7 +27,7 @@ maven_library(
     artifact_name = "libeopp :: util :: timestamps",
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.util"],
-    deps = ["//third_party/protobuf:timestamp_java_proto"],
+    deps = ["@maven//:com_google_protobuf_protobuf_java"],
 )
 
 maven_library(

@@ -24,12 +24,19 @@ load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
 bazel_skylib_workspace()
 
+load("//third_party/protobuf:protobuf_repositories.bzl", "COM_GOOGLE_PROTOBUF_JAVA_OVERRIDE_TARGETS", "protobuf_repositories")
+load("//third_party/grpc:grpc_repositories.bzl", "IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS", "grpc_repositories")
+
+protobuf_repositories()
+
+grpc_repositories()
+
 http_archive(
     name = "rules_pkg",
-    sha256 = "62eeb544ff1ef41d786e329e1536c1d541bb9bcad27ae984d57f18f314018e66",
+    sha256 = "8a298e832762eda1830597d64fe7db58178aa84cd5926d76d5b744d6558941c2",
     urls = [
-        "https://github.com/bazelbuild/rules_pkg/releases/download/0.6.0/rules_pkg-0.6.0.tar.gz",
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.6.0/rules_pkg-0.6.0.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.7.0/rules_pkg-0.7.0.tar.gz",
+        "https://github.com/bazelbuild/rules_pkg/releases/download/0.7.0/rules_pkg-0.7.0.tar.gz",
     ],
 )
 
@@ -39,9 +46,11 @@ rules_pkg_dependencies()
 
 http_archive(
     name = "rules_java",
-    sha256 = "ddc9e11f4836265fea905d2845ac1d04ebad12a255f791ef7fd648d1d2215a5b",
-    strip_prefix = "rules_java-5.0.0",
-    urls = ["https://github.com/bazelbuild/rules_java/archive/refs/tags/5.0.0.tar.gz"],
+    sha256 = "8c376f1e4ab7d7d8b1880e4ef8fc170862be91b7c683af97ca2768df546bb073",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_java/releases/download/5.0.0/rules_java-5.0.0.tar.gz",
+        "https://github.com/bazelbuild/rules_java/releases/download/5.0.0/rules_java-5.0.0.tar.gz",
+    ],
 )
 
 load("@rules_java//java:repositories.bzl", "rules_java_dependencies", "rules_java_toolchains")
@@ -52,16 +61,24 @@ rules_java_toolchains()
 
 http_archive(
     name = "rules_proto",
-    sha256 = "c22cfcb3f22a0ae2e684801ea8dfed070ba5bed25e73f73580564f250475e72d",
-    strip_prefix = "rules_proto-4.0.0-3.19.2",
-    urls = ["https://github.com/bazelbuild/rules_proto/archive/refs/tags/4.0.0-3.19.2.tar.gz"],
+    sha256 = "e017528fd1c91c5a33f15493e3a398181a9e821a804eb7ff5acdd1d2d6c2b18d",
+    strip_prefix = "rules_proto-4.0.0-3.20.0",
+    urls = [
+        "https://github.com/bazelbuild/rules_proto/archive/refs/tags/4.0.0-3.20.0.tar.gz",
+    ],
 )
+
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
+rules_proto_dependencies()
+
+rules_proto_toolchains()
 
 http_archive(
     name = "rules_python",
-    sha256 = "15f84594af9da06750ceb878abbf129241421e3abbd6e36893041188db67f2fb",
-    strip_prefix = "rules_python-0.7.0",
-    url = "https://github.com/bazelbuild/rules_python/archive/refs/tags/0.7.0.tar.gz",
+    sha256 = "9fcf91dbcc31fde6d1edb15f117246d912c33c36f44cf681976bd886538deba6",
+    strip_prefix = "rules_python-0.8.0",
+    url = "https://github.com/bazelbuild/rules_python/archive/refs/tags/0.8.0.tar.gz",
 )
 
 RULES_JVM_EXTERNAL_TAG = "4.2"
@@ -94,8 +111,6 @@ http_archive(
 
 load("//third_party/java:java_repositories.bzl", "ARTIFACTS", "REPOSITORIES")
 load("//third_party/kotlin:kotlin_repositories.bzl", "kotlin_repositories", "kt_register_toolchains")
-load("//third_party/protobuf:protobuf_repositories.bzl", "COM_GOOGLE_PROTOBUF_JAVA_OVERRIDE_TARGETS", "protobuf_repositories")
-load("//third_party/grpc:grpc_repositories.bzl", "IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS", "grpc_repositories")
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 
 maven_install(
@@ -125,10 +140,6 @@ compat_repositories()
 kotlin_repositories()
 
 kt_register_toolchains()
-
-protobuf_repositories()
-
-grpc_repositories()
 
 load("//third_party/grpc:grpc_dependency_repositories.bzl", "grpc_dependency_repositories")
 

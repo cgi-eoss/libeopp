@@ -63,10 +63,9 @@ public class EoppFileStreamResource<S extends AbstractStub<S>, P extends Message
      *
      * @param fileMeta         FileMeta for the resulting resource.
      * @param fileStreamMethod gRPC method returning <code>stream FileChunk</code>; the data backing this resource.
-     * @deprecated Use the reactive-enabled {@link #EoppFileStreamResource(FileMeta, GrpcMethod, Function)} to make use
-     * of built-in flow control and other enhancements.
+     * @see #EoppFileStreamResource(FileMeta, GrpcMethod, Function) Use the reactive API constructor to make use of
+     * built-in flow control and other enhancements.
      */
-    @Deprecated(forRemoval = false)
     public EoppFileStreamResource(FileMeta fileMeta, GrpcMethod<S, P, FileChunk> fileStreamMethod) {
         this(fileMeta, fileStreamMethod, null);
     }

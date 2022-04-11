@@ -109,7 +109,6 @@ public class EoppAzureBlobAsyncResourceTest {
             assertThat(e.getMessage()).isEqualTo("Azure Blob resources may not be resolved as Files");
         }
 
-        // To open the stream, Azure async SDK only does a GET
         server.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())

@@ -106,14 +106,6 @@ public class EoppAzureBlobResourceTest {
             assertThat(e.getMessage()).isEqualTo("Azure Blob resources may not be resolved as Files");
         }
 
-        // To open the stream, Azure SDK first does a HEAD, then a GET
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())
-                .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
-                .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
-                .setHeader("x-ms-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader().replace('-', '_'), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
-        );
         server.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())

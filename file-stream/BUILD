@@ -2,7 +2,7 @@ load("//tools:maven.bzl", "maven_library")
 load("@com_salesforce_servicelibs_reactive_grpc//bazel:java_reactive_grpc_library.bzl", "reactor_grpc_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
-load("@rules_java//java:defs.bzl", "java_library", "java_proto_library", "java_test")
+load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
 filegroup(

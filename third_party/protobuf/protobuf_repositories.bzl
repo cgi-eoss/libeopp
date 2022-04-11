@@ -1,6 +1,6 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-PROTOBUF_VERSION = "3.19.4"
+PROTOBUF_VERSION = "3.20.0"
 
 def protobuf_repositories():
     #    # Protobuf expects an //external:python_headers label which would contain the
@@ -22,16 +22,16 @@ def protobuf_repositories():
 
     http_archive(
         name = "com_google_protobuf",
-        sha256 = "25680843adf0c3302648d35f744e38cc3b6b05a6c77a927de5aea3e1c2e36106",
+        sha256 = "6bd1e17170ccb166029a1a5857e864020a18ed019a63fa8f1ac3b605f7be4466",
         strip_prefix = "protobuf-%s" % PROTOBUF_VERSION,
-        urls = ["https://github.com/google/protobuf/archive/v%s.zip" % PROTOBUF_VERSION],
+        urls = ["https://github.com/protocolbuffers/protobuf/archive/v%s.zip" % PROTOBUF_VERSION],
     )
 
     http_archive(
         name = "com_google_protobuf_javalite",
-        sha256 = "25680843adf0c3302648d35f744e38cc3b6b05a6c77a927de5aea3e1c2e36106",
+        sha256 = "6bd1e17170ccb166029a1a5857e864020a18ed019a63fa8f1ac3b605f7be4466",
         strip_prefix = "protobuf-%s" % PROTOBUF_VERSION,
-        urls = ["https://github.com/google/protobuf/archive/v%s.zip" % PROTOBUF_VERSION],
+        urls = ["https://github.com/protocolbuffers/protobuf/archive/v%s.zip" % PROTOBUF_VERSION],
     )
 
 COM_GOOGLE_PROTOBUF_JAVA_OVERRIDE_TARGETS = {

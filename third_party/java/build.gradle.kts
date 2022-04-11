@@ -18,27 +18,30 @@ repositories {
     mavenCentral()
 }
 
-extra["aws-sdk-v2.version"] = "2.17.150"
-extra["azure-sdk-bom.version"] = "1.1.1"
+extra["aws-sdk-v2.version"] = "2.17.167"
+extra["azure-sdk-bom.version"] = "1.2.0"
 extra["commons-compress.version"] = "1.21"
 extra["docker-java.version"] = "3.2.13"
 extra["failsafe.version"] = "2.4.4"
 extra["google-common-protos.version"] = "2.7.4"
-extra["grpc-java.version"] = "1.45.0" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
+extra["grpc-java.version"] = "1.45.1" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
 extra["guava.version"] = "31.1-jre"
 extra["j2objc-annotations.version"] = "1.3"
 extra["jimfs.version"] = "1.2"
-extra["json-schema-validator.version"] = "1.0.67"
+extra["json-schema-validator.version"] = "1.0.68"
 extra["jts-core.version"] = "1.18.2"
 extra["kotlin.version"] = "1.6.10"
 extra["okhttp.version"] = "4.9.3"
-extra["pitest.version"] = "1.7.4"
-extra["protobuf-java.version"] = "3.19.4"
+extra["pitest.version"] = "1.7.5"
+extra["protobuf-java.version"] = "3.20.0"
 extra["reactor-grpc.version"] = "1.2.3"
-extra["spring-boot.version"] = "2.6.4"
+extra["spring-boot.version"] = "2.6.6"
 extra["spring-cloud.version"] = "2021.0.1"
 extra["truth.version"] = "1.1.3"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
+
+//TODO Allow to update when tcnative sorts out fat jar and bazel compatibility (https://github.com/netty/netty-tcnative/issues/716)
+extra["netty-tcnative.version"] = "2.0.50.Final"
 
 dependencyManagement {
     imports {
