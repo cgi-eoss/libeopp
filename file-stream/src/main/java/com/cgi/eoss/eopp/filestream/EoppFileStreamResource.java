@@ -27,6 +27,7 @@ import io.grpc.stub.ClientCalls;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.springframework.core.io.Resource;
+import org.springframework.lang.Nullable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -80,7 +81,7 @@ public class EoppFileStreamResource<S extends AbstractStub<S>, P extends Message
      *                          the same method referenced by {@link #fileStreamMethod}. If null, a standard async stub
      *                          is used to feed the input stream.
      */
-    public EoppFileStreamResource(FileMeta fileMeta, GrpcMethod<S, P, FileChunk> fileStreamMethod, Function<Mono<P>, Flux<FileChunk>> reactiveMethodRef) {
+    public EoppFileStreamResource(FileMeta fileMeta, GrpcMethod<S, P, FileChunk> fileStreamMethod, @Nullable Function<Mono<P>, Flux<FileChunk>> reactiveMethodRef) {
         Preconditions.checkNotNull(fileMeta);
         this.fileMeta = fileMeta;
         this.fileStreamMethod = fileStreamMethod;

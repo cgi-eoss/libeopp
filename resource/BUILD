@@ -10,6 +10,7 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/resource/ResourceMetadataWrapper.java",
         "src/main/java/com/cgi/eoss/eopp/resource/WritableEoppResource.java",
         "src/main/java/com/cgi/eoss/eopp/resource/ZipCombiningResource.java",
+        "src/main/java/com/cgi/eoss/eopp/resource/package-info.java",
     ],
     analysis_srcs = glob(["src/main/java/**"]),
     analysis_targets = [
@@ -25,6 +26,7 @@ maven_library(
     test_suite = [":resource_tests"],
     deps = [
         "//file",
+        "//third_party/java:org_springframework_spring_core_neverlink",
         "//util:io",
         "//util:timestamps",
         "@maven//:com_google_guava_guava",

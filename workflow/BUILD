@@ -38,6 +38,7 @@ maven_library(
     exports = [":workflow_java_proto"],
     deps = [
         ":workflow_java_proto",
+        "//third_party/java:org_springframework_spring_core_neverlink",
         "//third_party/protobuf:protobuf_java",
         "//third_party/protobuf:protobuf_java_util",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",

@@ -19,6 +19,7 @@ package com.cgi.eoss.eopp.resource;
 import com.google.common.io.ByteStreams;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
+import org.springframework.lang.Nullable;
 import org.springframework.util.unit.DataSize;
 
 import java.io.BufferedOutputStream;
@@ -157,7 +158,7 @@ public class ZipCombiningResource extends AbstractResource {
             this.lastModified = safeGetFileTime(resource);
         }
 
-        public ZipResourceEntry(String path, FileTime lastModified, Resource resource) {
+        public ZipResourceEntry(String path, FileTime lastModified, @Nullable Resource resource) {
             this.path = path;
             this.lastModified = lastModified;
             this.resource = resource;
@@ -179,6 +180,7 @@ public class ZipCombiningResource extends AbstractResource {
             return lastModified;
         }
 
+        @Nullable
         public Resource getResource() {
             return resource;
         }

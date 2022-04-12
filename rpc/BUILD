@@ -9,6 +9,7 @@ maven_library(
     srcs = [
         "src/main/java/com/cgi/eoss/eopp/rpc/GrpcClient.java",
         "src/main/java/com/cgi/eoss/eopp/rpc/GrpcMethod.java",
+        "src/main/java/com/cgi/eoss/eopp/rpc/package-info.java",
     ],
     analysis_srcs = glob(["src/main/java/**/*.java"]),
     analysis_targets = [
@@ -23,6 +24,7 @@ maven_library(
         "//third_party/grpc:api",
         "//third_party/grpc:core_inprocess",
         "//third_party/grpc:stub",
+        "//third_party/java:org_springframework_spring_core_neverlink",
         "//third_party/protobuf:protobuf_java",
         "//util",
         "@maven//:com_google_guava_guava",

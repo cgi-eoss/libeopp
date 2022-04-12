@@ -7,6 +7,7 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/resolver/DefaultResolverFacade.java",
         "src/main/java/com/cgi/eoss/eopp/resolver/Resolver.java",
         "src/main/java/com/cgi/eoss/eopp/resolver/ResolverFacade.java",
+        "src/main/java/com/cgi/eoss/eopp/resolver/package-info.java",
     ],
     analysis_srcs = glob(["src/main/java/**"]),
     analysis_targets = [
@@ -20,6 +21,7 @@ maven_library(
     test_suite = [":resolver_tests"],
     deps = [
         "//resource",
+        "//third_party/java:org_springframework_spring_core_neverlink",
         "@org_slf4j_slf4j_api",
     ],
 )

@@ -16,6 +16,7 @@ maven_library(
     deps = [
         "//job",
         "//job-graph",
+        "//third_party/java:org_springframework_spring_core_neverlink",
         "//workflow",
         "@maven//:com_google_guava_guava",
         "@maven//:io_projectreactor_reactor_core",

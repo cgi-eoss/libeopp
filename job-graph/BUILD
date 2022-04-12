@@ -22,6 +22,7 @@ maven_library(
     deps = [
         "//identifier",
         "//job",
+        "//third_party/java:org_springframework_spring_core_neverlink",
         "//workflow",
         "@maven//:com_google_guava_guava",
         "@maven//:net_jodah_failsafe",

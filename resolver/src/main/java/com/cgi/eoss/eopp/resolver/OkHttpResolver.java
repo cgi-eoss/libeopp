@@ -22,6 +22,7 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 
 import java.net.URI;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -66,7 +67,7 @@ public class OkHttpResolver implements Resolver {
 
     @Override
     public EoppResource resolveUri(URI uri) {
-        return new EoppOkHttpResource(clientFactory.build(HttpUrl.get(uri)), HttpUrl.get(uri));
+        return new EoppOkHttpResource(clientFactory.build(Objects.requireNonNull(HttpUrl.get(uri))), Objects.requireNonNull(HttpUrl.get(uri)));
     }
 
     /**

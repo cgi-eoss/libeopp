@@ -24,6 +24,7 @@ maven_library(
         "//third_party/grpc:core",
         "//third_party/grpc:reactor_grpc_stub",
         "//third_party/grpc:stub",
+        "//third_party/java:org_springframework_spring_core_neverlink",
         "//third_party/protobuf:protobuf_java",
         "@maven//:com_google_guava_guava",
         "@maven//:io_projectreactor_reactor_core",

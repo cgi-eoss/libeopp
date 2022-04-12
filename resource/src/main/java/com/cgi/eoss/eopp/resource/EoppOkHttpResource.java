@@ -40,6 +40,7 @@ import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URL;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -126,7 +127,7 @@ public class EoppOkHttpResource implements EoppResource {
         if (relativePath.startsWith("/")) {
             relativePath = relativePath.substring(1);
         }
-        return new EoppOkHttpResource(httpClient, url.resolve(relativePath));
+        return new EoppOkHttpResource(httpClient, Objects.requireNonNull(url.resolve(relativePath)));
     }
 
     @Override
@@ -146,7 +147,7 @@ public class EoppOkHttpResource implements EoppResource {
         try {
             response = httpClient.newCall(request).execute();
             Preconditions.checkState(response.isSuccessful(), "Did not receive successful HTTP response: %s", response);
-            return response.body().byteStream();
+            return Objects.requireNonNull(response.body()).byteStream();
         } catch (Exception e) {
             Optional.ofNullable(response).ifPresent(Response::close);
             throw e;

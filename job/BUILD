@@ -43,6 +43,7 @@ maven_library(
     exports = [":job_java_proto"],
     deps = [
         ":job_java_proto",
+        "//third_party/java:org_springframework_spring_core_neverlink",
         "//workflow",
         "@maven//:com_google_guava_guava",
         "@maven//:org_springframework_spring_web",

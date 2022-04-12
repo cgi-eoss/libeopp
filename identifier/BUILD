@@ -37,6 +37,7 @@ maven_library(
     exports = [":identifier_java_proto"],
     deps = [
         ":identifier_java_proto",
+        "//third_party/java:org_springframework_spring_core_neverlink",
         "//third_party/protobuf:protobuf_java",
     ],
 )

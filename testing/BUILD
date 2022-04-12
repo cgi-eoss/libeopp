@@ -6,6 +6,7 @@ maven_library(
     srcs = [
         "src/main/java/com/cgi/eoss/eopp/testing/docker/DockerClientRule.java",
         "src/main/java/com/cgi/eoss/eopp/testing/docker/DockerRegistryRule.java",
+        "src/main/java/com/cgi/eoss/eopp/testing/docker/package-info.java",
     ],
     artifact_name = "libeopp :: testing :: docker-junit-rules",
     generate_sonarqube_project = False,
@@ -13,6 +14,7 @@ maven_library(
     root_packages = ["com.cgi.eoss.eopp.testing"],
     test_suite = [":testing_tests"],
     deps = [
+        "//third_party/java:org_springframework_spring_core_neverlink",
         "@maven//:com_github_docker_java_docker_java_api",
         "@maven//:com_github_docker_java_docker_java_core",
         "@maven//:com_github_docker_java_docker_java_transport",

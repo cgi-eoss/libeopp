@@ -22,6 +22,7 @@ import com.cgi.eoss.eopp.util.Timestamps;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import org.springframework.core.io.Resource;
+import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,7 +65,7 @@ public class EoppZipCombiningResource extends ZipCombiningResource implements Eo
      *                                    zip to capture the final zip file size and checksum. This may be time-
      *                                    consuming for resources which resolve slowly.
      */
-    public EoppZipCombiningResource(List<ZipResourceEntry> contents, String filename, boolean calculateDetailedProperties) throws IOException {
+    public EoppZipCombiningResource(List<ZipResourceEntry> contents, @Nullable String filename, boolean calculateDetailedProperties) throws IOException {
         this(contents, filename, calculateDetailedProperties, DEFAULT_BUFFER_SIZE, DEFAULT_COMPRESSION_LEVEL);
     }
 
@@ -78,7 +79,7 @@ public class EoppZipCombiningResource extends ZipCombiningResource implements Eo
      *                                    zip to capture the final zip file size and checksum. This may be time-
      *                                    consuming for resources which resolve slowly.
      */
-    public EoppZipCombiningResource(List<ZipResourceEntry> contents, String filename, boolean calculateDetailedProperties, int bufferSize, int compressionLevel) throws IOException {
+    public EoppZipCombiningResource(List<ZipResourceEntry> contents, @Nullable String filename, boolean calculateDetailedProperties, int bufferSize, int compressionLevel) throws IOException {
         super(contents, bufferSize, compressionLevel);
 
         this.filename = filename;

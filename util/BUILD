@@ -7,6 +7,7 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/util/AbortableCountDownLatch.java",
         "src/main/java/com/cgi/eoss/eopp/util/AbortedException.java",
         "src/main/java/com/cgi/eoss/eopp/util/Lazy.java",
+        "src/main/java/com/cgi/eoss/eopp/util/package-info.java",
     ],
     analysis_srcs = glob(["src/main/java/**"]),
     analysis_targets = [
@@ -19,6 +20,9 @@ maven_library(
     generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.util"],
     test_suite = [":util_tests"],
+    deps = [
+        "//third_party/java:org_springframework_spring_core_neverlink",
+    ],
 )
 
 maven_library(

@@ -41,6 +41,7 @@ maven_library(
     exports = [":file_java_proto"],
     deps = [
         ":file_java_proto",
+        "//third_party/java:org_springframework_spring_core_neverlink",
         "//third_party/protobuf:protobuf_java",
         "//util:eopp-headers",
         "//util:timestamps",
