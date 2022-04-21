@@ -1,13 +1,15 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-GRPC_JAVA_VERSION = "1.45.1"
+GRPC_JAVA_VERSION = "1.46.0"
+
+GRPC_KOTLIN_VERSION = "1.2.1"
 
 REACTOR_GRPC_VERSION = "1.2.3"
 
 def grpc_repositories():
     http_archive(
         name = "io_grpc_grpc_java",
-        sha256 = "ede3d9dcd2438f7e82b2e7f6a436a78bc7f0ebeb982415caec47de8f1bebf303",
+        sha256 = "2f2ca0701cf23234e512f415318bfeae00036a980f6a83574264f41c0201e5cd",
         strip_prefix = "grpc-java-%s" % GRPC_JAVA_VERSION,
         urls = ["https://github.com/grpc/grpc-java/archive/v%s.zip" % GRPC_JAVA_VERSION],
     )
@@ -17,6 +19,15 @@ def grpc_repositories():
         sha256 = "b446bbb5341ea1166dba47bc5c07fbe7afadb8b303c309baef7b58fff4e0dcc7",
         strip_prefix = "reactive-grpc-%s" % REACTOR_GRPC_VERSION,
         urls = ["https://github.com/salesforce/reactive-grpc/archive/v%s.zip" % REACTOR_GRPC_VERSION],
+    )
+
+    http_archive(
+        name = "com_github_grpc_grpc_kotlin",
+        patch_args = ["-p1"],
+        patches = ["@com_cgi_eoss_eopp//third_party/grpc:com_github_grpc_grpc_kotlin.patch"],
+        sha256 = "9d9b09a7dcc8cee1adf1e5c79a3b68d9a45e8b6f1e5b7f5a31b6410eea7d8ad0",
+        strip_prefix = "grpc-kotlin-%s" % GRPC_KOTLIN_VERSION,
+        url = "https://github.com/grpc/grpc-kotlin/archive/v%s.zip" % GRPC_KOTLIN_VERSION,
     )
 
     # From https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl
@@ -43,4 +54,8 @@ IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS = {
     #"io.grpc:grpc-services": "@com_cgi_eoss_eopp//third_party/grpc:all_services",
     "io.grpc:grpc-stub": "@com_cgi_eoss_eopp//third_party/grpc:stub",
     "io.grpc:grpc-testing": "@com_cgi_eoss_eopp//third_party/grpc:testing",
+}
+
+IO_GRPC_GRPC_KOTLIN_OVERRIDE_TARGETS = {
+    "io.grpc:grpc-kotlin-stub": "@com_cgi_eoss_eopp//third_party/grpc:kotlin_stub"
 }

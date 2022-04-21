@@ -1,6 +1,6 @@
 plugins {
     base
-    id("com.github.zetten.bazel-dependencies-plugin") version "2.0.2"
+    id("com.github.zetten.bazel-dependencies-plugin") version "2.1.0"
     id("com.github.ben-manes.versions") version "0.42.0"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
 }
@@ -18,25 +18,26 @@ repositories {
     mavenCentral()
 }
 
-extra["aws-sdk-v2.version"] = "2.17.167"
-extra["azure-sdk-bom.version"] = "1.2.0"
+extra["aws-sdk-v2.version"] = "2.17.189"
+extra["azure-sdk-bom.version"] = "1.2.1"
 extra["commons-compress.version"] = "1.21"
 extra["docker-java.version"] = "3.2.13"
 extra["failsafe.version"] = "2.4.4"
-extra["google-common-protos.version"] = "2.7.4"
-extra["grpc-java.version"] = "1.45.1" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
+extra["google-common-protos.version"] = "2.8.3"
+extra["grpc-java.version"] = "1.46.0" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
+extra["grpc-kotlin.version"] = "1.2.1"
 extra["guava.version"] = "31.1-jre"
 extra["j2objc-annotations.version"] = "1.3"
 extra["jimfs.version"] = "1.2"
-extra["json-schema-validator.version"] = "1.0.68"
+extra["json-schema-validator.version"] = "1.0.69"
 extra["jts-core.version"] = "1.18.2"
-extra["kotlin.version"] = "1.6.10"
+extra["kotlin.version"] = "1.6.21"
 extra["okhttp.version"] = "4.9.3"
-extra["pitest.version"] = "1.7.5"
-extra["protobuf-java.version"] = "3.20.0"
+extra["pitest.version"] = "1.7.6"
+extra["protobuf-java.version"] = "3.20.1"
 extra["reactor-grpc.version"] = "1.2.3"
-extra["spring-boot.version"] = "2.6.6"
-extra["spring-cloud.version"] = "2021.0.1"
+extra["spring-boot.version"] = "2.6.8"
+extra["spring-cloud.version"] = "2021.0.2"
 extra["truth.version"] = "1.1.3"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
 
@@ -69,6 +70,7 @@ dependencyManagement {
         dependency("com.squareup.okhttp3:logging-interceptor:${property("okhttp.version")}")
         dependency("com.squareup.okhttp3:mockwebserver:${property("okhttp.version")}")
         dependency("com.squareup.okhttp3:okhttp:${property("okhttp.version")}")
+        dependency("io.grpc:grpc-kotlin-stub:${property("grpc-kotlin.version")}")
         dependency("net.jodah:failsafe:${property("failsafe.version")}")
         dependency("org.apache.commons:commons-compress:${property("commons-compress.version")}")
         dependency("org.apache.tomcat:annotations-api:${property("org.apache.tomcat:annotations-api.version")}")
@@ -112,6 +114,7 @@ dependencies {
     generate("io.grpc:grpc-protobuf-lite")
     generate("io.grpc:grpc-services")
     generate("io.grpc:grpc-stub")
+    generate("io.grpc:grpc-kotlin-stub")
     generate("io.projectreactor:reactor-core")
     generate("javax.annotation:javax.annotation-api")
     generate("junit:junit")
@@ -121,6 +124,8 @@ dependencies {
     generate("org.awaitility:awaitility")
     generate("org.jetbrains.kotlin:kotlin-reflect")
     generate("org.jetbrains.kotlin:kotlin-stdlib")
+    generate("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm")
+    generate("org.jetbrains.kotlinx:kotlinx-coroutines-debug")
     generate("org.locationtech.jts:jts-core")
     generate("org.mockito:mockito-core")
     generate("org.pitest:pitest")

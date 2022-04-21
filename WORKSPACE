@@ -25,7 +25,7 @@ load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 bazel_skylib_workspace()
 
 load("//third_party/protobuf:protobuf_repositories.bzl", "COM_GOOGLE_PROTOBUF_JAVA_OVERRIDE_TARGETS", "protobuf_repositories")
-load("//third_party/grpc:grpc_repositories.bzl", "IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS", "grpc_repositories")
+load("//third_party/grpc:grpc_repositories.bzl", "IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS", "IO_GRPC_GRPC_KOTLIN_OVERRIDE_TARGETS", "grpc_repositories")
 
 protobuf_repositories()
 
@@ -94,9 +94,9 @@ http_archive(
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
 
-rules_kotlin_version = "v1.5.0"
+rules_kotlin_version = "1.6.0-RC-1"
 
-rules_kotlin_sha = "12d22a3d9cbcf00f2e2d8f0683ba87d3823cb8c7f6837568dd7e48846e023307"
+rules_kotlin_sha = "f1a4053eae0ea381147f5056bb51e396c5c494c7f8d50d0dee4cc2f9d5c701b0"
 
 http_archive(
     name = "io_bazel_rules_kotlin",
@@ -123,7 +123,8 @@ maven_install(
     maven_install_json = "//third_party/java:maven_install.json",
     override_targets = dict(
         COM_GOOGLE_PROTOBUF_JAVA_OVERRIDE_TARGETS.items() +
-        IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS.items(),
+        IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS.items() +
+        IO_GRPC_GRPC_KOTLIN_OVERRIDE_TARGETS.items(),
     ),
     repositories = REPOSITORIES,
     strict_visibility = True,

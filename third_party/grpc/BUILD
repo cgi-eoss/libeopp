@@ -1,5 +1,5 @@
 load("@rules_java//java:defs.bzl", "java_library")
-load(":grpc_repositories.bzl", "GRPC_JAVA_VERSION", "REACTOR_GRPC_VERSION")
+load(":grpc_repositories.bzl", "GRPC_JAVA_VERSION", "GRPC_KOTLIN_VERSION", "REACTOR_GRPC_VERSION")
 
 licenses(["notice"])
 
@@ -211,6 +211,19 @@ java_library(
     ],
     visibility = ["//visibility:public"],
     exports = ["@io_grpc_grpc_java//testing"],
+)
+
+java_library(
+    name = "kotlin_stub",
+    tags = [
+        "manual",
+        "maven_coordinates=io.grpc:grpc-kotlin-stub:" + GRPC_KOTLIN_VERSION,
+    ],
+    visibility = ["//visibility:public"],
+    exports = [
+        "@com_github_grpc_grpc_kotlin//stub/src/main/java/io/grpc/kotlin:context",
+        "@com_github_grpc_grpc_kotlin//stub/src/main/java/io/grpc/kotlin:stub",
+    ],
 )
 
 java_library(

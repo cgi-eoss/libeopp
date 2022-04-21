@@ -1,0 +1,139 @@
+diff --git a/compiler/src/main/java/io/grpc/kotlin/generator/BUILD.bazel b/compiler/src/main/java/io/grpc/kotlin/generator/BUILD.bazel
+index d24268e..d684186 100644
+--- a/compiler/src/main/java/io/grpc/kotlin/generator/BUILD.bazel
++++ b/compiler/src/main/java/io/grpc/kotlin/generator/BUILD.bazel
+@@ -17,7 +17,6 @@ kt_jvm_library(
+         "@io_grpc_grpc_java//core",
+         "@com_google_guava_guava//:com_google_guava_guava",
+         "@com_squareup_kotlinpoet//:com_squareup_kotlinpoet",
+-        "@org_jetbrains_kotlinx_kotlinx_coroutines_core//:org_jetbrains_kotlinx_kotlinx_coroutines_core",
+     ],
+ )
+ 
+diff --git a/kt_jvm_grpc.bzl b/kt_jvm_grpc.bzl
+index a3dabbf..1f35732 100644
+--- a/kt_jvm_grpc.bzl
++++ b/kt_jvm_grpc.bzl
+@@ -87,6 +87,7 @@ def kt_jvm_grpc_library(
+         visibility = None,
+         flavor = None,
+         deprecation = None,
++        java_grpc_target = None,
+         features = []):
+     """This rule compiles Kotlin APIs for gRPC services from the proto_library in srcs.
+ 
+@@ -117,6 +118,7 @@ def kt_jvm_grpc_library(
+         fail("Expected exactly one dep", "deps")
+ 
+     kt_deps.extend([
++        "@io_grpc_grpc_java//api",
+         "@com_github_grpc_grpc_kotlin//stub/src/main/java/io/grpc/kotlin:stub",
+         "@com_github_grpc_grpc_kotlin//stub/src/main/java/io/grpc/kotlin:context",
+     ])
+@@ -124,22 +126,23 @@ def kt_jvm_grpc_library(
+     kt_grpc_label = ":%s_DO_NOT_DEPEND_kt_grpc" % name
+     kt_grpc_name = kt_grpc_label[1:]
+ 
+-    java_grpc_label = ":%s_DO_NOT_DEPEND_java_grpc" % name
+-    java_grpc_name = java_grpc_label[1:]
+-
+-    java_grpc_library(
+-        name = java_grpc_name,
+-        srcs = srcs,
+-        deps = deps,
+-        flavor = flavor,
+-        compatible_with = compatible_with,
+-        restricted_to = restricted_to,
+-        testonly = testonly,
+-        visibility = visibility,
+-        deprecation = deprecation,
+-        features = features,
+-    )
+-    kt_deps.append(java_grpc_label)
++    if java_grpc_target == None:
++        java_grpc_target = ":%s_DO_NOT_DEPEND_java_grpc" % name
++        java_grpc_name = java_grpc_target[1:]
++
++        java_grpc_library(
++            name = java_grpc_name,
++            srcs = srcs,
++            deps = deps,
++            flavor = flavor,
++            compatible_with = compatible_with,
++            restricted_to = restricted_to,
++            testonly = testonly,
++            visibility = visibility,
++            deprecation = deprecation,
++            features = features,
++        )
++    kt_deps.append(java_grpc_target)
+ 
+     _kt_grpc_generate_code(
+         name = kt_grpc_name,
+@@ -258,6 +261,7 @@ def kt_jvm_proto_library(
+         restricted_to = None,
+         visibility = None,
+         deprecation = None,
++        java_proto_target = None,
+         features = []):
+     """
+     This rule accepts any number of proto_library targets in "deps", translates them to Kotlin and
+@@ -283,20 +287,22 @@ def kt_jvm_proto_library(
+       deprecation: Standard attribute
+       features: Standard attribute
+     """
+-    java_proto_target = ":%s_DO_NOT_DEPEND_java_proto" % name
+-    helper_target = ":%s_DO_NOT_DEPEND_kt_proto" % name
+ 
+-    native.java_proto_library(
+-        name = java_proto_target[1:],
+-        deps = deps,
+-        testonly = testonly,
+-        compatible_with = compatible_with,
+-        visibility = ["//visibility:private"],
+-        restricted_to = restricted_to,
+-        tags = tags,
+-        deprecation = deprecation,
+-        features = features,
+-    )
++    if java_proto_target == None:
++        java_proto_target = ":%s_DO_NOT_DEPEND_java_proto" % name
++
++        native.java_proto_library(
++            name = java_proto_target[1:],
++            deps = deps,
++            testonly = testonly,
++            compatible_with = compatible_with,
++            visibility = ["//visibility:private"],
++            restricted_to = restricted_to,
++            tags = tags,
++            deprecation = deprecation,
++            features = features,
++        )
++    helper_target = ":%s_DO_NOT_DEPEND_kt_proto" % name
+ 
+     _kt_jvm_proto_library_helper(
+         name = helper_target[1:],
+diff --git a/stub/src/main/java/io/grpc/kotlin/BUILD.bazel b/stub/src/main/java/io/grpc/kotlin/BUILD.bazel
+index d83137a..7c79add 100644
+--- a/stub/src/main/java/io/grpc/kotlin/BUILD.bazel
++++ b/stub/src/main/java/io/grpc/kotlin/BUILD.bazel
+@@ -14,9 +14,9 @@ kt_jvm_library(
+     ),
+     deps = [
+         ":context",
++        "@io_grpc_grpc_java//context",
+         "@io_grpc_grpc_java//core",
+         "@io_grpc_grpc_java//stub",
+-        "@org_jetbrains_kotlinx_kotlinx_coroutines_core//:org_jetbrains_kotlinx_kotlinx_coroutines_core",
+         "@org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
+     ],
+ )
+@@ -26,7 +26,6 @@ kt_jvm_library(
+     srcs = ["GrpcContextElement.kt"],
+     deps = [
+         "@io_grpc_grpc_java//context",
+-        "@org_jetbrains_kotlinx_kotlinx_coroutines_core//:org_jetbrains_kotlinx_kotlinx_coroutines_core",
+         "@org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
+     ],
+ )
