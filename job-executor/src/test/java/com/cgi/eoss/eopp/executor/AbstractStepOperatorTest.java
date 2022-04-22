@@ -42,6 +42,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -62,6 +63,7 @@ import java.util.stream.IntStream;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.fail;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @RunWith(JUnit4.class)
 public class AbstractStepOperatorTest {
@@ -129,7 +131,7 @@ public class AbstractStepOperatorTest {
         Duration elapsed = stopwatch.stop().elapsed();
 
         // Simply ensure that the total duration is less than the sum of all step sleeps, i.e. steps ran in parallel
-        assertThat(elapsed).isLessThan(Duration.ofMillis(8 * 100));
+        assertThat(elapsed).isLessThan(stepOperator.durations.values().stream().reduce(Duration.ZERO, Duration::plus));
     }
 
     @Test
@@ -439,8 +441,11 @@ public class AbstractStepOperatorTest {
     }
 
     private static class TestStepOperator extends AbstractStepOperator {
+        private static final Logger log = getLogger(TestStepOperator.class);
+
         private final ConcurrentMap<StepInstanceId, AtomicInteger> started = new ConcurrentHashMap<>();
         private final ConcurrentMap<StepInstanceId, AtomicInteger> cleanedUp = new ConcurrentHashMap<>();
+        private final ConcurrentMap<StepInstanceId, Duration> durations = new ConcurrentHashMap<>();
         private final AtomicReference<Throwable> throwCause = new AtomicReference<>();
 
         private TestStepOperator(TestStepOperatorEventDispatcher stepOperatorEventService) {
@@ -462,7 +467,9 @@ public class AbstractStepOperatorTest {
         protected Supplier<StepInstance> getExecutionSupplier(StepInstance stepInstance) {
             AtomicInteger startedCount = started.computeIfAbsent(StepInstances.getId(stepInstance), stepInstanceId -> new AtomicInteger());
             return () -> {
+                log.debug("{}::{} starting execution", stepInstance.getJobUuid(), stepInstance.getIdentifier());
                 startedCount.incrementAndGet();
+                Stopwatch stepTimer = Stopwatch.createStarted();
                 ListMultimap<String, String> parameterValues = StepInstances.parameterValues(stepInstance);
                 parameterValues.get("DURATION").stream().findFirst()
                         .ifPresent(sleepParameter -> {
@@ -483,6 +490,8 @@ public class AbstractStepOperatorTest {
                                     }
                             );
                         });
+                durations.put(StepInstances.getId(stepInstance), stepTimer.stop().elapsed());
+                log.debug("{}::{} completed", stepInstance.getJobUuid(), stepInstance.getIdentifier());
                 return stepInstance.toBuilder()
                         .addOutputs(StepDataSet.newBuilder()
                                 .setIdentifier("out1")

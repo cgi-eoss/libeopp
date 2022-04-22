@@ -36,5 +36,6 @@ gen_java_tests(
         "@maven//:junit_junit",
         "@maven//:net_jodah_failsafe",
         "@maven//:org_awaitility_awaitility",
+        "@maven//:org_slf4j_slf4j_api",
     ],
 )
