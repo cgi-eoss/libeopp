@@ -1,4 +1,5 @@
 load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
+load("@com_github_grpc_grpc_kotlin//:kt_jvm_grpc.bzl", "kt_jvm_proto_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
 load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
@@ -27,6 +28,13 @@ java_proto_library(
     deps = [":workflow_proto"],
 )
 
+kt_jvm_proto_library(
+    name = "workflow_kt_jvm_proto",
+    java_proto_target = "workflow_java_proto",
+    visibility = ["//visibility:public"],
+    deps = [":workflow_proto"],
+)
+
 maven_library(
     name = "workflow",
     srcs = [":workflow_java_srcs"],
@@ -35,7 +43,10 @@ maven_library(
     generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.workflow"],
     test_suite = [":workflow_tests"],
-    exports = [":workflow_java_proto"],
+    exports = [
+        ":workflow_java_proto",
+        ":workflow_kt_jvm_proto",
+    ],
     deps = [
         ":workflow_java_proto",
         "//third_party/java:org_springframework_spring_core_neverlink",
@@ -52,6 +63,7 @@ jarjar_library(
     jars = [
         ":workflow",
         ":workflow_java_proto",
+        ":workflow_kt_jvm_proto.jar",
     ],
     tags = [
         "maven_artifact",

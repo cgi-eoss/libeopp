@@ -101,7 +101,7 @@ public class EoppS3ObjectAsyncResourceTest {
                 .isEqualTo(FileMetas.get(testfile).getLastModified());
         assertThat(resource.contentLength()).isEqualTo(Files.size(testfile));
         assertThat(resource.isCacheable()).isTrue();
-        assertThat(resource.shouldRetry(null)).isFalse();
+        assertThat(resource.shouldRetry(new EoppResourceException("error"))).isFalse();
         assertThat(resource.exists()).isTrue();
         assertThat(resource.isReadable()).isTrue();
         assertThat(resource.getURI()).isEqualTo(URI.create("s3://EODATA/testfile"));
@@ -138,7 +138,7 @@ public class EoppS3ObjectAsyncResourceTest {
         ProtoTruth.assertThat(resource.getFileMeta()).isEqualTo(FileMeta.getDefaultInstance());
         assertThat(resource.contentLength()).isEqualTo(-1);
         assertThat(resource.isCacheable()).isTrue();
-        assertThat(resource.shouldRetry(null)).isFalse();
+        assertThat(resource.shouldRetry(new EoppResourceException("error"))).isFalse();
         assertThat(resource.exists()).isFalse();
         assertThat(resource.isReadable()).isFalse();
         assertThat(resource.getURI()).isEqualTo(URI.create("s3://EODATA/testfile"));
@@ -180,7 +180,7 @@ public class EoppS3ObjectAsyncResourceTest {
                 .isEqualTo(FileMetas.get(testfile).getLastModified());
         assertThat(resource.contentLength()).isEqualTo(Files.size(testfile));
         assertThat(resource.isCacheable()).isTrue();
-        assertThat(resource.shouldRetry(null)).isFalse();
+        assertThat(resource.shouldRetry(new EoppResourceException("error"))).isFalse();
         assertThat(resource.exists()).isTrue();
         assertThat(resource.isReadable()).isTrue();
         assertThat(resource.getURI()).isEqualTo(URI.create("s3://EODATA/testfile"));

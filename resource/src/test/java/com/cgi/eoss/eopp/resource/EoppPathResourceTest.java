@@ -48,7 +48,7 @@ public class EoppPathResourceTest {
         assertThat(resource.contentLength()).isEqualTo(Files.size(testfile));
         assertThat(resource.isCacheable()).isFalse();
         assertThat(resource.contentLength()).isEqualTo(Files.size(testfile));
-        assertThat(resource.shouldRetry(null)).isFalse();
+        assertThat(resource.shouldRetry(new EoppResourceException("error"))).isFalse();
     }
 
     @Test

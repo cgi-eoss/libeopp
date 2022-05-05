@@ -12,6 +12,7 @@ maven_library(
     analysis_srcs = glob(["src/main/java/**"]),
     analysis_targets = [
         ":util",
+        ":anies",
         ":timestamps",
         ":eopp-headers",
         ":io",
@@ -26,12 +27,29 @@ maven_library(
 )
 
 maven_library(
-    name = "timestamps",
-    srcs = ["src/main/java/com/cgi/eoss/eopp/util/Timestamps.java"],
-    artifact_name = "libeopp :: util :: timestamps",
+    name = "anies",
+    srcs = ["src/main/java/com/cgi/eoss/eopp/util/Anies.kt"],
+    artifact_name = "libeopp :: util :: anies",
+    build_kt_jvm_library = True,
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.util"],
-    deps = ["@maven//:com_google_protobuf_protobuf_java"],
+    deps = [
+        "//third_party/protobuf:any_kt_jvm_proto",
+        "@maven//:com_google_protobuf_protobuf_kotlin",
+    ],
+)
+
+maven_library(
+    name = "timestamps",
+    srcs = ["src/main/java/com/cgi/eoss/eopp/util/Timestamps.kt"],
+    artifact_name = "libeopp :: util :: timestamps",
+    build_kt_jvm_library = True,
+    generate_sonarqube_project = False,
+    root_packages = ["com.cgi.eoss.eopp.util"],
+    deps = [
+        "//third_party/protobuf:timestamp_kt_jvm_proto",
+        "@maven//:com_google_protobuf_protobuf_kotlin",
+    ],
 )
 
 maven_library(
@@ -58,7 +76,10 @@ gen_java_tests(
     name = "util_tests",
     srcs = glob(["src/test/java/**/*.java"]),
     deps = [
+        ":timestamps",
         ":util",
+        "@maven//:com_google_protobuf_protobuf_java",
+        "@maven//:com_google_protobuf_protobuf_kotlin",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],

@@ -22,6 +22,7 @@ import com.cgi.eoss.eopp.util.EoppHeaders;
 import com.cgi.eoss.eopp.util.Lazy;
 import com.cgi.eoss.eopp.util.Timestamps;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.net.HttpHeaders;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -75,7 +76,8 @@ public class EoppOkHttpResource implements EoppResource {
 
     @Override
     public boolean shouldRetry(Throwable throwable) {
-        if (throwable instanceof SocketTimeoutException && remainingRetries > 0) {
+        if (Throwables.getRootCause(throwable) instanceof SocketTimeoutException
+                && remainingRetries > 0) {
             remainingRetries--;
             return true;
         }
@@ -174,26 +176,28 @@ public class EoppOkHttpResource implements EoppResource {
                 fileMeta.ifPresent(builder::fileMeta);
 
                 Stream.of(fileMeta.map(FileMeta::getLastModified).map(Timestamps::instantFromTimestamp).map(Instant::toEpochMilli),
-                        Optional.ofNullable(response.header(HttpHeaders.LAST_MODIFIED)).map(EoppHeaders::parseInstant).map(Instant::toEpochMilli))
+                                Optional.ofNullable(response.header(HttpHeaders.LAST_MODIFIED)).map(EoppHeaders::parseInstant).map(Instant::toEpochMilli))
                         .filter(Optional::isPresent).map(Optional::get).findFirst()
                         .ifPresent(builder::lastModified);
 
                 Stream.of(fileMeta.map(FileMeta::getSize),
-                        Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader())).map(Long::valueOf),
-                        Optional.ofNullable(response.header(HttpHeaders.CONTENT_LENGTH)).map(Long::valueOf))
+                                Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_SIZE.getHeader())).map(Long::valueOf),
+                                Optional.ofNullable(response.header(HttpHeaders.CONTENT_LENGTH)).map(Long::valueOf))
                         .filter(Optional::isPresent).map(Optional::get).findFirst()
                         .ifPresent(builder::contentLength);
 
                 builder.filename(Stream.of(fileMeta.map(FileMeta::getFilename),
-                        Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader())),
-                        Optional.ofNullable(response.header(HttpHeaders.CONTENT_DISPOSITION)).flatMap(EoppHeaders.FILENAME_FROM_HTTP_HEADER))
+                                Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader())),
+                                Optional.ofNullable(response.header(HttpHeaders.CONTENT_DISPOSITION)).flatMap(EoppHeaders.FILENAME_FROM_HTTP_HEADER))
                         .filter(Optional::isPresent).map(Optional::get).findFirst()
                         .orElse(StringUtils.getFilename(url.encodedPath())));
 
                 Stream.of(fileMeta.map(FileMeta::getChecksum),
-                        Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader())))
+                                Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader())))
                         .filter(Optional::isPresent).map(Optional::get).findFirst()
                         .ifPresent(builder::checksum);
+            } else {
+                throw new EoppResourceException(String.format("Received unsuccessful HTTP response for resource: %s", response));
             }
         } catch (IOException e) {
             log.warn("Failed to HEAD resource at {}", url, e);

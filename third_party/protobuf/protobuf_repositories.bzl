@@ -40,4 +40,6 @@ COM_GOOGLE_PROTOBUF_JAVA_OVERRIDE_TARGETS = {
     "com.google.protobuf:protobuf-java": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_java",
     "com.google.protobuf:protobuf-java-util": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_java_util",
     "com.google.protobuf:protobuf-javalite": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_javalite",
+    # TODO Override the bazel protobuf-kotlin target when we can import all the additional non-visible targets
+    #"com.google.protobuf:protobuf-kotlin": "@com_cgi_eoss_eopp//third_party/protobuf:protobuf_kotlin",
 }

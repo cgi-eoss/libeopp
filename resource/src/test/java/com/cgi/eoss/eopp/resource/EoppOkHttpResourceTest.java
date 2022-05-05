@@ -91,8 +91,8 @@ public class EoppOkHttpResourceTest {
         assertThat(resource.contentLength()).isEqualTo(Files.size(testfile));
         assertThat(resource.isCacheable()).isTrue();
         assertThat(resource.contentLength()).isEqualTo(Files.size(testfile));
-        assertThat(resource.shouldRetry(null)).isFalse();
-        assertThat(resource.shouldRetry(new SocketTimeoutException())).isTrue();
+        assertThat(resource.shouldRetry(new EoppResourceException("error"))).isFalse();
+        assertThat(resource.shouldRetry(new EoppResourceException("error", new SocketTimeoutException()))).isTrue();
         assertThat(resource.exists()).isTrue();
         assertThat(resource.isReadable()).isTrue();
         assertThat(resource.getURI()).isEqualTo(url.uri());
