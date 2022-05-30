@@ -12,37 +12,36 @@ bazelDependencies {
     outputFile.set(project.rootDir.resolve("java_repositories.bzl"))
     sourcesChecksums.set(true)
     rulesJvmExternalVersion.set("4.1.0")
+    createMavenInstallJson.set(false) // pinned by finalizer task
 }
 
 repositories {
     mavenCentral()
 }
 
-extra["aws-sdk-v2.version"] = "2.17.189"
-extra["azure-sdk-bom.version"] = "1.2.1"
+extra["aws-sdk-v2.version"] = "2.17.201"
+extra["azure-sdk-bom.version"] = "1.2.2"
 extra["commons-compress.version"] = "1.21"
 extra["docker-java.version"] = "3.2.13"
 extra["failsafe.version"] = "2.4.4"
 extra["google-common-protos.version"] = "2.8.3"
-extra["grpc-java.version"] = "1.46.0" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
-extra["grpc-kotlin.version"] = "1.2.1"
+extra["grpc-java.version"] = "1.47.0" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
+extra["grpc-kotlin.version"] = "1.3.0"
 extra["guava.version"] = "31.1-jre"
 extra["j2objc-annotations.version"] = "1.3"
 extra["jimfs.version"] = "1.2"
-extra["json-schema-validator.version"] = "1.0.69"
+extra["json-schema-validator.version"] = "1.0.70"
 extra["jts-core.version"] = "1.18.2"
 extra["kotlin.version"] = "1.6.21"
+extra["kotlin-coroutines.version"] = "1.6.2"
 extra["okhttp.version"] = "4.9.3"
-extra["pitest.version"] = "1.7.6"
-extra["protobuf-java.version"] = "3.20.1"
+extra["pitest.version"] = "1.8.0"
+extra["protobuf-java.version"] = "3.21.1"
 extra["reactor-grpc.version"] = "1.2.3"
-extra["spring-boot.version"] = "2.6.8"
-extra["spring-cloud.version"] = "2021.0.2"
+extra["spring-boot.version"] = "2.7.0"
+extra["spring-cloud.version"] = "2021.0.3"
 extra["truth.version"] = "1.1.3"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
-
-//TODO Allow to update when tcnative sorts out fat jar and bazel compatibility (https://github.com/netty/netty-tcnative/issues/716)
-extra["netty-tcnative.version"] = "2.0.50.Final"
 
 dependencyManagement {
     imports {
@@ -62,6 +61,7 @@ dependencyManagement {
         dependency("com.google.j2objc:j2objc-annotations:${property("j2objc-annotations.version")}")
         dependency("com.google.jimfs:jimfs:${property("jimfs.version")}")
         dependency("com.google.protobuf:protobuf-javalite:${property("protobuf-java.version")}")
+        dependency("com.google.protobuf:protobuf-kotlin:${property("protobuf-java.version")}")
         dependency("com.google.truth.extensions:truth-java8-extension:${property("truth.version")}")
         dependency("com.google.truth.extensions:truth-proto-extension:${property("truth.version")}")
         dependency("com.google.truth:truth:${property("truth.version")}")
@@ -95,6 +95,7 @@ dependencies {
     generate("com.google.jimfs:jimfs")
     generate("com.google.protobuf:protobuf-java")
     generate("com.google.protobuf:protobuf-javalite")
+    generate("com.google.protobuf:protobuf-kotlin")
     generate("com.google.truth.extensions:truth-java8-extension")
     generate("com.google.truth.extensions:truth-proto-extension")
     generate("com.google.truth:truth")
@@ -139,3 +140,9 @@ dependencies {
     generate("org.springframework:spring-web")
     generate("software.amazon.awssdk:s3")
 }
+
+val pinMavenInstallJson by tasks.registering(Exec::class) {
+    workingDir("../../")
+    commandLine("bazel", "run", "@unpinned_maven//:pin")
+}
+tasks.named("generateRulesJvmExternal") { finalizedBy(pinMavenInstallJson) }

@@ -76,14 +76,14 @@ rules_proto_toolchains()
 
 http_archive(
     name = "rules_python",
-    sha256 = "9fcf91dbcc31fde6d1edb15f117246d912c33c36f44cf681976bd886538deba6",
-    strip_prefix = "rules_python-0.8.0",
-    url = "https://github.com/bazelbuild/rules_python/archive/refs/tags/0.8.0.tar.gz",
+    sha256 = "cdf6b84084aad8f10bf20b46b77cb48d83c319ebe6458a18e9d2cebf57807cdd",
+    strip_prefix = "rules_python-0.8.1",
+    url = "https://github.com/bazelbuild/rules_python/archive/refs/tags/0.8.1.tar.gz",
 )
 
-RULES_JVM_EXTERNAL_TAG = "4.2"
+RULES_JVM_EXTERNAL_TAG = "94ac7bf49c26915de546b7ab919f0b8928324b7a"
 
-RULES_JVM_EXTERNAL_SHA = "cd1a77b7b02e8e008439ca76fd34f5b07aecb8c752961f9640dea15e9e5ba1ca"
+RULES_JVM_EXTERNAL_SHA = "64f8db257e929ca78b70eb265363b0f65ee5c8f22986cc7d9104308c6c88e998"
 
 http_archive(
     name = "rules_jvm_external",
@@ -94,9 +94,9 @@ http_archive(
     url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
 )
 
-rules_kotlin_version = "1.6.0-RC-1"
+rules_kotlin_version = "v1.6.0-RC-3"
 
-rules_kotlin_sha = "f1a4053eae0ea381147f5056bb51e396c5c494c7f8d50d0dee4cc2f9d5c701b0"
+rules_kotlin_sha = "a57591404423a52bd6b18ebba7979e8cd2243534736c5c94d35c89718ea38f94"
 
 http_archive(
     name = "io_bazel_rules_kotlin",

@@ -1,15 +1,3 @@
-diff --git a/compiler/src/main/java/io/grpc/kotlin/generator/BUILD.bazel b/compiler/src/main/java/io/grpc/kotlin/generator/BUILD.bazel
-index d24268e..d684186 100644
---- a/compiler/src/main/java/io/grpc/kotlin/generator/BUILD.bazel
-+++ b/compiler/src/main/java/io/grpc/kotlin/generator/BUILD.bazel
-@@ -17,7 +17,6 @@ kt_jvm_library(
-         "@io_grpc_grpc_java//core",
-         "@com_google_guava_guava//:com_google_guava_guava",
-         "@com_squareup_kotlinpoet//:com_squareup_kotlinpoet",
--        "@org_jetbrains_kotlinx_kotlinx_coroutines_core//:org_jetbrains_kotlinx_kotlinx_coroutines_core",
-     ],
- )
- 
 diff --git a/kt_jvm_grpc.bzl b/kt_jvm_grpc.bzl
 index a3dabbf..1f35732 100644
 --- a/kt_jvm_grpc.bzl
@@ -70,7 +58,7 @@ index a3dabbf..1f35732 100644
  
      _kt_grpc_generate_code(
          name = kt_grpc_name,
-@@ -258,6 +261,7 @@ def kt_jvm_proto_library(
+@@ -256,6 +259,7 @@ def kt_jvm_proto_library(
          restricted_to = None,
          visibility = None,
          deprecation = None,
@@ -78,7 +66,7 @@ index a3dabbf..1f35732 100644
          features = []):
      """
      This rule accepts any number of proto_library targets in "deps", translates them to Kotlin and
-@@ -283,20 +287,22 @@ def kt_jvm_proto_library(
+@@ -281,20 +285,22 @@ def kt_jvm_proto_library(
        deprecation: Standard attribute
        features: Standard attribute
      """
@@ -114,26 +102,3 @@ index a3dabbf..1f35732 100644
  
      _kt_jvm_proto_library_helper(
          name = helper_target[1:],
-diff --git a/stub/src/main/java/io/grpc/kotlin/BUILD.bazel b/stub/src/main/java/io/grpc/kotlin/BUILD.bazel
-index d83137a..7c79add 100644
---- a/stub/src/main/java/io/grpc/kotlin/BUILD.bazel
-+++ b/stub/src/main/java/io/grpc/kotlin/BUILD.bazel
-@@ -14,9 +14,9 @@ kt_jvm_library(
-     ),
-     deps = [
-         ":context",
-+        "@io_grpc_grpc_java//context",
-         "@io_grpc_grpc_java//core",
-         "@io_grpc_grpc_java//stub",
--        "@org_jetbrains_kotlinx_kotlinx_coroutines_core//:org_jetbrains_kotlinx_kotlinx_coroutines_core",
-         "@org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
-     ],
- )
-@@ -26,7 +26,6 @@ kt_jvm_library(
-     srcs = ["GrpcContextElement.kt"],
-     deps = [
-         "@io_grpc_grpc_java//context",
--        "@org_jetbrains_kotlinx_kotlinx_coroutines_core//:org_jetbrains_kotlinx_kotlinx_coroutines_core",
-         "@org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
-     ],
- )

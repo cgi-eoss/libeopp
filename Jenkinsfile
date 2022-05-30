@@ -20,9 +20,8 @@ pipeline {
         container('libeopp-build') {
           echo "Updating repository URLs to local proxies..."
           sh """
-            sed -i 's#https\\(:/\\)\\?/jcenter.bintray.com/#http\\1/cgici-nexus-nexus/repository/maven-jcenter/#' third_party/java/maven_install.json
-            sed -i 's#https\\(:/\\)\\?/repo.maven.apache.org/maven2/#http\\1/cgici-nexus-nexus/repository/maven-central/#' third_party/java/maven_install.json
-            (cd third_party/java && ./gradlew --no-daemon rehashMavenInstall)
+            sed -i 's#https\\(:/\\)\\?/repo.maven.apache.org/maven2/#http\\1/cgici-nexus-nexus/repository/maven-central/#' third_party/java/java_repositories.bzl
+            bazel run @unpinned_maven//:pin
           """
         }
       }
