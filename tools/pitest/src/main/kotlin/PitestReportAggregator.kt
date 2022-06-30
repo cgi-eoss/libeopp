@@ -4,6 +4,7 @@ import org.pitest.aggregate.ReportAggregator
 import org.pitest.mutationtest.config.DirectoryResultOutputStrategy
 import org.pitest.mutationtest.config.UndatedReportDirCreationStrategy
 import java.io.BufferedInputStream
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -28,6 +29,8 @@ class PitestReportAggregator {
                 ?: Files.createTempDirectory("pitest-inputs-")
 
             val reportAggregator = ReportAggregator.builder()
+                .inputCharSet(Charset.defaultCharset())
+                .outputCharset(Charset.defaultCharset())
 
             reportPaths.forEachIndexed { idx, reportZip ->
                 val reportUnzip = Files.createDirectories(pitestInputs.resolve(idx.toString()))
