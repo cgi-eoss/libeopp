@@ -1,5 +1,5 @@
 load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
-load("@com_github_grpc_grpc_kotlin//:kt_jvm_grpc.bzl", "kt_jvm_grpc_library", "kt_jvm_proto_library")
+load("@com_github_grpc_grpc_kotlin//:kt_jvm_grpc.bzl", "kt_jvm_proto_library")
 
 # Re-exports with Maven coordinates for POM generation
 load(":protobuf_repositories.bzl", "PROTOBUF_JAVA_VERSION")

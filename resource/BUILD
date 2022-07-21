@@ -21,7 +21,6 @@ maven_library(
         ":azure-blob-resource",
     ],
     artifact_name = "libeopp :: resource",
-    generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.resource"],
     test_suite = [":resource_tests"],
     deps = [
@@ -38,6 +37,7 @@ maven_library(
     name = "path-resource",
     srcs = ["src/main/java/com/cgi/eoss/eopp/resource/EoppPathResource.java"],
     artifact_name = "libeopp :: resource :: path",
+    generate_pitest_coverage_target = False,
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.resource"],
     deps = [
@@ -51,6 +51,7 @@ maven_library(
     name = "okhttp-resource",
     srcs = ["src/main/java/com/cgi/eoss/eopp/resource/EoppOkHttpResource.java"],
     artifact_name = "libeopp :: resource :: okhttp",
+    generate_pitest_coverage_target = False,
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.resource"],
     deps = [
@@ -74,6 +75,7 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/resource/EoppS3ObjectResource.java",
     ],
     artifact_name = "libeopp :: resource :: s3",
+    generate_pitest_coverage_target = False,
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.resource"],
     deps = [
@@ -98,6 +100,7 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/resource/EoppAzureBlobResource.java",
     ],
     artifact_name = "libeopp :: resource :: azure-blob",
+    generate_pitest_coverage_target = False,
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.resource"],
     deps = [

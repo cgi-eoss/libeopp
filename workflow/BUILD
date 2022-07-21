@@ -1,75 +1,27 @@
-load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
-load("@com_github_grpc_grpc_kotlin//:kt_jvm_grpc.bzl", "kt_jvm_proto_library")
+load("//tools:maven.bzl", "maven_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
-load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
-load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
-load("@rules_proto//proto:defs.bzl", "proto_library")
-
-filegroup(
-    name = "workflow_proto_srcs",
-    srcs = glob(["src/main/proto/**/*.proto"]),
-)
-
-filegroup(
-    name = "workflow_java_srcs",
-    srcs = glob(["src/main/java/**/*.java"]),
-)
-
-proto_library(
-    name = "workflow_proto",
-    srcs = [":workflow_proto_srcs"],
-    visibility = ["//visibility:public"],
-    deps = ["//identifier:identifier_proto"],
-)
-
-java_proto_library(
-    name = "workflow_java_proto",
-    visibility = ["//visibility:public"],
-    deps = [":workflow_proto"],
-)
-
-kt_jvm_proto_library(
-    name = "workflow_kt_jvm_proto",
-    java_proto_target = "workflow_java_proto",
-    visibility = ["//visibility:public"],
-    deps = [":workflow_proto"],
-)
+load("@rules_java//java:defs.bzl", "java_library")
 
 maven_library(
     name = "workflow",
-    srcs = [":workflow_java_srcs"],
     artifact_name = "libeopp :: workflow",
-    deploy_java_library = False,
     generate_pitest_coverage_target = True,
+    protos = [{
+        "name": "workflow",
+        "srcs": "src/main/proto/workflow.proto",
+        "deps": [
+            "//identifier:identifier_proto",
+        ],
+    }],
     root_packages = ["com.cgi.eoss.eopp.workflow"],
     test_suite = [":workflow_tests"],
-    exports = [
-        ":workflow_java_proto",
-        ":workflow_kt_jvm_proto",
-    ],
     deps = [
-        ":workflow_java_proto",
         "//third_party/java:org_springframework_spring_core_neverlink",
         "//third_party/protobuf:protobuf_java",
         "//third_party/protobuf:protobuf_java_util",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
         "@maven//:com_fasterxml_jackson_dataformat_jackson_dataformat_yaml",
     ],
-)
-
-# Bundle the proto-derived classes for the Maven artifact
-jarjar_library(
-    name = "workflow_deploy",
-    jars = [
-        ":workflow",
-        ":workflow_java_proto",
-        ":workflow_kt_jvm_proto.jar",
-    ],
-    tags = [
-        "maven_artifact",
-        maven_coordinates_tag("workflow"),
-    ],
-    visibility = ["//:__pkg__"],
 )
 
 java_library(

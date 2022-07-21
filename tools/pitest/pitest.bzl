@@ -129,7 +129,7 @@ def pitest_mutation_coverage_test(
     )
 
     native.filegroup(
-        name = "%s_pitest_report_support_files",
+        name = "_%s_pitest_report_support_files" % name,
         srcs = srcs,
         tags = ["manual"],
         visibility = ["//visibility:public"],

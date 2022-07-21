@@ -5,14 +5,8 @@ load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
 load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
-filegroup(
-    name = "file-stream_java_srcs",
-    srcs = glob(["src/main/java/**/*.java"]),
-)
-
 maven_library(
     name = "file-stream",
-    srcs = [":file-stream_java_srcs"],
     artifact_name = "libeopp :: file-stream",
     generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.filestream"],

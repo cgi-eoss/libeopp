@@ -1,14 +1,8 @@
 load("//tools:maven.bzl", "maven_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 
-filegroup(
-    name = "job-executor_java_srcs",
-    srcs = glob(["src/main/java/**/*.java"]),
-)
-
 maven_library(
     name = "job-executor",
-    srcs = [":job-executor_java_srcs"],
     artifact_name = "libeopp :: job-executor",
     generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.executor"],

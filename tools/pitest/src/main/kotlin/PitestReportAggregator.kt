@@ -14,7 +14,7 @@ class PitestReportAggregator {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            check(!Files.exists(Paths.get(args[0])))
+            check(!Files.exists(Paths.get(args[0]))) { "Output directory already exists: ${args[0]}" }
 
             val outputPath = Paths.get(args[0])
             val workspacePath = Paths.get(args[1])
@@ -62,7 +62,7 @@ class PitestReportAggregator {
                 )
 
             reportAggregator.build()
-                .aggregateReport()
+                 .aggregateReport()
 
             println("  Pitest aggregate report generated: file://$outputPath/index.html")
         }

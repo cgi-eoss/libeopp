@@ -17,17 +17,24 @@ bazel test "${pitest_targets[@]}"
 
 # Find all the pitest outputs
 pitest_outputs=()
+dep_targets=()
 for t in ${pitest_targets[*]}; do
   x=${t:2}
   test_pkg=${x%\:*}
   test_name=${x#*:}
   pitest_outputs=("${pitest_outputs[@]}" "${workspace}/bazel-testlogs/${test_pkg}/${test_name}/test.outputs/outputs.zip")
 
-  # Extract all the classes depended on by this test target
-  for dep in $(bazel query "kind('(java|kt_jvm)_library', deps(${t}) intersect //...)" --output=label 2>/dev/null); do
-    jar=$(readlink -f "$(bazel build "$dep" 2>&1 | grep "^ " | head -1 | tr -d '[:space:]')")
-    unzip -qo "$jar" -d "$classes_path"
-  done
+  # Find all the dependencies of this test target containing classes
+  mapfile -t deps < <(bazel query "kind('maven_project_jar', deps(${t}) intersect //...)" --output=label 2>/dev/null)
+  dep_targets+=("${deps[@]}")
+done
+
+# Select the unique set of dependency targets to build
+read -ra dep_targets <<<"$(tr ' ' '\n' <<<"${dep_targets[@]}" | sort -u | tr '\n' ' ')"
+
+# Build all dep_targets and get the output jar paths
+for jar in $(bazel build "${dep_targets[@]}" --show_result=999 2>&1 | grep "^ " | xargs readlink -f); do
+  unzip -qo "$jar" -d "$classes_path"
 done
 
 bazel run //tools/pitest:pitest_report_aggregator -- "$report_path" "$workspace" "$classes_path" "${pitest_outputs[@]}"

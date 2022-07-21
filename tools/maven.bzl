@@ -1,108 +1,152 @@
+load("@rules_jvm_external//private/rules:maven_project_jar.bzl", "maven_project_jar")
 load("@rules_jvm_external//:defs.bzl", "javadoc")
-load("@google_bazel_common//tools/maven:pom_file.bzl", default_pom_file = "pom_file")
+load(":pom_file.bzl", "DEFAULT_POM_VERSION", "pom_file")
+load("@com_github_grpc_grpc_kotlin//:kt_jvm_grpc.bzl", "kt_jvm_proto_library")
+load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
 load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
-load("@bazel_sonarqube//:defs.bzl", "sq_project")
-load("@rules_java//java:defs.bzl", "java_library")
+load("@bazel_sonarqube//:defs.bzl", _sq_project = "sq_project")
 load("//tools/pitest:pitest.bzl", "pitest_mutation_coverage_test")
 load("//tools/maven_publish:maven_publish.bzl", "maven_publish")
 
-POM_VERSION = "{pom_version}"
-
 def maven_coordinates(name, group_id = "com.cgi.eoss.eopp", artifact_id = None):
-    return "%s:%s:%s" % (group_id, (artifact_id or name), POM_VERSION)
+    return "%s:%s:%s" % (group_id, (artifact_id or name), DEFAULT_POM_VERSION)
 
 def maven_coordinates_tag(name, group_id = "com.cgi.eoss.eopp", artifact_id = None):
-    return "maven_coordinates=%s:%s:%s" % (group_id, (artifact_id or name), POM_VERSION)
+    return "maven_coordinates=%s:%s:%s" % (group_id, (artifact_id or name), DEFAULT_POM_VERSION)
 
 def maven_library(
         name,
-        srcs,
-        artifact_name,
-        artifact_id = None,
         group_id = "com.cgi.eoss.eopp",
+        artifact_id = None,
         packaging = None,
-        root_packages = ["com.cgi.eoss.eopp"],
-        generate_sonarqube_project = True,
-        visibility = ["//visibility:public"],
-        deploy_java_library = True,
+        artifact_name = None,
+        protos = [],
+        build_kt_jvm_proto_library = True,
+        srcs = [],
+        deps = [],
         build_kt_jvm_library = False,
         build_javadoc_library = True,
+        root_packages = ["com.cgi.eoss.eopp"],
         analysis_srcs = None,
         analysis_targets = None,
+        generate_sonarqube_project = True,
         test_srcs = [],
         test_targets = [],
         test_suite = None,
-        generate_pitest_coverage_target = False,
+        generate_pitest_coverage_target = True,
+        visibility = ["//visibility:public"],
+        tags = [],
+        testonly = False,
         **kwargs):
     _maven_coordinates = maven_coordinates(name, group_id, artifact_id)
     _maven_coordinates_tag = maven_coordinates_tag(name, group_id, artifact_id)
 
+    _lib_deps = deps
+
+    for proto in protos:
+        proto_library(
+            name = "%s_proto" % proto.get("name"),
+            srcs = [proto.get("srcs")],
+            deps = proto.get("deps"),
+            testonly = testonly,
+            visibility = visibility,
+        )
+
+        java_proto_library(
+            name = "%s_java_proto" % proto.get("name"),
+            deps = [":%s_proto" % proto.get("name")],
+            testonly = testonly,
+            visibility = visibility,
+        )
+        deps.append("%s_java_proto" % proto.get("name"))
+
+        if build_kt_jvm_proto_library:
+            kt_jvm_proto_library(
+                name = "%s_kt_jvm_proto" % proto.get("name"),
+                java_proto_target = "%s_java_proto" % proto.get("name"),
+                deps = [":%s_proto" % proto.get("name")],
+                testonly = testonly,
+                visibility = visibility,
+            )
+            deps.append("%s_kt_jvm_proto" % proto.get("name"))
+
+    if srcs != None:
+        srcs_attr = [":%s_srcs" % name]
+        native.filegroup(
+            name = "%s_srcs" % name,
+            srcs = srcs or native.glob([
+                "src/main/java/**/*.java",
+                "src/main/java/**/*.kt",
+            ]),
+            testonly = testonly,
+        )
+    else:
+        srcs_attr = []
+
     if build_kt_jvm_library:
         kt_jvm_library(
-            name = name,
-            srcs = srcs,
-            tags = (["maven_artifact"] if deploy_java_library else []) + [_maven_coordinates_tag],
+            name = "%s_lib" % name,
+            srcs = srcs_attr,
             visibility = visibility,
+            deps = deps,
+            testonly = testonly,
+            tags = tags + [_maven_coordinates_tag],
             **kwargs
-        )
-
-        # kt_jvm_library emits two files in the default outputgroup, so we select the jar for publishing
-        native.filegroup(
-            name = "_%s_maven_artifact" % name,
-            srcs = [":%s.jar" % name],
-        )
-
-        java_library(
-            name = "%s_srcjar" % name,
-            resources = srcs,
-            tags = ["manual", "maven_srcjar", _maven_coordinates_tag],
         )
     else:
         java_library(
-            name = name,
-            srcs = srcs,
-            tags = (["maven_artifact"] if deploy_java_library else []) + [_maven_coordinates_tag],
+            name = "%s_lib" % name,
+            srcs = srcs_attr,
             visibility = visibility,
+            deps = deps,
+            testonly = testonly,
+            tags = tags + [_maven_coordinates_tag],
             **kwargs
         )
 
-        native.filegroup(
-            name = "_%s_maven_artifact" % name,
-            srcs = [":%s" % name],
-        )
+    maven_project_jar(
+        name = name,
+        target = "%s_lib" % name,
+        tags = tags + [_maven_coordinates_tag],
+        visibility = visibility,
+        testonly = testonly,
+    )
 
-        native.alias(
-            name = "%s_srcjar" % name,
-            actual = ":lib%s-src.jar" % name,
-            tags = ["manual", "maven_srcjar", _maven_coordinates_tag],
-        )
+    native.filegroup(
+        name = "%s_srcjar" % name,
+        srcs = [":%s" % name],
+        output_group = "maven_source",
+        visibility = visibility,
+        tags = tags + ["manual"],
+        testonly = testonly,
+    )
 
     if build_javadoc_library:
         javadoc(
-            name = "lib%s-javadoc" % name,
+            name = "%s_javadoc" % name,
             deps = [":%s" % name],
-            tags = ["manual", "maven_javadoc", _maven_coordinates_tag],
+            tags = tags + ["manual"],
+            testonly = testonly,
         )
 
     pom_file(
         name = "%s_pom" % name,
-        targets = [":%s" % name],
-        artifact_name = artifact_name,
-        artifact_id = artifact_id or name,
-        group_id = group_id,
-        packaging = packaging,
-        tags = ["manual", _maven_coordinates_tag],
+        target = ":%s_lib" % name,
+        artifact_name = artifact_name or name,
+        visibility = visibility,
+        tags = tags + ["manual"],
     )
 
     maven_publish(
         name = "%s.publish" % name,
         coordinates = _maven_coordinates,
         pom = ":%s_pom" % name,
-        javadocs = ":lib%s-javadoc" % name if build_javadoc_library else None,
-        artifact_jar = ":_%s_maven_artifact" % name,
+        javadocs = ":%s_javadoc" % name if build_javadoc_library else None,
+        artifact_jar = ":%s" % name,
         source_jar = ":%s_srcjar" % name,
         visibility = visibility,
-        tags = ["manual", _maven_coordinates_tag],
+        tags = tags + ["manual"],
     )
 
     _test_srcs = test_srcs if test_srcs else native.glob(["src/test/java/**/*.java"])
@@ -114,12 +158,12 @@ def maven_library(
 
     if generate_sonarqube_project:
         sonarqube_project(
-            name,
-            analysis_srcs if analysis_srcs else srcs,
-            artifact_name,
-            artifact_id,
-            group_id,
-            targets = analysis_targets if analysis_targets else [":%s" % name],
+            name = name,
+            srcs = analysis_srcs or srcs,
+            artifact_name = artifact_name or artifact_id,
+            artifact_id = artifact_id,
+            group_id = group_id,
+            targets = analysis_targets or [":%s" % name],
             test_srcs = _test_srcs,
             test_targets = _test_targets,
         )
@@ -145,7 +189,7 @@ def sonarqube_project(
         targets = [],
         test_srcs = [],
         test_targets = []):
-    sq_project(
+    _sq_project(
         name = "sq_%s" % name,
         srcs = srcs,
         test_srcs = test_srcs,
@@ -156,26 +200,4 @@ def sonarqube_project(
         test_reports = ["//:test_reports"],
         test_targets = test_targets,
         visibility = ["//visibility:public"],
-    )
-
-def pom_file(
-        name,
-        targets,
-        artifact_name,
-        artifact_id,
-        group_id = "com.cgi.eoss.eopp",
-        packaging = None,
-        **kwargs):
-    default_pom_file(
-        name = name,
-        targets = targets,
-        preferred_group_ids = ["com.cgi.eoss.eopp", "com.cgi"],
-        template_file = "//tools:pom-template.xml",
-        substitutions = {
-            "{group_id}": group_id,
-            "{artifact_id}": artifact_id,
-            "{artifact_name}": artifact_name,
-            "{packaging}": packaging or "jar",
-        },
-        **kwargs
     )

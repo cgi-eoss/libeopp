@@ -1,81 +1,27 @@
-load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
-load("@com_github_grpc_grpc_kotlin//:kt_jvm_grpc.bzl", "kt_jvm_proto_library")
+load("//tools:maven.bzl", "maven_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
-load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
-load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
-load("@rules_proto//proto:defs.bzl", "proto_library")
-
-filegroup(
-    name = "file_proto_srcs",
-    srcs = glob(["src/main/proto/**/*.proto"]),
-)
-
-filegroup(
-    name = "file_java_srcs",
-    srcs = glob(["src/main/java/**/*.java"]),
-)
-
-proto_library(
-    name = "file_proto",
-    srcs = [":file_proto_srcs"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "@com_google_protobuf//:any_proto",
-        "@com_google_protobuf//:timestamp_proto",
-    ],
-)
-
-java_proto_library(
-    name = "file_java_proto",
-    visibility = ["//visibility:public"],
-    deps = [":file_proto"],
-)
-
-kt_jvm_proto_library(
-    name = "file_kt_jvm_proto",
-    java_proto_target = "file_java_proto",
-    visibility = ["//visibility:public"],
-    deps = [":file_proto"],
-)
+load("@rules_java//java:defs.bzl", "java_library")
 
 maven_library(
     name = "file",
-    srcs = [":file_java_srcs"],
     artifact_name = "libeopp :: file",
-    deploy_java_library = False,
-    generate_pitest_coverage_target = True,
+    protos = [{
+        "name": "file",
+        "srcs": "src/main/proto/file.proto",
+        "deps": [
+            "@com_google_protobuf//:any_proto",
+            "@com_google_protobuf//:timestamp_proto",
+        ],
+    }],
     root_packages = ["com.cgi.eoss.eopp.file"],
     test_suite = [":file_tests"],
-    exports = [
-        ":file_java_proto",
-        ":file_kt_jvm_proto",
-    ],
     deps = [
-        ":file_java_proto",
         "//third_party/java:org_springframework_spring_core_neverlink",
-        "//third_party/protobuf:protobuf_java",
         "//util:eopp-headers",
         "//util:timestamps",
         "@maven//:com_google_guava_guava",
+        "@maven//:com_google_protobuf_protobuf_java",
     ],
-)
-
-# Bundle the proto-derived classes for the Maven artifact
-jarjar_library(
-    name = "file_deploy",
-    jars = [
-        ":file",
-        ":file_java_proto",
-        ":file_kt_jvm_proto.jar",
-    ],
-    rules = [
-        "zap com.google.protobuf.**",
-    ],
-    tags = [
-        "maven_artifact",
-        maven_coordinates_tag("file"),
-    ],
-    visibility = ["//:__pkg__"],
 )
 
 java_library(

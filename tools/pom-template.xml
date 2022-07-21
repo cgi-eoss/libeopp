@@ -17,12 +17,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>{group_id}</groupId>
-    <artifactId>{artifact_id}</artifactId>
-    <name>{artifact_name}</name>
-    <version>{pom_version}</version>
+    <groupId>{groupId}</groupId>
+    <artifactId>{artifactId}</artifactId>
+    <name>{artifactName}</name>
+    <version>{version}</version>
     <url>https://github.com/cgi-eoss/libeopp</url>
-    <packaging>{packaging}</packaging>
 
     <scm>
         <url>https://github.com/cgi-eoss/libeopp/</url>
@@ -49,6 +48,6 @@
     </organization>
 
     <dependencies>
-        {generated_bzl_deps}
+{dependencies}
     </dependencies>
 </project>

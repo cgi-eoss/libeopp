@@ -4,8 +4,6 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "google_bazel_common",
-    patch_args = ["-p1"],
-    patches = ["//third_party:google_bazel_common.suppress-warning.patch"],
     sha256 = "207317ec7f3acaa9e4e33f11eb45effdda2c3506edbe6fbdbffcff32be6fe16a",
     strip_prefix = "bazel-common-f538027ae7f9133d1796eb6b970fb78eff58e4b5",
     urls = ["https://github.com/google/bazel-common/archive/f538027ae7f9133d1796eb6b970fb78eff58e4b5.zip"],
@@ -147,10 +145,6 @@ kt_register_toolchains()
 load("//third_party/grpc:grpc_dependency_repositories.bzl", "grpc_dependency_repositories")
 
 grpc_dependency_repositories()
-
-load("//third_party/java:jarjar_repositories.bzl", "jarjar_repositories")
-
-jarjar_repositories()
 
 load("@bazel_sonarqube//:repositories.bzl", "bazel_sonarqube_repositories")
 

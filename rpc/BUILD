@@ -17,7 +17,6 @@ maven_library(
         ":grpc-discovery-client-name-resolver",
     ],
     artifact_name = "libeopp :: rpc",
-    generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.rpc"],
     test_suite = [":rpc_tests"],
     deps = [
@@ -39,6 +38,7 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/rpc/DiscoveryClientNameResolverProvider.java",
     ],
     artifact_name = "libeopp :: rpc :: grpc-discovery-client-name-resolver",
+    generate_pitest_coverage_target = False,
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.rpc"],
     deps = [

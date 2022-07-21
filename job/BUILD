@@ -1,82 +1,28 @@
-load("//tools:maven.bzl", "maven_coordinates_tag", "maven_library")
-load("@com_github_grpc_grpc_kotlin//:kt_jvm_grpc.bzl", "kt_jvm_proto_library")
+load("//tools:maven.bzl", "maven_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
-load("@google_bazel_common//tools/jarjar:jarjar.bzl", "jarjar_library")
-load("@rules_java//java:defs.bzl", "java_proto_library")
-load("@rules_proto//proto:defs.bzl", "proto_library")
-
-filegroup(
-    name = "job_proto_srcs",
-    srcs = glob(["src/main/proto/**/*.proto"]),
-)
-
-filegroup(
-    name = "job_java_srcs",
-    srcs = glob(["src/main/java/**/*.java"]),
-)
-
-proto_library(
-    name = "job_proto",
-    srcs = [":job_proto_srcs"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//identifier:identifier_proto",
-        "//workflow:workflow_proto",
-        "@com_google_protobuf//:any_proto",
-        "@com_google_protobuf//:timestamp_proto",
-    ],
-)
-
-java_proto_library(
-    name = "job_java_proto",
-    visibility = ["//visibility:public"],
-    deps = [":job_proto"],
-)
-
-kt_jvm_proto_library(
-    name = "job_kt_jvm_proto",
-    java_proto_target = "job_java_proto",
-    visibility = ["//visibility:public"],
-    deps = [":job_proto"],
-)
 
 maven_library(
     name = "job",
-    srcs = [":job_java_srcs"],
     artifact_name = "libeopp :: job",
-    deploy_java_library = False,
     generate_pitest_coverage_target = True,
+    protos = [{
+        "name": "job",
+        "srcs": "src/main/proto/job.proto",
+        "deps": [
+            "//identifier:identifier_proto",
+            "//workflow:workflow_proto",
+            "@com_google_protobuf//:any_proto",
+            "@com_google_protobuf//:timestamp_proto",
+        ],
+    }],
     root_packages = ["com.cgi.eoss.eopp.job"],
     test_suite = [":job_tests"],
-    exports = [
-        ":job_java_proto",
-        ":job_kt_jvm_proto",
-    ],
     deps = [
-        ":job_java_proto",
         "//third_party/java:org_springframework_spring_core_neverlink",
         "//workflow",
         "@maven//:com_google_guava_guava",
         "@maven//:org_springframework_spring_web",
     ],
-)
-
-# Bundle the proto-derived classes for the Maven artifact
-jarjar_library(
-    name = "job_deploy",
-    jars = [
-        ":job",
-        ":job_java_proto",
-        ":job_kt_jvm_proto.jar",
-    ],
-    rules = [
-        "zap com.google.protobuf.**",
-    ],
-    tags = [
-        "maven_artifact",
-        maven_coordinates_tag("job"),
-    ],
-    visibility = ["//:__pkg__"],
 )
 
 gen_java_tests(

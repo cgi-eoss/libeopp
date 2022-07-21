@@ -18,7 +18,6 @@ maven_library(
         ":io",
     ],
     artifact_name = "libeopp :: util",
-    generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.util"],
     test_suite = [":util_tests"],
     deps = [
@@ -31,6 +30,7 @@ maven_library(
     srcs = ["src/main/java/com/cgi/eoss/eopp/util/Anies.kt"],
     artifact_name = "libeopp :: util :: anies",
     build_kt_jvm_library = True,
+    generate_pitest_coverage_target = False,
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.util"],
     deps = [
@@ -44,6 +44,7 @@ maven_library(
     srcs = ["src/main/java/com/cgi/eoss/eopp/util/Timestamps.kt"],
     artifact_name = "libeopp :: util :: timestamps",
     build_kt_jvm_library = True,
+    generate_pitest_coverage_target = False,
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.util"],
     deps = [
@@ -56,6 +57,7 @@ maven_library(
     name = "eopp-headers",
     srcs = ["src/main/java/com/cgi/eoss/eopp/util/EoppHeaders.java"],
     artifact_name = "libeopp :: util :: eopp-headers",
+    generate_pitest_coverage_target = False,
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.util"],
 )
@@ -64,6 +66,7 @@ maven_library(
     name = "io",
     srcs = ["src/main/java/com/cgi/eoss/eopp/util/HashingCountingOutputStream.java"],
     artifact_name = "libeopp :: util :: io",
+    generate_pitest_coverage_target = False,
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.util"],
     deps = [

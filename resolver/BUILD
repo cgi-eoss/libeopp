@@ -16,7 +16,6 @@ maven_library(
         ":resolver",
     ],
     artifact_name = "libeopp :: resolver",
-    generate_pitest_coverage_target = True,
     root_packages = ["com.cgi.eoss.eopp.resolver"],
     test_suite = [":resolver_tests"],
     deps = [
@@ -30,6 +29,7 @@ maven_library(
     name = "path-resolver",
     srcs = ["src/main/java/com/cgi/eoss/eopp/resolver/PathResolver.java"],
     artifact_name = "libeopp :: resolver :: path",
+    generate_pitest_coverage_target = False,
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.resolver"],
     deps = [
@@ -43,6 +43,7 @@ maven_library(
     name = "okhttp-resolver",
     srcs = ["src/main/java/com/cgi/eoss/eopp/resolver/OkHttpResolver.java"],
     artifact_name = "libeopp :: resolver :: okhttp",
+    generate_pitest_coverage_target = False,
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.resolver"],
     deps = [

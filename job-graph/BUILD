@@ -1,17 +1,8 @@
 load("//tools:maven.bzl", "maven_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 
-filegroup(
-    name = "job-graph_java_srcs",
-    srcs = glob([
-        "src/main/java/**/*.java",
-        "src/main/java/**/*.kt",
-    ]),
-)
-
 maven_library(
     name = "job-graph",
-    srcs = [":job-graph_java_srcs"],
     artifact_name = "libeopp :: job-graph",
     build_javadoc_library = False,
     build_kt_jvm_library = True,
