@@ -2,7 +2,7 @@ plugins {
     base
     id("com.github.zetten.bazel-dependencies-plugin") version "2.1.0"
     id("com.github.ben-manes.versions") version "0.42.0"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("io.spring.dependency-management") version "1.0.12.RELEASE"
 }
 
 val generate by configurations.creating
@@ -19,26 +19,27 @@ repositories {
     mavenCentral()
 }
 
-extra["aws-sdk-v2.version"] = "2.17.222"
-extra["azure-sdk-bom.version"] = "1.2.3"
+extra["aws-sdk-v2.version"] = "2.17.242"
+extra["azure-sdk-bom.version"] = "1.2.4"
 extra["commons-compress.version"] = "1.21"
 extra["docker-java.version"] = "3.2.13"
 extra["failsafe.version"] = "2.4.4"
-extra["google-common-protos.version"] = "2.9.1"
-extra["grpc-java.version"] = "1.47.0" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
+extra["google-common-protos.version"] = "2.9.2"
+extra["grpc-java.version"] =
+    "1.48.0" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
 extra["grpc-kotlin.version"] = "1.3.0"
 extra["guava.version"] = "31.1-jre"
 extra["j2objc-annotations.version"] = "1.3"
 extra["jimfs.version"] = "1.2"
-extra["json-schema-validator.version"] = "1.0.71"
+extra["json-schema-validator.version"] = "1.0.72"
 extra["jts-core.version"] = "1.19.0"
 extra["kotlin.version"] = "1.6.21"
-extra["kotlin-coroutines.version"] = "1.6.3"
+extra["kotlin-coroutines.version"] = "1.6.4"
 extra["okhttp.version"] = "4.9.3"
-extra["pitest.version"] = "1.9.0"
-extra["protobuf-java.version"] = "3.21.2"
+extra["pitest.version"] = "1.9.3"
+extra["protobuf-java.version"] = "3.21.4"
 extra["reactor-grpc.version"] = "1.2.3"
-extra["spring-boot.version"] = "2.7.1"
+extra["spring-boot.version"] = "2.7.2"
 extra["spring-cloud.version"] = "2021.0.3"
 extra["truth.version"] = "1.1.3"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
@@ -126,7 +127,11 @@ dependencies {
     generate("org.jetbrains.kotlin:kotlin-reflect")
     generate("org.jetbrains.kotlin:kotlin-stdlib")
     generate("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm")
-    generate("org.jetbrains.kotlinx:kotlinx-coroutines-debug")
+    generate("org.jetbrains.kotlinx:kotlinx-coroutines-debug") {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
+        }
+    }
     generate("org.locationtech.jts:jts-core")
     generate("org.mockito:mockito-core")
     generate("org.pitest:pitest")

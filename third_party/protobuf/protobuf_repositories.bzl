@@ -1,8 +1,8 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-PROTOBUF_VERSION = "21.2"
-PROTOBUF_JAVA_VERSION = "3.21.2"
-PROTOBUF_SHA256 = "3307728c339867a7b31f8b4d80501225853b364ce57f35dc2b5d154033ecbe53"
+PROTOBUF_VERSION = "21.4"
+PROTOBUF_JAVA_VERSION = "3.21.4"
+PROTOBUF_SHA256 = "3d7764816081cb57752869d99b8d1c6523c054ceb19581737210a838d77403e0"
 
 def protobuf_repositories():
     #    # Protobuf expects an //external:python_headers label which would contain the
