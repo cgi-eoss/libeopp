@@ -25,8 +25,7 @@ extra["commons-compress.version"] = "1.21"
 extra["docker-java.version"] = "3.2.13"
 extra["failsafe.version"] = "2.4.4"
 extra["google-common-protos.version"] = "2.9.2"
-extra["grpc-java.version"] =
-    "1.48.0" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
+extra["grpc-java.version"] = "1.48.1" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
 extra["grpc-kotlin.version"] = "1.3.0"
 extra["guava.version"] = "31.1-jre"
 extra["j2objc-annotations.version"] = "1.3"
