@@ -141,7 +141,7 @@ gen_java_tests(
         "@maven//:com_google_truth_truth",
         "@maven//:com_squareup_okhttp3_mockwebserver",
         "@maven//:com_squareup_okhttp3_okhttp",
-        "@maven//:com_squareup_okio_okio",
+        "@maven//:com_squareup_okio_okio_jvm",
         "@maven//:junit_junit",
         "@maven//:org_slf4j_slf4j_api",
         "@maven//:software_amazon_awssdk_auth",

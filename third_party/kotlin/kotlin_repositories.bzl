@@ -4,8 +4,8 @@ load(
 )
 load("@io_bazel_rules_kotlin//src/main/starlark/core/repositories:versions.bzl", "version")
 
-KOTLIN_VERSION = "1.6.21"
-KOTLINC_RELEASE_SHA = "632166fed89f3f430482f5aa07f2e20b923b72ef688c8f5a7df3aa1502c6d8ba"
+KOTLIN_VERSION = "1.7.20"
+KOTLINC_RELEASE_SHA = "5e3c8d0f965410ff12e90d6f8dc5df2fc09fd595a684d514616851ce7e94ae7d"
 
 KOTLINC_RELEASE = version(
     version = KOTLIN_VERSION,

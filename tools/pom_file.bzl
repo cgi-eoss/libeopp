@@ -69,11 +69,10 @@ def _pom_file_impl(ctx):
         substitutions = substitutions,
     )
 
+    out_depset = depset([out])
     return [
-        DefaultInfo(files = depset([out])),
-        OutputGroupInfo(
-            pom = depset([out]),
-        ),
+        DefaultInfo(files = out_depset),
+        OutputGroupInfo(pom = out_depset),
     ]
 
 pom_file = rule(

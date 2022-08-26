@@ -8,18 +8,18 @@ def _quote(filename, protect = "="):
 
 def _java_transitive_runtime_dependencies_impl(ctx):
     transitive_dependency_files = []
+    transitive_dependency_depsets = []
 
     for target in ctx.attr.targets:
-        _deps = depset([], transitive = [
-            target[JavaInfo].compilation_info.runtime_classpath,
-            target[JavaInfo].transitive_runtime_deps,
-        ])
-        for dep in _deps.to_list():
-            if dep not in target.files.to_list():
-                transitive_dependency_files.extend([dep])
+        transitive_dependency_depsets.append(target[JavaInfo].compilation_info.runtime_classpath)
+        transitive_dependency_depsets.append(target[JavaInfo].transitive_runtime_deps)
+
+    for dep in depset(transitive = transitive_dependency_depsets).to_list():
+        if dep not in target.files.to_list():
+            transitive_dependency_files.extend([dep])
 
     return [
-        DefaultInfo(files = depset(transitive_dependency_files)),
+        DefaultInfo(files = depset(transitive = transitive_dependency_files)),
     ]
 
 _java_transitive_runtime_dependencies = rule(

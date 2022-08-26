@@ -1,25 +1,20 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-PROTOBUF_VERSION = "21.4"
-PROTOBUF_JAVA_VERSION = "3.21.4"
-PROTOBUF_SHA256 = "3d7764816081cb57752869d99b8d1c6523c054ceb19581737210a838d77403e0"
+PROTOBUF_VERSION = "21.9"
+PROTOBUF_JAVA_VERSION = "3.21.9"
+PROTOBUF_SHA256 = "5babb8571f1cceafe0c18e13ddb3be556e87e12ceea3463d6b0d0064e6cc1ac3"
 
 def protobuf_repositories():
-    #    # Protobuf expects an //external:python_headers label which would contain the
-    #    # Python headers if fast Python protos is enabled. Since we are not using fast
-    #    # Python protos, bind python_headers to a dummy target.
-    #    native.bind(
-    #        name = "python_headers",
-    #        actual = "//:dummy",
-    #    )
-
     if not native.existing_rule("zlib"):
         http_archive(
             name = "zlib",
-            build_file = Label("@com_google_protobuf//:third_party/zlib.BUILD"),
-            sha256 = "629380c90a77b964d896ed37163f5c3a34f6e6d897311f1df2a7016355c45eff",
-            strip_prefix = "zlib-1.2.11",
-            urls = ["https://github.com/madler/zlib/archive/v1.2.11.tar.gz"],
+            build_file = "@com_google_protobuf//:third_party/zlib.BUILD",
+            sha256 = "d14c38e313afc35a9a8760dadf26042f51ea0f5d154b0630a31da0540107fb98",
+            strip_prefix = "zlib-1.2.13",
+            urls = [
+                "https://github.com/madler/zlib/releases/download/v1.2.13/zlib-1.2.13.tar.xz",
+                "https://zlib.net/zlib-1.2.13.tar.xz",
+            ],
         )
 
     http_archive(
