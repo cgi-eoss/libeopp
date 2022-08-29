@@ -33,7 +33,9 @@ done
 read -ra dep_targets <<<"$(tr ' ' '\n' <<<"${dep_targets[@]}" | sort -u | tr '\n' ' ')"
 
 # Build all dep_targets and get the output jar paths
-for jar in $(bazel build "${dep_targets[@]}" --show_result=999 2>&1 | grep "^ " | xargs readlink -f); do
+for t in "${dep_targets[@]}"; do
+  bazel build "$t"
+  jar=$(bazel cquery "$t" --output=files | xargs readlink -f)
   unzip -qo "$jar" -d "$classes_path"
 done
 
