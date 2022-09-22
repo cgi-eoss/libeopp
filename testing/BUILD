@@ -15,6 +15,7 @@ maven_library(
     test_suite = [":testing_tests"],
     deps = [
         "//third_party/java:org_springframework_spring_core_neverlink",
+        "//util",
         "@maven//:com_github_docker_java_docker_java_api",
         "@maven//:com_github_docker_java_docker_java_core",
         "@maven//:com_github_docker_java_docker_java_transport",

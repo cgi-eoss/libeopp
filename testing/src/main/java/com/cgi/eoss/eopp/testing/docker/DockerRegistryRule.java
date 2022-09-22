@@ -16,6 +16,7 @@
 
 package com.cgi.eoss.eopp.testing.docker;
 
+import com.cgi.eoss.eopp.util.Lazy;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.InspectContainerResponse;
@@ -31,7 +32,9 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import static org.awaitility.Awaitility.await;
 
@@ -46,15 +49,33 @@ public class DockerRegistryRule extends ExternalResource {
     private static final String DEFAULT_REGISTRY_IMAGE = "registry:2";
 
     private final boolean startupRegistry;
-    private DockerClient dockerClient;
+    private Supplier<DockerClient> dockerClient;
     private String registryContainer;
     private String registryHost;
     private String registryPort;
 
     /**
-     * <p>Start a new Docker Registry container using the given Docker API client.</p>
+     * <p>Start a new Docker Registry container using the Docker API client attached to the given
+     * {@link DockerClientRule}.</p>
+     *
+     * <p>Note that the Rule ordering should be consistent to make this an 'inner' rule:</p>
+     *
+     * <pre>
+     *     &#64;ClassRule(order = 0)
+     *     public static DockerClientRule dockerClient = new DockerClientRule();
+     *     &#64;ClassRule(order = 1)
+     *     public static DockerRegistryRule dockerRegistry = new DockerRegistryRule(dockerClient);
+     * </pre>
      */
-    public DockerRegistryRule(DockerClient dockerClient) {
+    public DockerRegistryRule(DockerClientRule dockerClientRule) {
+        this(Lazy.lazily(dockerClientRule::getDockerClient));
+    }
+
+    /**
+     * <p>Start a new Docker Registry container using the given supplier of a <strong>non-null</strong> Docker API
+     * client.</p>
+     */
+    public DockerRegistryRule(Supplier<DockerClient> dockerClient) {
         this.startupRegistry = true;
         this.dockerClient = dockerClient;
     }
@@ -70,9 +91,12 @@ public class DockerRegistryRule extends ExternalResource {
 
     @Override
     protected void before() {
+        // Ensure correct ordering: dockerClient must be instantiated beforehand
+        Objects.requireNonNull(dockerClient.get());
+
         if (startupRegistry) {
             try {
-                dockerClient.infoCmd().exec();
+                dockerClient.get().infoCmd().exec();
             } catch (Exception e) {
                 Assume.assumeNoException("Docker client cannot connect to engine", e);
             }
@@ -86,21 +110,21 @@ public class DockerRegistryRule extends ExternalResource {
     }
 
     private void startRegistryContainer() throws InterruptedException {
-        dockerClient.pullImageCmd(DEFAULT_REGISTRY_IMAGE).start().awaitCompletion();
+        dockerClient.get().pullImageCmd(DEFAULT_REGISTRY_IMAGE).start().awaitCompletion();
 
         ExposedPort internalPort = ExposedPort.tcp(5000);
 
-        try (CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd(DEFAULT_REGISTRY_IMAGE)) {
+        try (CreateContainerCmd createContainerCmd = dockerClient.get().createContainerCmd(DEFAULT_REGISTRY_IMAGE)) {
             registryContainer = createContainerCmd
                     .withExposedPorts(internalPort)
                     .withHostConfig(HostConfig.newHostConfig().withPublishAllPorts(true))
                     .exec().getId();
         }
 
-        dockerClient.startContainerCmd(registryContainer).exec();
+        dockerClient.get().startContainerCmd(registryContainer).exec();
 
         // Find the ephemeral Docker port
-        InspectContainerResponse inspectResponse = dockerClient.inspectContainerCmd(registryContainer).exec();
+        InspectContainerResponse inspectResponse = dockerClient.get().inspectContainerCmd(registryContainer).exec();
 
         Map<String, ContainerNetwork> networks = inspectResponse.getNetworkSettings().getNetworks();
         if (networks.size() == 1) {
@@ -133,9 +157,9 @@ public class DockerRegistryRule extends ExternalResource {
         if (!startupRegistry) {
             return;
         }
-        dockerClient.stopContainerCmd(registryContainer).exec();
-        dockerClient.waitContainerCmd(registryContainer).start().awaitStatusCode();
-        dockerClient.removeContainerCmd(registryContainer).withRemoveVolumes(true).exec();
+        dockerClient.get().stopContainerCmd(registryContainer).exec();
+        dockerClient.get().waitContainerCmd(registryContainer).start().awaitStatusCode();
+        dockerClient.get().removeContainerCmd(registryContainer).withRemoveVolumes(true).exec();
     }
 
     /**

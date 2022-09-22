@@ -33,11 +33,11 @@ import static com.google.common.truth.Truth.assertThat;
 @RunWith(JUnit4.class)
 public class DockerRegistryRuleTest {
 
-    @ClassRule
+    @ClassRule(order=0)
     public static DockerClientRule dockerClient = new DockerClientRule();
 
-    @ClassRule
-    public static DockerRegistryRule dockerRegistry = new DockerRegistryRule(dockerClient.getDockerClient());
+    @ClassRule(order=1)
+    public static DockerRegistryRule dockerRegistry = new DockerRegistryRule(dockerClient);
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
