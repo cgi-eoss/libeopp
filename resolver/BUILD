@@ -46,6 +46,9 @@ maven_library(
     generate_pitest_coverage_target = False,
     generate_sonarqube_project = False,
     root_packages = ["com.cgi.eoss.eopp.resolver"],
+    runtime_deps = [
+        "@maven//:com_squareup_okio_okio_jvm",
+    ],
     deps = [
         ":resolver",
         "//resource",

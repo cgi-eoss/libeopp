@@ -64,7 +64,7 @@ class PitestReportAggregator {
             reportAggregator.build()
                  .aggregateReport()
 
-            println("  Pitest aggregate report generated: file://$outputPath/index.html")
+            println("\n  Pitest aggregate report generated: file://$outputPath/index.html\n")
         }
     }
 }

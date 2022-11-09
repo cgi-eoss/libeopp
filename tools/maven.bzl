@@ -77,7 +77,7 @@ def maven_library(
             name = "%s_srcs" % name,
             srcs = srcs or native.glob([
                 "src/main/java/**/*.java",
-                "src/main/java/**/*.kt",
+                "src/main/kotlin/**/*.kt",
             ]),
             testonly = testonly,
         )
@@ -149,7 +149,10 @@ def maven_library(
         tags = tags + ["manual"],
     )
 
-    _test_srcs = test_srcs if test_srcs else native.glob(["src/test/java/**/*.java"])
+    _test_srcs = test_srcs or native.glob([
+        "src/test/java/**/*.java",
+        "src/test/kotlin/**/*.kt",
+    ])
     _test_targets = []
     _test_targets.extend(test_targets)
     if test_suite:
@@ -157,9 +160,13 @@ def maven_library(
         _test_targets.extend([":%s" % test_file.replace(".java", "") for test_file in _test_srcs if test_file.endswith("Test.java")])
 
     if generate_sonarqube_project:
+        _analysis_srcs = analysis_srcs or srcs_attr or native.glob([
+            "src/main/java/**/*.java",
+            "src/main/kotlin/**/*.kt",
+        ])
         sonarqube_project(
             name = name,
-            srcs = analysis_srcs or srcs,
+            srcs = _analysis_srcs,
             artifact_name = artifact_name or artifact_id,
             artifact_id = artifact_id,
             group_id = group_id,
@@ -171,7 +178,7 @@ def maven_library(
     if generate_pitest_coverage_target:
         pitest_mutation_coverage_test(
             name = "%s_pitest" % name,
-            srcs = analysis_srcs if analysis_srcs else srcs,
+            srcs = analysis_srcs or srcs,
             libraries = analysis_targets if analysis_targets else [":%s" % name],
             target_classes = ",".join(["%s.*" % p for p in root_packages]),
             target_tests = ",".join(["%s.*" % p for p in root_packages]),

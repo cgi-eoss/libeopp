@@ -1,7 +1,7 @@
 plugins {
     base
-    id("com.github.zetten.bazel-dependencies-plugin") version "2.1.0"
-    id("com.github.ben-manes.versions") version "0.43.0"
+    id("com.github.zetten.bazel-dependencies-plugin") version "2.2.0"
+    id("com.github.ben-manes.versions") version "0.44.0"
     id("io.spring.dependency-management") version "1.1.0"
 }
 
@@ -11,20 +11,20 @@ bazelDependencies {
     configuration.set(generate)
     outputFile.set(project.rootDir.resolve("java_repositories.bzl"))
     sourcesChecksums.set(true)
-    rulesJvmExternalVersion.set("4.1.0")
-    createMavenInstallJson.set(false) // pinned by finalizer task
+    rulesJvmExternalVersion.set("4.5.0")
+    createMavenInstallJson.set(true)
 }
 
 repositories {
     mavenCentral()
 }
 
-extra["aws-sdk-v2.version"] = "2.18.6"
+extra["aws-sdk-v2.version"] = "2.18.16"
 extra["azure-sdk-bom.version"] = "1.2.7"
-extra["commons-compress.version"] = "1.21"
+extra["commons-compress.version"] = "1.22"
 extra["docker-java.version"] = "3.2.13"
 extra["failsafe.version"] = "2.4.4"
-extra["google-common-protos.version"] = "2.9.6"
+extra["google-common-protos.version"] = "2.10.0"
 extra["grpc-java.version"] = "1.50.2" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
 extra["grpc-kotlin.version"] = "1.3.0"
 extra["guava.version"] = "31.1-jre"
@@ -32,14 +32,14 @@ extra["j2objc-annotations.version"] = "1.3"
 extra["jimfs.version"] = "1.2"
 extra["json-schema-validator.version"] = "1.0.73"
 extra["jts-core.version"] = "1.19.0"
-extra["kotlin.version"] = "1.7.20"
+extra["kotlin.version"] = "1.7.21"
 extra["kotlin-coroutines.version"] = "1.6.4"
 extra["okhttp.version"] = "4.10.0"
-extra["pitest.version"] = "1.9.9"
+extra["pitest.version"] = "1.9.10"
 extra["protobuf-java.version"] = "3.21.9"
 extra["reactor-grpc.version"] = "1.2.3"
 extra["spring-boot.version"] = "2.7.5"
-extra["spring-cloud.version"] = "2021.0.4"
+extra["spring-cloud.version"] = "2021.0.5"
 extra["truth.version"] = "1.1.3"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
 
@@ -145,9 +145,3 @@ dependencies {
     generate("org.springframework:spring-web")
     generate("software.amazon.awssdk:s3")
 }
-
-val pinMavenInstallJson by tasks.registering(Exec::class) {
-    workingDir("../../")
-    commandLine("bazel", "run", "@unpinned_maven//:pin")
-}
-tasks.named("generateRulesJvmExternal") { finalizedBy(pinMavenInstallJson) }

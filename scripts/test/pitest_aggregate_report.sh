@@ -12,10 +12,12 @@ report_path=$(readlink -m "${workspace}/target/pitest-report")
 rm -rf "$report_path"
 
 # Ensure we have up-to-date test reports
+printf "\nExecuting tests under pitest\n\n"
 readarray -t pitest_targets < <(bazel query 'attr("tags", "pitest", tests(//...))' --output=label 2>/dev/null)
 bazel test "${pitest_targets[@]}"
 
 # Find all the pitest outputs
+printf "\nLocating test dependencies to provide classes for pitest aggregation\n\n"
 pitest_outputs=()
 dep_targets=()
 for t in ${pitest_targets[*]}; do
@@ -33,10 +35,10 @@ done
 read -ra dep_targets <<<"$(tr ' ' '\n' <<<"${dep_targets[@]}" | sort -u | tr '\n' ' ')"
 
 # Build all dep_targets and get the output jar paths
-for t in "${dep_targets[@]}"; do
-  bazel build "$t"
-  jar=$(bazel cquery "$t" --output=files | xargs readlink -f)
-  unzip -qo "$jar" -d "$classes_path"
+bazel build "${dep_targets[@]}"
+for jar in $(bazel cquery "set(${dep_targets[*]})" --output=files 2>/dev/null); do
+  unzip -qo "$(readlink -f "$jar")" -d "$classes_path"
 done
 
+printf "\nRunning pitest aggregation\n\n"
 bazel run //tools/pitest:pitest_report_aggregator -- "$report_path" "$workspace" "$classes_path" "${pitest_outputs[@]}"

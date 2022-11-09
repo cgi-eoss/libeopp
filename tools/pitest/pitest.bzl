@@ -7,19 +7,14 @@ def _quote(filename, protect = "="):
     return filename.replace("\\", "\\\\").replace(protect, "\\" + protect)
 
 def _java_transitive_runtime_dependencies_impl(ctx):
-    transitive_dependency_files = []
     transitive_dependency_depsets = []
 
     for target in ctx.attr.targets:
         transitive_dependency_depsets.append(target[JavaInfo].compilation_info.runtime_classpath)
         transitive_dependency_depsets.append(target[JavaInfo].transitive_runtime_deps)
 
-    for dep in depset(transitive = transitive_dependency_depsets).to_list():
-        if dep not in target.files.to_list():
-            transitive_dependency_files.extend([dep])
-
     return [
-        DefaultInfo(files = depset(transitive = transitive_dependency_files)),
+        DefaultInfo(files = depset(transitive = transitive_dependency_depsets)),
     ]
 
 _java_transitive_runtime_dependencies = rule(

@@ -27,7 +27,7 @@ maven_library(
 
 maven_library(
     name = "anies",
-    srcs = ["src/main/java/com/cgi/eoss/eopp/util/Anies.kt"],
+    srcs = ["src/main/kotlin/Anies.kt"],
     artifact_name = "libeopp :: util :: anies",
     build_kt_jvm_library = True,
     generate_pitest_coverage_target = False,
@@ -41,7 +41,7 @@ maven_library(
 
 maven_library(
     name = "timestamps",
-    srcs = ["src/main/java/com/cgi/eoss/eopp/util/Timestamps.kt"],
+    srcs = ["src/main/kotlin/Timestamps.kt"],
     artifact_name = "libeopp :: util :: timestamps",
     build_kt_jvm_library = True,
     generate_pitest_coverage_target = False,
