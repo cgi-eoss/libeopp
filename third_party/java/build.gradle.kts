@@ -5,7 +5,11 @@ plugins {
     id("io.spring.dependency-management") version "1.1.0"
 }
 
-val generate by configurations.creating
+val generate by configurations.creating {
+    attributes {
+        attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
+    }
+}
 
 bazelDependencies {
     configuration.set(generate)
@@ -19,26 +23,27 @@ repositories {
     mavenCentral()
 }
 
-extra["aws-sdk-v2.version"] = "2.18.16"
-extra["azure-sdk-bom.version"] = "1.2.7"
+extra["aws-sdk-v2.version"] = "2.18.38"
+extra["azure-sdk-bom.version"] = "1.2.8"
 extra["commons-compress.version"] = "1.22"
-extra["docker-java.version"] = "3.2.13"
+extra["docker-java.version"] = "3.2.14"
 extra["failsafe.version"] = "2.4.4"
-extra["google-common-protos.version"] = "2.10.0"
-extra["grpc-java.version"] = "1.50.2" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
+extra["google-cloud-libraries-bom.version"] = "26.1.5"
+extra["google-common-protos.version"] = "2.11.0"
+extra["grpc-java.version"] = "1.51.1" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
 extra["grpc-kotlin.version"] = "1.3.0"
 extra["guava.version"] = "31.1-jre"
 extra["j2objc-annotations.version"] = "1.3"
 extra["jimfs.version"] = "1.2"
-extra["json-schema-validator.version"] = "1.0.73"
+extra["json-schema-validator.version"] = "1.0.75"
 extra["jts-core.version"] = "1.19.0"
 extra["kotlin.version"] = "1.7.21"
 extra["kotlin-coroutines.version"] = "1.6.4"
 extra["okhttp.version"] = "4.10.0"
-extra["pitest.version"] = "1.9.10"
-extra["protobuf-java.version"] = "3.21.9"
+extra["pitest.version"] = "1.10.3"
+extra["protobuf-java.version"] = "3.21.11"
 extra["reactor-grpc.version"] = "1.2.3"
-extra["spring-boot.version"] = "2.7.5"
+extra["spring-boot.version"] = "2.7.6"
 extra["spring-cloud.version"] = "2021.0.5"
 extra["truth.version"] = "1.1.3"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
@@ -48,10 +53,11 @@ dependencyManagement {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("spring-cloud.version")}")
         mavenBom("org.springframework.boot:spring-boot-dependencies:${property("spring-boot.version")}")
         mavenBom("com.google.protobuf:protobuf-bom:${property("protobuf-java.version")}")
-        mavenBom("io.grpc:grpc-bom:${property("grpc-java.version")}")
-        mavenBom("org.jetbrains.kotlin:kotlin-bom:${property("kotlin.version")}")
         mavenBom("software.amazon.awssdk:bom:${property("aws-sdk-v2.version")}")
         mavenBom("com.azure:azure-sdk-bom:${property("azure-sdk-bom.version")}")
+        mavenBom("com.google.cloud:libraries-bom:${property("google-cloud-libraries-bom.version")}")
+        mavenBom("org.jetbrains.kotlin:kotlin-bom:${property("kotlin.version")}")
+        mavenBom("io.grpc:grpc-bom:${property("grpc-java.version")}")
     }
     dependencies {
         dependency("com.github.docker-java:docker-java-core:${property("docker-java.version")}")
@@ -91,6 +97,7 @@ dependencies {
     generate("com.github.docker-java:docker-java-core")
     generate("com.github.docker-java:docker-java-transport-zerodep")
     generate("com.google.api.grpc:proto-google-common-protos")
+    generate("com.google.cloud:google-cloud-storage")
     generate("com.google.guava:guava")
     generate("com.google.jimfs:jimfs")
     generate("com.google.protobuf:protobuf-java")
@@ -127,11 +134,7 @@ dependencies {
     generate("org.jetbrains.kotlin:kotlin-reflect")
     generate("org.jetbrains.kotlin:kotlin-stdlib")
     generate("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm")
-    generate("org.jetbrains.kotlinx:kotlinx-coroutines-debug") {
-        attributes {
-            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
-        }
-    }
+    generate("org.jetbrains.kotlinx:kotlinx-coroutines-debug")
     generate("org.locationtech.jts:jts-core")
     generate("org.mockito:mockito-core")
     generate("org.pitest:pitest")
