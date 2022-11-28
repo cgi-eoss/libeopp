@@ -117,6 +117,27 @@ maven_library(
     ],
 )
 
+maven_library(
+    name = "google-cloud-storage-object-resource",
+    srcs = [
+        "src/main/java/com/cgi/eoss/eopp/resource/EoppGoogleCloudStorageObjectResource.java",
+    ],
+    artifact_name = "libeopp :: resource :: google-cloud-storage-object",
+    generate_pitest_coverage_target = False,
+    generate_sonarqube_project = False,
+    root_packages = ["com.cgi.eoss.eopp.resource"],
+    deps = [
+        ":resource",
+        "//file",
+        "//util",
+        "//util:eopp-headers",
+        "//util:timestamps",
+        "@maven//:com_google_api_gax",
+        "@maven//:com_google_cloud_google_cloud_storage",
+        "@maven//:org_springframework_spring_core",
+    ],
+)
+
 gen_java_tests(
     name = "resource_tests",
     srcs = glob(["src/test/java/**/*.java"]),
@@ -125,6 +146,7 @@ gen_java_tests(
     ],
     deps = [
         ":azure-blob-resource",
+        ":google-cloud-storage-object-resource",
         ":okhttp-resource",
         ":path-resource",
         ":resource",
@@ -135,6 +157,9 @@ gen_java_tests(
         "@com_google_protobuf//:protobuf_java",
         "@maven//:com_azure_azure_storage_blob",
         "@maven//:com_azure_azure_storage_common",
+        "@maven//:com_google_api_gax",
+        "@maven//:com_google_auth_google_auth_library_oauth2_http",
+        "@maven//:com_google_cloud_google_cloud_storage",
         "@maven//:com_google_guava_guava",
         "@maven//:com_google_jimfs_jimfs",
         "@maven//:com_google_truth_extensions_truth_proto_extension",
