@@ -13,7 +13,7 @@ build --tool_java_language_version=11
 build --java_runtime_version=remotejdk_11
 build --tool_java_runtime_version=remotejdk_11
 
-# To use a local jdk11 from $JAVA_HOME, add to .bazelrc.local and uncomment:
+# To use a local jdk from $JAVA_HOME, add to .bazelrc.local and uncomment:
 #build --java_runtime_version=local_jdk
 
 # TODO Remove when https://github.com/salesforce/reactive-grpc/issues/294 is resolved

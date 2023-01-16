@@ -1,8 +1,8 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-PROTOBUF_VERSION = "21.11"
-PROTOBUF_JAVA_VERSION = "3.21.11"
-PROTOBUF_SHA256 = "0faa3f28b150efcaf044d33a05f613e3b052b852f41d2d420eb7ad49d11a06df"
+PROTOBUF_VERSION = "21.12"
+PROTOBUF_JAVA_VERSION = "3.21.12"
+PROTOBUF_SHA256 = "6a31b662deaeb0ac35e6287bda2f3369b19836e6c9f8828d4da444346f420298"
 
 def protobuf_repositories():
     if not native.existing_rule("zlib"):
