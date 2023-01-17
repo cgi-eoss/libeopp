@@ -1,5 +1,15 @@
 def baseBranch = 'master'
 
+def bazelStep(Closure doStep) {
+  configFileProvider([
+      configFile(fileId: 'cgici-bazelrc', variable: 'BAZELRC')
+  ]) {
+    sh 'echo "" >>\$BAZELRC'
+    sh 'echo "build --jobs=6" >>\$BAZELRC'
+    doStep()
+  }
+}
+
 pipeline {
   options {
     buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '1', daysToKeepStr: '30', numToKeepStr: ''))
@@ -8,6 +18,7 @@ pipeline {
   }
   agent {
     kubernetes {
+      workspaceVolume dynamicPVC(accessModes: 'ReadWriteOnce', requestsSize: '10Gi')
       yamlFile 'JenkinsfilePod.yaml'
     }
   }
@@ -31,7 +42,7 @@ pipeline {
     stage('Build') {
       steps {
         container('libeopp-build') {
-          sh "bazel build //..."
+          bazelStep { sh "bazel build //..." }
         }
       }
     }
@@ -39,7 +50,7 @@ pipeline {
     stage('Test Maven Install') {
       steps {
         container('libeopp-build') {
-          sh "./scripts/deploy/install-local-snapshot.sh"
+          bazelStep { sh "./scripts/deploy/install-local-snapshot.sh" }
         }
       }
     }
@@ -47,7 +58,7 @@ pipeline {
     stage('Test') {
       steps {
         container('libeopp-build') {
-          sh "bazel coverage //... --test_output=errors --keep_going"
+          bazelStep { sh "bazel coverage //... --test_output=errors --keep_going" }
         }
       }
       post {
@@ -64,8 +75,8 @@ pipeline {
       when { tag '' }
       steps {
         container('libeopp-build') {
-          withCredentials([usernamePassword(credentialsId: '597ee7f1-63fc-4036-be52-0cea3e3d8d37', passwordVariable: 'MAVEN_PASSWORD', usernameVariable: 'MAVEN_USER')]) {
-            sh "./scripts/deploy/deploy-nexus.sh ${TAG_NAME}"
+          withCredentials([usernamePassword(credentialsId: 'cgici-jenkins-nexus-userpass', passwordVariable: 'MAVEN_PASSWORD', usernameVariable: 'MAVEN_USER')]) {
+            bazelStep { sh "./scripts/deploy/deploy-nexus.sh ${TAG_NAME}" }
           }
         }
       }
@@ -80,8 +91,9 @@ pipeline {
       steps {
         container('libeopp-build') {
           withSonarQubeEnv('CGI CI SonarQube') {
-            sh "bazel run //:sq_libeopp -- -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_AUTH_TOKEN} \${BRANCH_ARGS} \${VERSION_ARGS}"
-            sh "mkdir -p tmp/ && cp --target-directory=tmp/ --dereference bazel-bin/sq_libeopp.runfiles/com_cgi_eoss_eopp/.scannerwork/report-task.txt" // Jenkins can't find things outside the workspace, so copy the SQ marker locally
+            bazelStep { sh "bazel run //:sq_libeopp -- -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_AUTH_TOKEN} \${BRANCH_ARGS} \${VERSION_ARGS}" }
+            sh "mkdir -p tmp/ && cp --target-directory=tmp/ --dereference bazel-bin/sq_libeopp.runfiles/com_cgi_eoss_eopp/.scannerwork/report-task.txt"
+            // Jenkins can't find things outside the workspace, so copy the SQ marker locally
           }
         }
         waitForQualityGate abortPipeline: ABORT_ON_QUALITY_GATE.toBoolean()

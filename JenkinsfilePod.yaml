@@ -4,15 +4,33 @@ metadata:
   annotations:
     cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
 spec:
+  # Try to keep build pods away from other build pods if possible, but it's not critical
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 10
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              jenkins/cgici-jenkins-jenkins-agent: "true"
+          topologyKey: kubernetes.io/hostname
   securityContext:
-    runAsUser: 10000
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
   containers:
   - name: libeopp-build
-    image: cgici/eopp-build-container:2.0.1
+    image: cgici/eopp-build-container:2.2.1
     imagePullPolicy: IfNotPresent
     command:
     - cat
     tty: true
+    volumeMounts:
+    # This volume is defined by the Jenkins agent, which extends this yaml
+    # We want to also mount it under ~/.cache to add the Bazel cache to the workspace volume
+    - mountPath: /home/jenkins/.cache
+      name: workspace-volume
+      subPath: .cache
     resources:
       limits:
         cpu: "4"
