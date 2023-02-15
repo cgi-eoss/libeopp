@@ -103,6 +103,8 @@ message Batch {
     }
     // The UUIDs of the jobs launched as a part of this batch.
     repeated string job_uuid = 5;
+    // Reference to the user or system who launched this batch.
+    string owner = 6;
 }
 
 // A specific execution of a workflow.
@@ -135,6 +137,9 @@ message Job {
     JobSpecification job_specification = 2;
     // The configured steps that make up this job's processing graph.
     repeated StepInstance step = 3;
+    // Reference to the user or system who launched this job. If unset, may be
+    // inherited from a Batch.
+    string owner = 4;
 }
 
 // The specification for a job, containing all the processed configuration,
@@ -246,6 +251,9 @@ message StepInstance {
     // parameter or input from the step configuration, or it is part of a
     // nested workflow.
     string parent_identifier = 10;
+    // Reference to the user or system who launched this step. If unset, may be
+    // inherited from a Batch or Job.
+    string owner = 12;
 }
 
 // Multi-valued map entry for realised step parameter values.
