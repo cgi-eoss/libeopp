@@ -5,17 +5,17 @@ load("//third_party/grpc:grpc_repositories.bzl", "grpc_repositories")
 def libeopp_dependencies():
     http_archive(
         name = "google_bazel_common",
-        sha256 = "bcb5de5a5b951434828ead94479d3e1ff6501c2c8fc490db6cf3fbf7c188684b",
-        strip_prefix = "bazel-common-aaa4d801588f7744c6f4428e4f133f26b8518f42",
-        urls = ["https://github.com/google/bazel-common/archive/aaa4d801588f7744c6f4428e4f133f26b8518f42.zip"],
+        sha256 = "e30e092e50c47a38994334dbe42386675cf519a5e86b973e45034323bbdb70a3",
+        strip_prefix = "bazel-common-a9e1d8efd54cbf27249695b23775b75ca65bb59d",
+        urls = ["https://github.com/google/bazel-common/archive/a9e1d8efd54cbf27249695b23775b75ca65bb59d.zip"],
     )
 
     http_archive(
         name = "bazel_skylib",
-        sha256 = "74d544d96f4a5bb630d465ca8bbcfe231e3594e5aae57e1edbf17a6eb3ca2506",
+        sha256 = "b8a1527901774180afc798aeb28c4634bdccf19c4d98e7bdd1ce79d1fe9aaad7",
         urls = [
-            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.3.0/bazel-skylib-1.3.0.tar.gz",
-            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.3.0/bazel-skylib-1.3.0.tar.gz",
+            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.4.1/bazel-skylib-1.4.1.tar.gz",
+            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.4.1/bazel-skylib-1.4.1.tar.gz",
         ],
     )
 
@@ -25,31 +25,31 @@ def libeopp_dependencies():
 
     http_archive(
         name = "rules_cc",
-        sha256 = "af6cc82d87db94585bceeda2561cb8a9d55ad435318ccb4ddfee18a43580fb5d",
-        strip_prefix = "rules_cc-0.0.4",
-        urls = ["https://github.com/bazelbuild/rules_cc/releases/download/0.0.4/rules_cc-0.0.4.tar.gz"],
+        sha256 = "3d9e271e2876ba42e114c9b9bc51454e379cbf0ec9ef9d40e2ae4cec61a31b40",
+        strip_prefix = "rules_cc-0.0.6",
+        urls = ["https://github.com/bazelbuild/rules_cc/releases/download/0.0.6/rules_cc-0.0.6.tar.gz"],
     )
 
     http_archive(
         name = "rules_python",
-        sha256 = "48a838a6e1983e4884b26812b2c748a35ad284fd339eb8e2a6f3adf95307fbcd",
-        strip_prefix = "rules_python-0.16.2",
-        url = "https://github.com/bazelbuild/rules_python/archive/refs/tags/0.16.2.tar.gz",
+        sha256 = "94750828b18044533e98a129003b6a68001204038dc4749f40b195b24c38f49f",
+        strip_prefix = "rules_python-0.21.0",
+        urls = ["https://github.com/bazelbuild/rules_python/releases/download/0.21.0/rules_python-0.21.0.tar.gz"],
     )
 
     http_archive(
         name = "rules_pkg",
-        sha256 = "eea0f59c28a9241156a47d7a8e32db9122f3d50b505fae0f33de6ce4d9b61834",
+        sha256 = "335632735e625d408870ec3e361e192e99ef7462315caa887417f4d88c4c8fb8",
         urls = [
-            "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.8.0/rules_pkg-0.8.0.tar.gz",
-            "https://github.com/bazelbuild/rules_pkg/releases/download/0.8.0/rules_pkg-0.8.0.tar.gz",
+            "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.9.0/rules_pkg-0.9.0.tar.gz",
+            "https://github.com/bazelbuild/rules_pkg/releases/download/0.9.0/rules_pkg-0.9.0.tar.gz",
         ],
     )
 
     http_archive(
         name = "rules_java",
-        sha256 = "c73336802d0b4882e40770666ad055212df4ea62cfa6edf9cb0f9d29828a0934",
-        url = "https://github.com/bazelbuild/rules_java/releases/download/5.3.5/rules_java-5.3.5.tar.gz",
+        sha256 = "bcfabfb407cb0c8820141310faa102f7fb92cc806b0f0e26a625196101b0b57e",
+        urls = ["https://github.com/bazelbuild/rules_java/releases/download/5.5.0/rules_java-5.5.0.tar.gz"],
     )
 
     http_archive(
@@ -59,15 +59,14 @@ def libeopp_dependencies():
         urls = ["https://github.com/bazelbuild/rules_proto/archive/refs/tags/5.3.0-21.7.tar.gz"],
     )
 
-    RULES_JVM_EXTERNAL_TAG = "4.5"
-
-    RULES_JVM_EXTERNAL_SHA = "b17d7388feb9bfa7f2fa09031b32707df529f26c91ab9e5d909eb1676badd9a6"
+    RULES_JVM_EXTERNAL_TAG = "5.2"
+    RULES_JVM_EXTERNAL_SHA = "f86fd42a809e1871ca0aabe89db0d440451219c3ce46c58da240c7dcdc00125f"
 
     http_archive(
         name = "rules_jvm_external",
-        sha256 = RULES_JVM_EXTERNAL_SHA,
         strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
-        url = "https://github.com/bazelbuild/rules_jvm_external/archive/%s.zip" % RULES_JVM_EXTERNAL_TAG,
+        sha256 = RULES_JVM_EXTERNAL_SHA,
+        url = "https://github.com/bazelbuild/rules_jvm_external/releases/download/%s/rules_jvm_external-%s.tar.gz" % (RULES_JVM_EXTERNAL_TAG, RULES_JVM_EXTERNAL_TAG)
     )
 
     rules_kotlin_version = "v1.7.1"
@@ -82,7 +81,7 @@ def libeopp_dependencies():
 
     http_archive(
         name = "bazel_sonarqube",
-        sha256 = "b50d5faebc72fc1796ca010f0df795aa6943813e9770f0c0a2e950cf75bf3465",
-        strip_prefix = "bazel-sonarqube-37261de24f80b661bbc4726e3382ef43e9d66a6e",
-        urls = ["https://github.com/Zetten/bazel-sonarqube/archive/37261de24f80b661bbc4726e3382ef43e9d66a6e.zip"],
+        sha256 = "2205ef64f2181e67b7dd8e91c4c7118d8163149225ec7a04b3e67216a9b74479",
+        strip_prefix = "bazel-sonarqube-77044ecda2ba8d4c7aa4a4c3dfaa703d981b9b88",
+        urls = ["https://github.com/Zetten/bazel-sonarqube/archive/77044ecda2ba8d4c7aa4a4c3dfaa703d981b9b88.zip"],
     )

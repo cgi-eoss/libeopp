@@ -12,11 +12,15 @@ load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
 
 rules_pkg_dependencies()
 
-load("@rules_java//java:repositories.bzl", "rules_java_dependencies", "rules_java_toolchains")
+load("@rules_java//java:repositories.bzl", "remote_jdk19_repos", "rules_java_dependencies")
 
 rules_java_dependencies()
 
-rules_java_toolchains()
+remote_jdk19_repos()
+
+load("//tools/java:toolchains.bzl", "java_toolchains")
+
+java_toolchains()
 
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
 
@@ -43,7 +47,6 @@ maven_install(
     ),
     repositories = REPOSITORIES,
     strict_visibility = True,
-    use_unsafe_shared_cache = True,
     version_conflict_policy = "pinned",
 )
 
