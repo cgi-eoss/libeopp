@@ -23,12 +23,12 @@ repositories {
     mavenCentral()
 }
 
-extra["aws-sdk-v2.version"] = "2.20.66"
+extra["aws-sdk-v2.version"] = "2.20.67"
 extra["azure-sdk-bom.version"] = "1.2.12"
 extra["commons-compress.version"] = "1.22"
 extra["docker-java.version"] = "3.3.0"
 extra["failsafe.version"] = "2.4.4"
-extra["google-cloud-libraries-bom.version"] = "26.14.0"
+extra["google-cloud-libraries-bom.version"] = "26.15.0"
 extra["google-common-protos.version"] = "2.18.0"
 extra["grpc-java.version"] = "1.55.1" // check org.apache.tomcat:annotations-api.version in https://github.com/grpc/grpc-java/blob/{GRPC_JAVA_VERSION}/repositories.bzl when updating
 extra["grpc-kotlin.version"] = "1.3.0"
@@ -43,7 +43,7 @@ extra["okhttp.version"] = "4.10.0"
 extra["pitest.version"] = "1.13.2"
 extra["protobuf-java.version"] = "3.21.12"
 extra["reactor-grpc.version"] = "1.2.4"
-extra["spring-boot.version"] = "2.7.11"
+extra["spring-boot.version"] = "2.7.12"
 extra["spring-cloud.version"] = "2021.0.7"
 extra["truth.version"] = "1.1.3"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
