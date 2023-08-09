@@ -173,6 +173,7 @@ def maven_library(
             targets = analysis_targets or [":%s" % name],
             test_srcs = _test_srcs,
             test_targets = _test_targets,
+            testonly = True,
         )
 
     if generate_pitest_coverage_target:
@@ -195,7 +196,8 @@ def sonarqube_project(
         group_id = "com.cgi.eoss.eopp",
         targets = [],
         test_srcs = [],
-        test_targets = []):
+        test_targets = [],
+        testonly = True):
     _sq_project(
         name = "sq_%s" % name,
         srcs = srcs,
@@ -206,5 +208,6 @@ def sonarqube_project(
         targets = targets,
         test_reports = ["//:test_reports"],
         test_targets = test_targets,
+        testonly = testonly,
         visibility = ["//visibility:public"],
     )

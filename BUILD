@@ -85,4 +85,5 @@ sonarqube(
     project_name = "libeopp",
     scm_info = [":git"],
     tags = ["manual"],
+    testonly = True,
 )

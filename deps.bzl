@@ -105,7 +105,7 @@ def libeopp_dependencies():
     maybe(
         http_archive,
         name = "bazel_sonarqube",
-        sha256 = "2205ef64f2181e67b7dd8e91c4c7118d8163149225ec7a04b3e67216a9b74479",
-        strip_prefix = "bazel-sonarqube-77044ecda2ba8d4c7aa4a4c3dfaa703d981b9b88",
-        urls = ["https://github.com/Zetten/bazel-sonarqube/archive/77044ecda2ba8d4c7aa4a4c3dfaa703d981b9b88.zip"],
+        sha256 = "b4dacf20a413e9ddca1d886c936c0dfcfd5d7464d22c38eb4cd37da34c259fc4",
+        strip_prefix = "bazel-sonarqube-452a2c80c4c12c4fb18fd7b6cae459d84b81f350",
+        urls = ["https://github.com/Zetten/bazel-sonarqube/archive/452a2c80c4c12c4fb18fd7b6cae459d84b81f350.zip"],
     )
