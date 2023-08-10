@@ -22,6 +22,19 @@ def libeopp_dependencies():
         ],
     )
 
+    HERMETIC_CC_TOOLCHAIN_VERSION = "v2.0.0"
+    HERMETIC_CC_TOOLCHAIN_SHA = "57f03a6c29793e8add7bd64186fc8066d23b5ffd06fe9cc6b0b8c499914d3a65"
+
+    maybe(
+        http_archive,
+        name = "hermetic_cc_toolchain",
+        sha256 = HERMETIC_CC_TOOLCHAIN_SHA,
+        urls = [
+            "https://mirror.bazel.build/github.com/uber/hermetic_cc_toolchain/releases/download/{0}/hermetic_cc_toolchain-{0}.tar.gz".format(HERMETIC_CC_TOOLCHAIN_VERSION),
+            "https://github.com/uber/hermetic_cc_toolchain/releases/download/{0}/hermetic_cc_toolchain-{0}.tar.gz".format(HERMETIC_CC_TOOLCHAIN_VERSION),
+        ],
+    )
+
     protobuf_repositories()
 
     grpc_repositories()
