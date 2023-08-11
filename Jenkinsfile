@@ -2,10 +2,15 @@ def baseBranch = 'master'
 
 def bazelStep(Closure doStep) {
   configFileProvider([
-      configFile(fileId: 'cgici-bazelrc', variable: 'BAZELRC')
+      configFile(fileId: 'cgici-bazelrc', targetLocation: '.bazelrc.local')
   ]) {
-    sh 'echo "" >>\$BAZELRC'
-    sh 'echo "build --jobs=6" >>\$BAZELRC'
+    // Update Bazel resources if changing JenkinsfilePod.yaml - ensure it gets accurate resource limits
+    sh """
+      echo "" >>.bazelrc.local
+      echo "build --local_cpu_resources=4" >>.bazelrc.local
+      echo "build --local_ram_resources=8000" >>.bazelrc.local
+      cat .bazelrc.local
+    """
     doStep()
   }
 }

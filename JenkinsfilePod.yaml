@@ -31,6 +31,7 @@ spec:
     - mountPath: /home/jenkins/.cache
       name: workspace-volume
       subPath: .cache
+    # Update bazelrc flags at top of Jenkinsfile if changing resources
     resources:
       limits:
         cpu: "4"
