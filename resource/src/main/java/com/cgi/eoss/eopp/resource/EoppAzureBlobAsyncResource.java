@@ -20,8 +20,6 @@ import com.azure.storage.blob.BlobServiceAsyncClient;
 import com.azure.storage.blob.models.BlobErrorCode;
 import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlobStorageException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -49,6 +47,11 @@ public class EoppAzureBlobAsyncResource extends BaseAzureBlobResource {
     protected EoppAzureBlobAsyncResource(BlobServiceAsyncClient blobServiceAsyncClient, String container, String name) {
         super(container, name);
         this.blobServiceAsyncClient = blobServiceAsyncClient;
+    }
+
+    @Override
+    public String getDescription() {
+        return "EoppAzureBlobAsyncResource [" + getURI() + "]";
     }
 
     @Override
@@ -99,10 +102,22 @@ public class EoppAzureBlobAsyncResource extends BaseAzureBlobResource {
             return blobServiceAsyncClient.getBlobContainerAsyncClient(container).getBlobAsyncClient(name).getProperties()
                     .blockOptional();
         } catch (Exception e) {
-            if (e instanceof BlobStorageException && ((BlobStorageException) e).getErrorCode().equals(BlobErrorCode.BLOB_NOT_FOUND)) {
+            if ((e instanceof BlobStorageException blobStorageException) &&
+                    (blobStorageException.getErrorCode().equals(BlobErrorCode.BLOB_NOT_FOUND))) {
                 return Optional.empty();
+
             }
             throw new EoppResourceException("Failed to get Azure Blob properties", e);
         }
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return super.equals(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

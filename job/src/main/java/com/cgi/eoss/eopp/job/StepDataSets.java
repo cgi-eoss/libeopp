@@ -61,7 +61,7 @@ public class StepDataSets {
         UriComponents uriComponents = UriComponentsBuilder.fromUri(eoppStepOutput).build();
         StepDataSet.Builder builder = StepDataSet.newBuilder()
                 .setStepIdentifier(Objects.requireNonNull(uriComponents.getPath()).substring(1))
-                .setIdentifier(uriComponents.getQueryParams().getFirst("outputIdentifier"));
+                .setIdentifier(Objects.requireNonNull(uriComponents.getQueryParams().getFirst("outputIdentifier")));
         return uriComponents.getQueryParams().containsKey("file")
                 ? builder.setStepOutput(StepOutput.newBuilder().addAllFilePaths(uriComponents.getQueryParams().get("file")).build()).build()
                 : builder.build();

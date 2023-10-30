@@ -41,6 +41,11 @@ public class EoppAzureBlobResource extends BaseAzureBlobResource {
     }
 
     @Override
+    public String getDescription() {
+        return "EoppAzureBlobResource [" + getURI() + "]";
+    }
+
+    @Override
     protected URI doGetURI(String container, String name) {
         String accountUrl = blobServiceClient.getAccountUrl();
         return URI.create((accountUrl.endsWith("/") ? accountUrl : accountUrl + "/") + container + "/" + name);
@@ -68,10 +73,21 @@ public class EoppAzureBlobResource extends BaseAzureBlobResource {
         try {
             return Optional.of(blobServiceClient.getBlobContainerClient(container).getBlobClient(name).getProperties());
         } catch (Exception e) {
-            if (e instanceof BlobStorageException && ((BlobStorageException) e).getErrorCode().equals(BlobErrorCode.BLOB_NOT_FOUND)) {
+            if ((e instanceof BlobStorageException blobStorageException) &&
+                    (blobStorageException.getErrorCode().equals(BlobErrorCode.BLOB_NOT_FOUND))) {
                 return Optional.empty();
             }
             throw new EoppResourceException("Failed to get Azure Blob properties", e);
         }
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return super.equals(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

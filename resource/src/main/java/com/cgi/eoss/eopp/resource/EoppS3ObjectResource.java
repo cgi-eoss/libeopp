@@ -47,6 +47,11 @@ public class EoppS3ObjectResource extends BaseS3ObjectResource implements EoppRe
     }
 
     @Override
+    public String getDescription() {
+        return "EoppS3ObjectResource [" + getURI() + "]";
+    }
+
+    @Override
     protected Resource doCreateRelative(String bucket, String key) {
         return new EoppS3ObjectResource(s3Client, bucket, key);
     }
@@ -69,6 +74,16 @@ public class EoppS3ObjectResource extends BaseS3ObjectResource implements EoppRe
         } catch (Exception e) {
             throw new EoppResourceException("Failed to complete S3 resource HEAD request", e);
         }
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return super.equals(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
 }

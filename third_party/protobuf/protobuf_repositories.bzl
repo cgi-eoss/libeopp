@@ -1,34 +1,14 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 
-PROTOBUF_VERSION = "21.12"
-PROTOBUF_JAVA_VERSION = "3.21.12"
-PROTOBUF_SHA256 = "6a31b662deaeb0ac35e6287bda2f3369b19836e6c9f8828d4da444346f420298"
+PROTOBUF_VERSION = "25.2"
+PROTOBUF_JAVA_VERSION = "3.25.2"
+PROTOBUF_SHA256 = "ddd0f5271f31b549efc74eb39061e142132653d5d043071fcec265bd571e73c4"
 
 def protobuf_repositories():
     maybe(
         http_archive,
-        name = "zlib",
-        build_file = "@com_google_protobuf//:third_party/zlib.BUILD",
-        sha256 = "d14c38e313afc35a9a8760dadf26042f51ea0f5d154b0630a31da0540107fb98",
-        strip_prefix = "zlib-1.2.13",
-        urls = [
-            "https://github.com/madler/zlib/releases/download/v1.2.13/zlib-1.2.13.tar.xz",
-            "https://zlib.net/zlib-1.2.13.tar.xz",
-        ],
-    )
-
-    maybe(
-        http_archive,
         name = "com_google_protobuf",
-        sha256 = PROTOBUF_SHA256,
-        strip_prefix = "protobuf-%s" % PROTOBUF_VERSION,
-        urls = ["https://github.com/protocolbuffers/protobuf/archive/v%s.zip" % PROTOBUF_VERSION],
-    )
-
-    maybe(
-        http_archive,
-        name = "com_google_protobuf_javalite",
         sha256 = PROTOBUF_SHA256,
         strip_prefix = "protobuf-%s" % PROTOBUF_VERSION,
         urls = ["https://github.com/protocolbuffers/protobuf/archive/v%s.zip" % PROTOBUF_VERSION],

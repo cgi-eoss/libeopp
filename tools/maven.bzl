@@ -4,7 +4,7 @@ load(":pom_file.bzl", "DEFAULT_POM_VERSION", "pom_file")
 load("@com_github_grpc_grpc_kotlin//:kt_jvm_grpc.bzl", "kt_jvm_proto_library")
 load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
-load("@io_bazel_rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 load("@bazel_sonarqube//:defs.bzl", _sq_project = "sq_project")
 load("//tools/pitest:pitest.bzl", "pitest_mutation_coverage_test")
 load("//tools/maven_publish:maven_publish.bzl", "maven_publish")
@@ -138,13 +138,16 @@ def maven_library(
         tags = tags + ["manual"],
     )
 
+    classifier_artifacts = {":%s_srcjar" % name: "sources"}
+    if build_javadoc_library:
+        classifier_artifacts[":%s_javadoc" % name] = "javadoc"
+
     maven_publish(
         name = "%s.publish" % name,
         coordinates = _maven_coordinates,
         pom = ":%s_pom" % name,
-        javadocs = ":%s_javadoc" % name if build_javadoc_library else None,
-        artifact_jar = ":%s" % name,
-        source_jar = ":%s_srcjar" % name,
+        artifact = ":%s" % name,
+        classifier_artifacts = classifier_artifacts,
         visibility = visibility,
         tags = tags + ["manual"],
     )

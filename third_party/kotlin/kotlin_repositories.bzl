@@ -1,11 +1,11 @@
 load(
-    "@io_bazel_rules_kotlin//kotlin:repositories.bzl",
+    "@rules_kotlin//kotlin:repositories.bzl",
     _kotlin_repositories = "kotlin_repositories",
 )
-load("@io_bazel_rules_kotlin//src/main/starlark/core/repositories:versions.bzl", "version")
+load("@rules_kotlin//src/main/starlark/core/repositories:versions.bzl", "version")
 
-KOTLIN_VERSION = "1.7.21"
-KOTLINC_RELEASE_SHA = "8412b31b808755f0c0d336dbb8c8443fa239bf32ddb3cdb81b305b25f0ad279e"
+KOTLIN_VERSION = "1.9.22"
+KOTLINC_RELEASE_SHA = "88b39213506532c816ff56348c07bbeefe0c8d18943bffbad11063cf97cac3e6"
 
 KOTLINC_RELEASE = version(
     version = KOTLIN_VERSION,

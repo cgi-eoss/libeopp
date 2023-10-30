@@ -1,3 +1,6 @@
+# Not all of our dependencies support bzlmod yet
+common --noenable_bzlmod
+
 # Always use hermetic_cc_toolchain
 build --incompatible_enable_cc_toolchain_resolution
 build --action_env BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
@@ -10,12 +13,16 @@ build --action_env=HTTPS_PROXY
 build --action_env=NO_PROXY
 build --action_env=NPM_CONFIG_REGISTRY
 
-build --java_language_version=11
-build --tool_java_language_version=11
+# Use C++14 (for protobuf compatibility)
+build --repo_env=BAZEL_CXXOPTS='-std=c++14'
+build --action_env=BAZEL_CXXOPTS='-std=c++14'
+
+build --java_language_version=17
+build --tool_java_language_version=17
 
 # Download a bazel-defined jdk11 for reproducible builds
-build --java_runtime_version=remotejdk_11
-build --tool_java_runtime_version=remotejdk_11
+build --java_runtime_version=remotejdk_17
+build --tool_java_runtime_version=remotejdk_17
 
 # To use a local jdk from $JAVA_HOME, add to .bazelrc.local and uncomment:
 #build --java_runtime_version=local_jdk
@@ -35,6 +42,6 @@ test --test_env=NO_PROXY
 
 coverage --collect_code_coverage
 coverage --combined_report=lcov
-coverage --coverage_report_generator=@bazel_sonarqube//:sonarqube_coverage_generator
+coverage --coverage_report_generator=@bazel_sonarqube//:SonarQubeCoverageGenerator
 
 try-import %workspace%/.bazelrc.local

@@ -24,7 +24,6 @@ import com.cgi.eoss.eopp.util.Timestamps;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageException;
 import org.springframework.core.io.Resource;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
@@ -40,8 +39,6 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import static com.google.api.gax.rpc.StatusCode.Code.NOT_FOUND;
 
 /**
  * <p>{@link EoppResource} implementation representing data in an Google Storage bucket.</p>
@@ -155,8 +152,8 @@ public class EoppGoogleCloudStorageObjectResource implements EoppResource {
 
     @Override
     public boolean equals(@Nullable Object other) {
-        return (this == other || (other instanceof Resource &&
-                ((Resource) other).getDescription().equals(getDescription())));
+        return (this == other || (other instanceof Resource resource) &&
+                resource.getDescription().equals(getDescription()));
     }
 
     @Override

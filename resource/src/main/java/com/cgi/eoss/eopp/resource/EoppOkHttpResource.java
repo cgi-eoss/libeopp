@@ -186,11 +186,11 @@ public class EoppOkHttpResource implements EoppResource {
                         .filter(Optional::isPresent).map(Optional::get).findFirst()
                         .ifPresent(builder::contentLength);
 
-                builder.filename(Stream.of(fileMeta.map(FileMeta::getFilename),
+                builder.filename(Objects.requireNonNull(Stream.of(fileMeta.map(FileMeta::getFilename),
                                 Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_NAME.getHeader())),
                                 Optional.ofNullable(response.header(HttpHeaders.CONTENT_DISPOSITION)).flatMap(EoppHeaders.FILENAME_FROM_HTTP_HEADER))
                         .filter(Optional::isPresent).map(Optional::get).findFirst()
-                        .orElse(StringUtils.getFilename(url.encodedPath())));
+                        .orElse(StringUtils.getFilename(url.encodedPath()))));
 
                 Stream.of(fileMeta.map(FileMeta::getChecksum),
                                 Optional.ofNullable(response.header(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader())))

@@ -138,8 +138,8 @@ abstract class BaseS3ObjectResource implements EoppResource {
 
     @Override
     public boolean equals(@Nullable Object other) {
-        return (this == other || (other instanceof Resource &&
-                ((Resource) other).getDescription().equals(getDescription())));
+        return (this == other || (other instanceof Resource resource) &&
+                resource.getDescription().equals(getDescription()));
     }
 
     @Override

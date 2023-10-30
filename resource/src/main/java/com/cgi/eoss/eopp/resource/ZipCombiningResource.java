@@ -118,10 +118,10 @@ public class ZipCombiningResource extends AbstractResource {
                 try {
                     pipeFuture.join();
                 } catch (CompletionException e) {
-                    if (e.getCause() instanceof EoppResourceException) {
-                        throw (EoppResourceException) e.getCause();
-                    } else if (e.getCause() instanceof IOException) {
-                        throw (IOException) e.getCause();
+                    if (e.getCause() instanceof EoppResourceException eoppResourceException) {
+                        throw eoppResourceException;
+                    } else if (e.getCause() instanceof IOException ioException) {
+                        throw ioException;
                     } else {
                         throw new IOException(e);
                     }

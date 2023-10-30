@@ -45,6 +45,7 @@ maven_library(
         "//third_party/grpc:api",
         "@maven//:com_google_code_findbugs_jsr305",
         "@maven//:org_springframework_cloud_spring_cloud_commons",
+        "@maven//:org_springframework_spring_beans",
         "@maven//:org_springframework_spring_core",
     ],
 )

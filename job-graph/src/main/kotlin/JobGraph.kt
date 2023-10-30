@@ -18,11 +18,7 @@ package com.cgi.eoss.eopp.jobgraph
 
 import com.cgi.eoss.eopp.job.JobSpecification
 import com.cgi.eoss.eopp.job.StepInstance
-import com.cgi.eoss.eopp.workflow.Input
-import com.cgi.eoss.eopp.workflow.Output
-import com.cgi.eoss.eopp.workflow.Parameter
-import com.cgi.eoss.eopp.workflow.StepConfiguration
-import com.cgi.eoss.eopp.workflow.Workflow
+import com.cgi.eoss.eopp.workflow.*
 import com.google.common.collect.ListMultimap
 import com.google.common.collect.MultimapBuilder
 import com.google.common.collect.SetMultimap
@@ -181,7 +177,7 @@ class JobGraph private constructor(
         }
 
         override fun withParameter(key: String, value: String) = apply {
-            parameterLinks.get(key).forEach {
+            parameterLinks[key].forEach {
                 it.first.parameterValues.put(it.second, value)
             }
         }
@@ -272,7 +268,7 @@ class JobGraph private constructor(
         }
 
         private fun stepIsSkippableBasedOnParameters(step: ProcessStep): Boolean = step.parameters.any { param ->
-            step.parameterValues.get(param.identifier).isEmpty() && param.skipStepIfEmpty
+            step.parameterValues[param.identifier].isEmpty() && param.skipStepIfEmpty
         }
 
         private fun validateParameterConstraints(network: MutableNetwork<Step, DataConnector>) {
@@ -391,7 +387,7 @@ interface InputStubbing : BuildStubbing {
     fun withInput(key: String, value: URI): InputStubbing
 }
 
-interface BuildStubbing {
+fun interface BuildStubbing {
     /**
      * Assemble the given Workflow, Inputs and Parameters into a Network, and perform consistency checking and removal
      * of skippable invalid steps.

@@ -17,11 +17,7 @@
 package com.cgi.eoss.eopp.jobgraph
 
 import com.cgi.eoss.eopp.identifier.Identifier
-import com.cgi.eoss.eopp.job.StepDataSet
-import com.cgi.eoss.eopp.job.StepInput
-import com.cgi.eoss.eopp.job.StepInputUriList
-import com.cgi.eoss.eopp.job.StepInstance
-import com.cgi.eoss.eopp.job.StepParameterValue
+import com.cgi.eoss.eopp.job.*
 import com.cgi.eoss.eopp.workflow.Input
 import com.cgi.eoss.eopp.workflow.Output
 import com.cgi.eoss.eopp.workflow.StepConfiguration
@@ -166,7 +162,7 @@ data class ProcessStep(
         inputs = when (stepConfiguration.executeCase) {
             StepConfiguration.ExecuteCase.STEP -> stepConfiguration.step.inputsList
             StepConfiguration.ExecuteCase.NESTED_WORKFLOW -> stepConfiguration.nestedWorkflow.inputsList
-            else -> throw IllegalStateException("stepConfiguration.executeCase must be STEP or NESTED_WORKFLOW")
+            else -> error(ILLEGAL_STEP_CASE)
         }.map {
             StepInputOrOutput(
                 it.identifier,
@@ -177,7 +173,7 @@ data class ProcessStep(
         outputs = when (stepConfiguration.executeCase) {
             StepConfiguration.ExecuteCase.STEP -> stepConfiguration.step.outputsList
             StepConfiguration.ExecuteCase.NESTED_WORKFLOW -> stepConfiguration.nestedWorkflow.outputsList
-            else -> throw IllegalStateException("stepConfiguration.executeCase must be STEP or NESTED_WORKFLOW")
+            else -> error(ILLEGAL_STEP_CASE)
         }.map {
             StepInputOrOutput(
                 it.identifier,
@@ -188,7 +184,7 @@ data class ProcessStep(
         parameters = when (stepConfiguration.executeCase) {
             StepConfiguration.ExecuteCase.STEP -> stepConfiguration.step.parametersList
             StepConfiguration.ExecuteCase.NESTED_WORKFLOW -> stepConfiguration.nestedWorkflow.parametersList
-            else -> throw IllegalStateException("stepConfiguration.executeCase must be STEP or NESTED_WORKFLOW")
+            else -> error(ILLEGAL_STEP_CASE)
         }.map {
             StepParameter(
                 it.identifier,
@@ -204,7 +200,7 @@ data class ProcessStep(
         nodeIdentifier = when (stepConfiguration.executeCase) {
             StepConfiguration.ExecuteCase.STEP -> stepConfiguration.step.identifier
             StepConfiguration.ExecuteCase.NESTED_WORKFLOW -> stepConfiguration.nestedWorkflow.identifier
-            else -> throw IllegalStateException("stepConfiguration.executeCase must be STEP or NESTED_WORKFLOW")
+            else -> error(ILLEGAL_STEP_CASE)
         },
         nodeIsNestedWorkflow = stepConfiguration.hasNestedWorkflow(),
         resourceRequests = stepConfiguration.step.requests
@@ -239,7 +235,7 @@ data class ProcessStep(
         parameters.map {
             StepParameterValue.newBuilder()
                 .setIdentifier(it.identifier)
-                .addAllValues(parameterValues.get(it.identifier)) // JobGraph#build handles defaults
+                .addAllValues(parameterValues[it.identifier]) // JobGraph#build handles defaults
                 .build()
         }
 
@@ -306,3 +302,5 @@ data class StepParameter(
     val defaultValues: List<String>,
     val skipStepIfEmpty: Boolean = false
 )
+
+private const val ILLEGAL_STEP_CASE = "stepConfiguration.executeCase must be STEP or NESTED_WORKFLOW"

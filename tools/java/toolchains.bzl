@@ -1,24 +1,30 @@
-# source: rules_java/java/repositories.bzl:466
-def java_toolchains(version = 11, platforms = "amd64"):
+# source: rules_java/java/repositories.bzl:531
+
+def rules_java_toolchains(name = "toolchains"):
     """An utility method to load all Java toolchains.
 
     Args:
         name: The name of this macro (not used)
     """
-    JDK_VERSIONS = ["11", "17", "19"]
-    PLATFORMS = ["linux", "macos", "macos_aarch64", "win"]
+    JDKS = {
+        # Must match JDK repos defined in remote_jdk11_repos()
+        "11": ["linux", "linux_aarch64", "linux_ppc64le", "linux_s390x", "macos", "macos_aarch64", "win", "win_arm64"],
+        # Must match JDK repos defined in remote_jdk17_repos()
+        "17": ["linux", "linux_aarch64", "linux_ppc64le", "linux_s390x", "macos", "macos_aarch64", "win", "win_arm64"],
+        # Must match JDK repos defined in remote_jdk21_repos()
+        "21": ["linux", "linux_aarch64", "macos", "macos_aarch64", "win"],
+    }
 
-    # Remote JDK repos for those Linux platforms are only defined for JDK 11.
-    EXTRA_REMOTE_JDK11_REPOS = [
-        "remotejdk11_linux_aarch64",
-        "remotejdk11_linux_ppc64le",
-        "remotejdk11_linux_s390x",
-    ]
+    REMOTE_JDK_REPOS = [("remotejdk" + version + "_" + platform) for version in JDKS for platform in JDKS[version]]
 
-    REMOTE_JDK_REPOS = [("remotejdk" + version + "_" + platform) for version in JDK_VERSIONS for platform in PLATFORMS] + EXTRA_REMOTE_JDK11_REPOS
-
-    # Disable toolchains:all, which registers remotejdk17 as a default
-    #native.register_toolchains("//toolchains:all")
-    native.register_toolchains("@local_jdk//:runtime_toolchain_definition")
+    native.register_toolchains(
+        # Disable toolchains:all, to avoid registering remotejdk17 as a default
+        #"//toolchains:all",
+        "@local_jdk//:runtime_toolchain_definition",
+        "@local_jdk//:bootstrap_runtime_toolchain_definition",
+    )
     for name in REMOTE_JDK_REPOS:
-        native.register_toolchains("@" + name + "_toolchain_config_repo//:toolchain")
+        native.register_toolchains(
+            "@" + name + "_toolchain_config_repo//:toolchain",
+            "@" + name + "_toolchain_config_repo//:bootstrap_runtime_toolchain",
+        )

@@ -7,23 +7,23 @@ def libeopp_dependencies():
     maybe(
         http_archive,
         name = "google_bazel_common",
-        sha256 = "e30e092e50c47a38994334dbe42386675cf519a5e86b973e45034323bbdb70a3",
-        strip_prefix = "bazel-common-a9e1d8efd54cbf27249695b23775b75ca65bb59d",
-        urls = ["https://github.com/google/bazel-common/archive/a9e1d8efd54cbf27249695b23775b75ca65bb59d.zip"],
+        sha256 = "de1441c02b35f5768b872d15d7e5813c4826b66630703e253fc95da39988a6d8",
+        strip_prefix = "bazel-common-d4ada735afa0ab044957cfa21849be577756a6cd",
+        urls = ["https://github.com/google/bazel-common/archive/d4ada735afa0ab044957cfa21849be577756a6cd.tar.gz"],
     )
 
     maybe(
         http_archive,
         name = "bazel_skylib",
-        sha256 = "b8a1527901774180afc798aeb28c4634bdccf19c4d98e7bdd1ce79d1fe9aaad7",
+        sha256 = "cd55a062e763b9349921f0f5db8c3933288dc8ba4f76dd9416aac68acee3cb94",
         urls = [
-            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.4.1/bazel-skylib-1.4.1.tar.gz",
-            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.4.1/bazel-skylib-1.4.1.tar.gz",
+            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.5.0/bazel-skylib-1.5.0.tar.gz",
+            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.5.0/bazel-skylib-1.5.0.tar.gz",
         ],
     )
 
-    HERMETIC_CC_TOOLCHAIN_VERSION = "v2.0.0"
-    HERMETIC_CC_TOOLCHAIN_SHA = "57f03a6c29793e8add7bd64186fc8066d23b5ffd06fe9cc6b0b8c499914d3a65"
+    HERMETIC_CC_TOOLCHAIN_VERSION = "v2.2.1"
+    HERMETIC_CC_TOOLCHAIN_SHA = "3b8107de0d017fe32e6434086a9568f97c60a111b49dc34fc7001e139c30fdea"
 
     maybe(
         http_archive,
@@ -42,46 +42,48 @@ def libeopp_dependencies():
     maybe(
         http_archive,
         name = "rules_cc",
-        sha256 = "3d9e271e2876ba42e114c9b9bc51454e379cbf0ec9ef9d40e2ae4cec61a31b40",
-        strip_prefix = "rules_cc-0.0.6",
-        urls = ["https://github.com/bazelbuild/rules_cc/releases/download/0.0.6/rules_cc-0.0.6.tar.gz"],
+        urls = ["https://github.com/bazelbuild/rules_cc/releases/download/0.0.9/rules_cc-0.0.9.tar.gz"],
+        sha256 = "2037875b9a4456dce4a79d112a8ae885bbc4aad968e6587dca6e64f3a0900cdf",
+        strip_prefix = "rules_cc-0.0.9",
     )
 
     maybe(
         http_archive,
         name = "rules_python",
-        sha256 = "94750828b18044533e98a129003b6a68001204038dc4749f40b195b24c38f49f",
-        strip_prefix = "rules_python-0.21.0",
-        urls = ["https://github.com/bazelbuild/rules_python/releases/download/0.21.0/rules_python-0.21.0.tar.gz"],
+        sha256 = "d70cd72a7a4880f0000a6346253414825c19cdd40a28289bdf67b8e6480edff8",
+        strip_prefix = "rules_python-0.28.0",
+        url = "https://github.com/bazelbuild/rules_python/releases/download/0.28.0/rules_python-0.28.0.tar.gz",
     )
 
     maybe(
         http_archive,
         name = "rules_pkg",
-        sha256 = "335632735e625d408870ec3e361e192e99ef7462315caa887417f4d88c4c8fb8",
+        sha256 = "8f9ee2dc10c1ae514ee599a8b42ed99fa262b757058f65ad3c384289ff70c4b8",
         urls = [
-            "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.9.0/rules_pkg-0.9.0.tar.gz",
-            "https://github.com/bazelbuild/rules_pkg/releases/download/0.9.0/rules_pkg-0.9.0.tar.gz",
+            "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.9.1/rules_pkg-0.9.1.tar.gz",
+            "https://github.com/bazelbuild/rules_pkg/releases/download/0.9.1/rules_pkg-0.9.1.tar.gz",
         ],
     )
 
     maybe(
         http_archive,
         name = "rules_java",
-        sha256 = "bcfabfb407cb0c8820141310faa102f7fb92cc806b0f0e26a625196101b0b57e",
-        urls = ["https://github.com/bazelbuild/rules_java/releases/download/5.5.0/rules_java-5.5.0.tar.gz"],
+        urls = [
+            "https://github.com/bazelbuild/rules_java/releases/download/7.3.2/rules_java-7.3.2.tar.gz",
+        ],
+        sha256 = "3121a00588b1581bd7c1f9b550599629e5adcc11ba9c65f482bbd5cfe47fdf30",
     )
 
     maybe(
         http_archive,
         name = "rules_proto",
-        sha256 = "dc3fb206a2cb3441b485eb1e423165b231235a1ea9b031b4433cf7bc1fa460dd",
-        strip_prefix = "rules_proto-5.3.0-21.7",
-        urls = ["https://github.com/bazelbuild/rules_proto/archive/refs/tags/5.3.0-21.7.tar.gz"],
+        sha256 = "903af49528dc37ad2adbb744b317da520f133bc1cbbecbdd2a6c546c9ead080b",
+        strip_prefix = "rules_proto-6.0.0-rc0",
+        url = "https://github.com/bazelbuild/rules_proto/releases/download/6.0.0-rc0/rules_proto-6.0.0-rc0.tar.gz",
     )
 
-    RULES_JVM_EXTERNAL_TAG = "5.2"
-    RULES_JVM_EXTERNAL_SHA = "f86fd42a809e1871ca0aabe89db0d440451219c3ce46c58da240c7dcdc00125f"
+    RULES_JVM_EXTERNAL_TAG = "6.0"
+    RULES_JVM_EXTERNAL_SHA = "85fd6bad58ac76cc3a27c8e051e4255ff9ccd8c92ba879670d195622e7c0a9b7"
 
     maybe(
         http_archive,
@@ -91,21 +93,21 @@ def libeopp_dependencies():
         url = "https://github.com/bazelbuild/rules_jvm_external/releases/download/%s/rules_jvm_external-%s.tar.gz" % (RULES_JVM_EXTERNAL_TAG, RULES_JVM_EXTERNAL_TAG),
     )
 
-    rules_kotlin_version = "v1.7.1"
+    rules_kotlin_version = "v1.9.0"
 
-    rules_kotlin_sha = "fd92a98bd8a8f0e1cdcb490b93f5acef1f1727ed992571232d33de42395ca9b3"
+    rules_kotlin_sha = "5766f1e599acf551aa56f49dab9ab9108269b03c557496c54acaf41f98e2b8d6"
 
     maybe(
         http_archive,
-        name = "io_bazel_rules_kotlin",
+        name = "rules_kotlin",
         sha256 = rules_kotlin_sha,
-        urls = ["https://github.com/bazelbuild/rules_kotlin/releases/download/%s/rules_kotlin_release.tgz" % rules_kotlin_version],
+        urls = ["https://github.com/bazelbuild/rules_kotlin/releases/download/%s/rules_kotlin-%s.tar.gz" % (rules_kotlin_version, rules_kotlin_version)],
     )
 
     maybe(
         http_archive,
         name = "bazel_sonarqube",
-        sha256 = "b4dacf20a413e9ddca1d886c936c0dfcfd5d7464d22c38eb4cd37da34c259fc4",
-        strip_prefix = "bazel-sonarqube-452a2c80c4c12c4fb18fd7b6cae459d84b81f350",
-        urls = ["https://github.com/Zetten/bazel-sonarqube/archive/452a2c80c4c12c4fb18fd7b6cae459d84b81f350.zip"],
+        sha256 = "5b2d6e2f83b9fb375dd422b2c6571ac223d89b6e1915f5d0b8e37aa04354ba32",
+        strip_prefix = "bazel-sonarqube-d6109e6627a00ad84c24c38df5d2d17159203f47",
+        urls = ["https://github.com/Zetten/bazel-sonarqube/archive/d6109e6627a00ad84c24c38df5d2d17159203f47.zip"],
     )

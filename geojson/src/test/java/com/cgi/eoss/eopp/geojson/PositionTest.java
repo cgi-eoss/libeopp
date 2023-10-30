@@ -61,7 +61,7 @@ public class PositionTest {
             OBJECT_MAPPER.readValue("[0,null]", Position.class);
             fail("Expected JsonMappingException");
         } catch (JsonMappingException e) {
-            assertThat(e.getMessage()).startsWith("Cannot construct instance of `com.cgi.eoss.eopp.geojson.Position`, problem: `java.lang.NullPointerException`");
+            assertThat(e.getMessage()).startsWith("Cannot construct instance of `com.cgi.eoss.eopp.geojson.Position`, problem: Cannot invoke \"java.math.BigDecimal.setScale(int, java.math.RoundingMode)\" because \"coordinates[1]\" is null");
         }
 
         try {

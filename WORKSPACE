@@ -21,25 +21,33 @@ register_toolchains(
     "@zig_sdk//toolchain:windows_arm64",
 )
 
+load("@rules_python//python:repositories.bzl", "py_repositories")
+
+py_repositories()
+
 load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
 
 rules_pkg_dependencies()
 
-load("@rules_java//java:repositories.bzl", "remote_jdk19_repos", "rules_java_dependencies")
+load("@rules_java//java:repositories.bzl", "rules_java_dependencies", "rules_java_toolchains")
 
 rules_java_dependencies()
 
-remote_jdk19_repos()
-
-load("//tools/java:toolchains.bzl", "java_toolchains")
-
-java_toolchains()
+rules_java_toolchains()
 
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
 
 rules_proto_dependencies()
 
 rules_proto_toolchains()
+
+load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
+
+rules_jvm_external_deps()
+
+load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
+
+rules_jvm_external_setup()
 
 load("//third_party/java:java_repositories.bzl", "ARTIFACTS", "REPOSITORIES")
 load("//third_party/protobuf:protobuf_repositories.bzl", "COM_GOOGLE_PROTOBUF_JAVA_OVERRIDE_TARGETS")
@@ -75,6 +83,10 @@ kotlin_repositories()
 
 kt_register_toolchains()
 
+load("//third_party/protobuf:protobuf_dependency_repositories.bzl", "protobuf_dependency_repositories")
+
+protobuf_dependency_repositories()
+
 load("//third_party/grpc:grpc_dependency_repositories.bzl", "grpc_dependency_repositories")
 
 grpc_dependency_repositories()
@@ -82,6 +94,6 @@ grpc_dependency_repositories()
 load("@bazel_sonarqube//:repositories.bzl", "bazel_sonarqube_repositories")
 
 bazel_sonarqube_repositories(
-    sonar_scanner_cli_sha256 = "642d3e189bcca51055bc17d349fc575bf6259df1b54f4077a9a6c586afd65bff",
-    sonar_scanner_cli_version = "4.8.0.2856",
+    sonar_scanner_cli_sha256 = "817802ab3a476f739192d6c10504285e24e9224a0fbe2a518bb938ff88b7ea81",
+    sonar_scanner_cli_version = "5.0.1.3006",
 )

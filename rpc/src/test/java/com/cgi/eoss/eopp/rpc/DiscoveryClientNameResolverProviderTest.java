@@ -24,12 +24,10 @@ import io.grpc.examples.helloworld.HelloRequest;
 import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
 import io.grpc.testing.GrpcCleanupRule;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mockito.stubbing.Answer;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClient;
@@ -42,9 +40,6 @@ import java.util.Map;
 
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.stream.Collectors.toList;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
 
 @RunWith(JUnit4.class)
 public class DiscoveryClientNameResolverProviderTest {
@@ -52,18 +47,13 @@ public class DiscoveryClientNameResolverProviderTest {
     @Rule
     public final GrpcCleanupRule grpcCleanup = new GrpcCleanupRule();
 
-    private final GreeterGrpc.GreeterImplBase serviceImpl = mock(GreeterGrpc.GreeterImplBase.class);
-
-    @Before
-    public void setUp() {
-        doAnswer((Answer<Void>) invocation -> {
-            HelloRequest request = invocation.getArgument(0);
-            StreamObserver<HelloReply> streamObserver = invocation.getArgument(1);
-            streamObserver.onNext(HelloReply.newBuilder().setMessage("Hello " + request.getName()).build());
-            streamObserver.onCompleted();
-            return null;
-        }).when(serviceImpl).sayHello(any(), any());
-    }
+    private final GreeterGrpc.GreeterImplBase serviceImpl = new GreeterGrpc.GreeterImplBase() {
+        @Override
+        public void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {
+            responseObserver.onNext(HelloReply.newBuilder().setMessage("Hello " + request.getName()).build());
+            responseObserver.onCompleted();
+        }
+    };
 
     @Test
     public void testRealServerAndReconnection() throws IOException {

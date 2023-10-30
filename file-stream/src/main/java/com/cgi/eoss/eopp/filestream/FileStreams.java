@@ -96,10 +96,17 @@ public final class FileStreams {
     public static Flux<FileChunk> create(Resource resource, int bufferSize) {
         AtomicLong position = new AtomicLong(0);
         return DataBufferUtils.read(resource, DEFAULT_DATA_BUFFER_FACTORY, bufferSize)
-                .map(db -> FileChunk.newBuilder()
-                        .setData(ByteString.copyFrom(db.asByteBuffer()))
-                        .setPosition(position.getAndAdd(db.readableByteCount()))
-                        .build());
+                .flatMap(db -> Flux.create(sink -> {
+                    try (DataBuffer.ByteBufferIterator iterator = db.readableByteBuffers()) {
+                        iterator.forEachRemaining(bb -> sink.next(FileChunk.newBuilder()
+                                .setData(ByteString.copyFrom(bb))
+                                .setPosition(position.getAndAdd(db.readableByteCount()))
+                                .build()));
+                        sink.complete();
+                    } catch (Exception e) {
+                        sink.error(e);
+                    }
+                }));
     }
 
 }

@@ -73,6 +73,11 @@ public class EoppS3ObjectAsyncResource extends BaseS3ObjectResource implements E
     }
 
     @Override
+    public String getDescription() {
+        return "EoppS3ObjectAsyncResource [" + getURI() + "]";
+    }
+
+    @Override
     protected Resource doCreateRelative(String bucket, String key) {
         return new EoppS3ObjectAsyncResource(s3AsyncClient, bucket, key);
     }
@@ -106,6 +111,16 @@ public class EoppS3ObjectAsyncResource extends BaseS3ObjectResource implements E
                 throw new EoppResourceException("Failed to complete S3 resource HEAD request", e.getCause());
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return super.equals(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     /**
