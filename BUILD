@@ -1,6 +1,7 @@
-load("@rules_java//java:defs.bzl", "java_library")
 load("//tools:pom_file.bzl", "DEFAULT_POM_VERSION", "pom_file")
+load("@rules_java//java:defs.bzl", "java_library")
 load("@bazel_sonarqube//:defs.bzl", "sonarqube")
+load("@rules_python//python:packaging.bzl", "py_wheel")
 
 filegroup(
     name = "dummy",
@@ -31,6 +32,13 @@ filegroup(
 )
 
 # Create a library exporting all modules as dependencies
+
+PROTO_MODULES = [
+    "file",
+    "identifier",
+    "job",
+    "workflow",
+]
 
 MODULES = [
     "file",
@@ -77,13 +85,21 @@ pom_file(
     target = ":eopp",
 )
 
+py_wheel(
+    name = "eopp_py",
+    distribution = "eopp",
+    python_tag = "py3",
+    version = "0.0.0",
+    deps = ["//%s:%s_py_proto" % (m, m) for m in PROTO_MODULES],
+)
+
 sonarqube(
     name = "sq_libeopp",
+    testonly = True,
     coverage_report = ":coverage_report",
     modules = {"//%s:sq_%s" % (m, m): m for m in MODULES},
     project_key = "com.cgi.eoss.eopp:libeopp",
     project_name = "libeopp",
     scm_info = [":git"],
     tags = ["manual"],
-    testonly = True,
 )

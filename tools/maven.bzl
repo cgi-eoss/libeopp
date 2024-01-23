@@ -1,13 +1,15 @@
-load("@rules_jvm_external//private/rules:maven_project_jar.bzl", "maven_project_jar")
-load("@rules_jvm_external//:defs.bzl", "javadoc")
 load(":pom_file.bzl", "DEFAULT_POM_VERSION", "pom_file")
-load("@com_github_grpc_grpc_kotlin//:kt_jvm_grpc.bzl", "kt_jvm_proto_library")
-load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
-load("@rules_proto//proto:defs.bzl", "proto_library")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
-load("@bazel_sonarqube//:defs.bzl", _sq_project = "sq_project")
 load("//tools/pitest:pitest.bzl", "pitest_mutation_coverage_test")
 load("//tools/maven_publish:maven_publish.bzl", "maven_publish")
+load("@bazel_sonarqube//:defs.bzl", "sq_project")
+load("@com_github_grpc_grpc_kotlin//:kt_jvm_grpc.bzl", "kt_jvm_proto_library")
+load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
+load("@rules_jvm_external//:defs.bzl", "javadoc")
+load("@rules_jvm_external//private/rules:maven_project_jar.bzl", "maven_project_jar")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@rules_python//python:proto.bzl", "py_proto_library")
+#load("@com_github_grpc_grpc//bazel:python_rules.bzl", "py_proto_library")
 
 def maven_coordinates(name, group_id = "com.cgi.eoss.eopp", artifact_id = None):
     return "%s:%s:%s" % (group_id, (artifact_id or name), DEFAULT_POM_VERSION)
@@ -23,6 +25,7 @@ def maven_library(
         artifact_name = None,
         protos = [],
         build_kt_jvm_proto_library = True,
+        build_py_proto_library = True,
         srcs = [],
         deps = [],
         build_kt_jvm_library = False,
@@ -70,6 +73,14 @@ def maven_library(
                 visibility = visibility,
             )
             deps.append("%s_kt_jvm_proto" % proto.get("name"))
+
+        if build_py_proto_library:
+            py_proto_library(
+                name = "%s_py_proto" % proto.get("name"),
+                deps = [":%s_proto" % proto.get("name")],
+                testonly = testonly,
+                visibility = visibility,
+            )
 
     if srcs != None:
         srcs_attr = [":%s_srcs" % name]
@@ -201,7 +212,7 @@ def sonarqube_project(
         test_srcs = [],
         test_targets = [],
         testonly = True):
-    _sq_project(
+    sq_project(
         name = "sq_%s" % name,
         srcs = srcs,
         test_srcs = test_srcs,

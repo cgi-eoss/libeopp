@@ -6,6 +6,16 @@ load("//third_party/grpc:grpc_repositories.bzl", "grpc_repositories")
 def libeopp_dependencies():
     maybe(
         http_archive,
+        name = "platforms",
+        urls = [
+            "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.8/platforms-0.0.8.tar.gz",
+            "https://github.com/bazelbuild/platforms/releases/download/0.0.8/platforms-0.0.8.tar.gz",
+        ],
+        sha256 = "8150406605389ececb6da07cbcb509d5637a3ab9a24bc69b1101531367d89d74",
+    )
+
+    maybe(
+        http_archive,
         name = "google_bazel_common",
         sha256 = "de1441c02b35f5768b872d15d7e5813c4826b66630703e253fc95da39988a6d8",
         strip_prefix = "bazel-common-d4ada735afa0ab044957cfa21849be577756a6cd",
@@ -50,9 +60,9 @@ def libeopp_dependencies():
     maybe(
         http_archive,
         name = "rules_python",
-        sha256 = "d70cd72a7a4880f0000a6346253414825c19cdd40a28289bdf67b8e6480edff8",
-        strip_prefix = "rules_python-0.28.0",
-        url = "https://github.com/bazelbuild/rules_python/releases/download/0.28.0/rules_python-0.28.0.tar.gz",
+        sha256 = "d71d2c67e0bce986e1c5a7731b4693226867c45bfe0b7c5e0067228a536fc580",
+        strip_prefix = "rules_python-0.29.0",
+        url = "https://github.com/bazelbuild/rules_python/releases/download/0.29.0/rules_python-0.29.0.tar.gz",
     )
 
     maybe(
@@ -94,7 +104,6 @@ def libeopp_dependencies():
     )
 
     rules_kotlin_version = "v1.9.0"
-
     rules_kotlin_sha = "5766f1e599acf551aa56f49dab9ab9108269b03c557496c54acaf41f98e2b8d6"
 
     maybe(
