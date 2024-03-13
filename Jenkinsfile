@@ -7,8 +7,8 @@ def bazelStep(Closure doStep) {
     // Update Bazel resources if changing JenkinsfilePod.yaml - ensure it gets accurate resource limits
     sh """
       echo "" >>.bazelrc.local
-      echo "build --local_cpu_resources=4" >>.bazelrc.local
-      echo "build --local_ram_resources=8000" >>.bazelrc.local
+      echo "build --local_resources=cpu=4" >>.bazelrc.local
+      echo "build --local_resources=memory=8000" >>.bazelrc.local
       cat .bazelrc.local
     """
     doStep()

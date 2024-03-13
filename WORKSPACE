@@ -8,6 +8,10 @@ load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
 bazel_skylib_workspace()
 
+load("@aspect_bazel_lib//lib:repositories.bzl", "aspect_bazel_lib_register_toolchains")
+
+aspect_bazel_lib_register_toolchains()
+
 load("@hermetic_cc_toolchain//toolchain:defs.bzl", zig_toolchains = "toolchains")
 
 zig_toolchains()

@@ -3,6 +3,7 @@ kind: Pod
 metadata:
   annotations:
     cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+    karpenter.sh/do-not-disrupt: "true"
 spec:
   # Try to keep build pods away from other build pods if possible, but it's not critical
   affinity:
