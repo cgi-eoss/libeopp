@@ -2,9 +2,9 @@ load("@rules_kotlin//kotlin:core.bzl", "define_kt_toolchain", "kt_kotlinc_option
 
 licenses(["notice"])
 
-KOTLIN_LANGUAGE_LEVEL = "1.7"
+KOTLIN_LANGUAGE_LEVEL = "1.9"
 
-JAVA_LANGUAGE_LEVEL = "11"
+JAVA_LANGUAGE_LEVEL = "21"
 
 kt_kotlinc_options(
     name = "kt_kotlinc_options",
