@@ -4,6 +4,19 @@ plugins {
     id("com.github.ben-manes.versions") version "0.51.0"
 }
 
+fun isNonStable(version: String): Boolean {
+    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
+    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+    val isStable = stableKeyword || regex.matches(version)
+    return isStable.not()
+}
+
+tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask> {
+    rejectVersionIf {
+        isNonStable(candidate.version)
+    }
+}
+
 val generate: Configuration by configurations.creating
 
 bazelDependencies {
@@ -19,14 +32,14 @@ repositories {
 }
 
 // BOMs
-extra["aws-sdk-v2.version"] = "2.25.8"
+extra["aws-sdk-v2.version"] = "2.25.14"
 extra["azure-sdk-bom.version"] = "1.2.21"
 extra["google-cloud-libraries-bom.version"] = "26.34.0"
 extra["grpc-java.version"] = "1.62.2"
 extra["kotlin.version"] = "1.9.23"
 extra["okhttp.version"] = "4.12.0"
 extra["protobuf-java.version"] = "3.25.3"
-extra["spring-boot.version"] = "3.2.3"
+extra["spring-boot.version"] = "3.2.4"
 extra["spring-cloud.version"] = "2023.0.0"
 
 extra["commons-compress.version"] = "1.26.1"
@@ -36,7 +49,7 @@ extra["grpc-kotlin.version"] = "1.4.1"
 extra["guava.version"] = "33.0.0-jre"
 extra["jetbrains-annotations.version"] = "24.1.0"
 extra["jimfs.version"] = "1.3.0"
-extra["json-schema-validator.version"] = "1.3.3"
+extra["json-schema-validator.version"] = "1.4.0"
 extra["jts-core.version"] = "1.19.0"
 extra["pitest.version"] = "1.15.8"
 extra["reactor-grpc.version"] = "1.2.4"

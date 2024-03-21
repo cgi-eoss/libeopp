@@ -8,6 +8,10 @@ load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
 bazel_skylib_workspace()
 
+load("@bazel_features//:deps.bzl", "bazel_features_deps")
+
+bazel_features_deps()
+
 load("@aspect_bazel_lib//lib:repositories.bzl", "aspect_bazel_lib_register_toolchains")
 
 aspect_bazel_lib_register_toolchains()
@@ -39,9 +43,11 @@ rules_java_dependencies()
 
 rules_java_toolchains()
 
-load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies")
 
 rules_proto_dependencies()
+
+load("@rules_proto//proto:toolchains.bzl", "rules_proto_toolchains")
 
 rules_proto_toolchains()
 

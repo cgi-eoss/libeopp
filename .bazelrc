@@ -19,7 +19,7 @@ build --action_env=BAZEL_CXXOPTS='-std=c++14'
 build --java_language_version=21
 build --tool_java_language_version=21
 
-# Download a bazel-defined jdk11 for reproducible builds
+# Download a bazel-defined jdk21 for reproducible builds
 build --java_runtime_version=remotejdk_21
 build --tool_java_runtime_version=remotejdk_21
 
@@ -28,6 +28,7 @@ build --tool_java_runtime_version=remotejdk_21
 
 # TODO Remove when https://github.com/salesforce/reactive-grpc/issues/294 is resolved
 build --noincompatible_java_common_parameters
+# TODO Remove when protobuf no longer passes obsolete values
 
 # Prevent leaking Bazel test runner into IntellIJ classpath
 build --explicit_java_test_deps
