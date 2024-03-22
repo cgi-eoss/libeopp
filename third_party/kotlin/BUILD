@@ -8,6 +8,7 @@ JAVA_LANGUAGE_LEVEL = "21"
 
 kt_kotlinc_options(
     name = "kt_kotlinc_options",
+    java_parameters = True,
     x_optin = [
         "kotlin.RequiresOptIn",
     ],
