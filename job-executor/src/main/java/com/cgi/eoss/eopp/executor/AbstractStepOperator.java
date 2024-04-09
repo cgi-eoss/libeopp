@@ -23,10 +23,10 @@ import com.cgi.eoss.eopp.jobgraph.JobGraph;
 import com.cgi.eoss.eopp.workflow.StepConfiguration;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import net.jodah.failsafe.Failsafe;
-import net.jodah.failsafe.FailsafeExecutor;
-import net.jodah.failsafe.RetryPolicy;
-import net.jodah.failsafe.Timeout;
+import dev.failsafe.Failsafe;
+import dev.failsafe.FailsafeExecutor;
+import dev.failsafe.RetryPolicy;
+import dev.failsafe.Timeout;
 import org.slf4j.Logger;
 
 import java.time.Duration;
@@ -87,7 +87,7 @@ public abstract class AbstractStepOperator implements StepOperator {
         this(stepOperatorEventDispatcher,
                 maxConcurrentSteps,
                 stepExecutionTimeout,
-                new RetryPolicy<StepInstance>().withMaxAttempts(1));
+                RetryPolicy.<StepInstance>builder().withMaxAttempts(1).build());
     }
 
     /**
@@ -143,12 +143,13 @@ public abstract class AbstractStepOperator implements StepOperator {
      * @return The given supplier as a {@link CompletableFuture}, with a timeout if configured.
      */
     protected CompletableFuture<StepInstance> submit(StepInstance stepInstance, Supplier<StepInstance> task) {
-        RetryPolicy<StepInstance> cleanupRetryPolicy = retryPolicy
-                .onFailedAttempt(event -> log.trace("{}::{} failed attempt {}/{}", stepInstance.getJobUuid(), stepInstance.getIdentifier(), event.getAttemptCount(), retryPolicy.getMaxAttempts(), event.getLastFailure()))
+        RetryPolicy<StepInstance> cleanupRetryPolicy = RetryPolicy.builder(retryPolicy.getConfig())
+                .onFailedAttempt(event -> log.trace("{}::{} failed attempt {}/{}", stepInstance.getJobUuid(), stepInstance.getIdentifier(), event.getAttemptCount(), retryPolicy.getConfig().getMaxAttempts(), event.getLastException()))
                 .onRetry(event -> {
-                    log.debug("{}::{} cleaning and retrying (attempt {}/{})", stepInstance.getJobUuid(), stepInstance.getIdentifier(), event.getAttemptCount() + 1, retryPolicy.getMaxAttempts());
+                    log.debug("{}::{} cleaning and retrying (attempt {}/{})", stepInstance.getJobUuid(), stepInstance.getIdentifier(), event.getAttemptCount() + 1, retryPolicy.getConfig().getMaxAttempts());
                     operatorCleanUp(stepInstance);
-                });
+                })
+                .build();
 
         FailsafeExecutor<StepInstance> failsafeExecutor;
         if (stepExecutionTimeout.isNegative()) {

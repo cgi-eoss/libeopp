@@ -35,8 +35,8 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.util.concurrent.MoreExecutors;
-import net.jodah.failsafe.RetryPolicy;
-import net.jodah.failsafe.TimeoutExceededException;
+import dev.failsafe.RetryPolicy;
+import dev.failsafe.TimeoutExceededException;
 import org.awaitility.Awaitility;
 import org.junit.Before;
 import org.junit.Test;
@@ -287,7 +287,7 @@ public class AbstractStepOperatorTest {
     public void testRetryPolicySuccess() throws ExecutionException, InterruptedException {
         TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
         TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService, 8, Duration.ofSeconds(-1),
-                new RetryPolicy<StepInstance>().withMaxAttempts(3));
+                RetryPolicy.<StepInstance>builder().withMaxAttempts(3).build());
 
         CompletableFuture<StepInstance> execute = stepOperator.execute(StepInstance.newBuilder()
                 .setIdentifier("test-step")
@@ -305,7 +305,7 @@ public class AbstractStepOperatorTest {
     public void testRetryPolicyMultipleAttempts() {
         TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
         TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService, 8, Duration.ofSeconds(-1),
-                new RetryPolicy<StepInstance>().withMaxAttempts(3));
+                RetryPolicy.<StepInstance>builder().withMaxAttempts(3).build());
 
         StepInstance stepInstance = StepInstance.newBuilder()
                 .setIdentifier("test-step")
@@ -337,8 +337,9 @@ public class AbstractStepOperatorTest {
     public void testRetryPolicyHandleMatched() {
         TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
         TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService, 8, Duration.ofSeconds(-1),
-                new RetryPolicy<StepInstance>().withMaxAttempts(3)
-                        .handleIf(t -> t.getMessage().equals("My failure message")));
+                RetryPolicy.<StepInstance>builder().withMaxAttempts(3)
+                        .handleIf(t -> t.getMessage().equals("My failure message"))
+                        .build());
 
         // Failsafe will enter retry logic if the exception matches the handleIf predicate
         // i.e. we should see all 3 attempts
@@ -373,8 +374,9 @@ public class AbstractStepOperatorTest {
     public void testRetryPolicyHandleUnmatched() {
         TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
         TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService, 8, Duration.ofSeconds(-1),
-                new RetryPolicy<StepInstance>().withMaxAttempts(3)
-                        .handleIf(t -> t.getCause() instanceof IOException));
+                RetryPolicy.<StepInstance>builder().withMaxAttempts(3)
+                        .handleIf(t -> t.getCause() instanceof IOException)
+                        .build());
 
         // Failsafe will enter retry logic if the exception matches the handleIf predicate
         // i.e. we should see only 1 attempt rather than 3
@@ -408,8 +410,9 @@ public class AbstractStepOperatorTest {
     public void testRetryPolicyAbortIfMatched() {
         TestStepOperatorEventDispatcher stepOperatorEventService = new TestStepOperatorEventDispatcher();
         TestStepOperator stepOperator = new TestStepOperator(stepOperatorEventService, 8, Duration.ofSeconds(-1),
-                new RetryPolicy<StepInstance>().withMaxAttempts(3)
-                        .abortIf((stepInstance, throwable) -> throwable.getCause() instanceof IOException));
+                RetryPolicy.<StepInstance>builder().withMaxAttempts(3)
+                        .abortIf((stepInstance, throwable) -> throwable.getCause() instanceof IOException)
+                        .build());
         stepOperator.throwCause.set(new IOException("Underlying failure"));
 
         // Failsafe will abort if the result matches the abortIf predicate

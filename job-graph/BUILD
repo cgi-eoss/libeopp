@@ -16,7 +16,7 @@ maven_library(
         "//third_party/java:org_springframework_spring_core_neverlink",
         "//workflow",
         "@maven//:com_google_guava_guava",
-        "@maven//:net_jodah_failsafe",
+        "@maven//:dev_failsafe_failsafe",
         "@maven//:org_slf4j_slf4j_api",
         "@maven//:org_springframework_spring_core",
     ],

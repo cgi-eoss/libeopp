@@ -4,6 +4,10 @@ load(":deps.bzl", "libeopp_dependencies")
 
 libeopp_dependencies()
 
+load("@platforms//host:extension.bzl", "host_platform_repo")
+
+host_platform_repo(name = "host_platform")
+
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
 bazel_skylib_workspace()

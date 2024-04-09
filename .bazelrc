@@ -1,6 +1,15 @@
 # Not all of our dependencies support bzlmod yet
 common --noenable_bzlmod
 
+# Allow the Bazel server to check directory sources for changes. Ensures that the Bazel server
+# notices when a directory changes, if you have a directory listed in the srcs of some target.
+# Recommended when using
+# [copy_directory](https://github.com/aspect-build/bazel-lib/blob/main/docs/copy_directory.md) and
+# [rules_js](https://github.com/aspect-build/rules_js) since npm package are source directories
+# inputs to copy_directory actions.
+# Docs: https://bazel.build/reference/command-line-reference#flag--host_jvm_args
+startup --host_jvm_args=-DBAZEL_TRACK_SOURCE_DIRECTORIES=1
+
 # Always use hermetic_cc_toolchain
 build --action_env BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
 
@@ -28,10 +37,16 @@ build --tool_java_runtime_version=remotejdk_21
 
 # TODO Remove when https://github.com/salesforce/reactive-grpc/issues/294 is resolved
 build --noincompatible_java_common_parameters
-# TODO Remove when protobuf no longer passes obsolete values
+
+# Required to make lombok's generated API visible to dependencies in Bazel 4.0+
+# TODO Remove this when we delombok the project
+build --nojava_header_compilation
 
 # Prevent leaking Bazel test runner into IntellIJ classpath
 build --explicit_java_test_deps
+
+# Preserve bazel-bin and bazel-testlogs: https://github.com/bazelbuild/bazel/issues/17081
+#build --use_top_level_targets_for_symlinks=false
 
 test --test_env=http_proxy
 test --test_env=https_proxy
@@ -39,6 +54,11 @@ test --test_env=no_proxy
 test --test_env=HTTP_PROXY
 test --test_env=HTTPS_PROXY
 test --test_env=NO_PROXY
+
+# pass through config for testcontainers
+test --test_env=DOCKER_HOST
+test --test_env=TESTCONTAINERS_RYUK_DISABLED
+test --test_env=TESTCONTAINERS_CHECKS_DISABLE
 
 coverage --collect_code_coverage
 coverage --combined_report=lcov
