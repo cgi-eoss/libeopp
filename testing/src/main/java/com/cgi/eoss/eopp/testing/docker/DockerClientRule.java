@@ -25,6 +25,8 @@ import com.github.dockerjava.zerodep.ZerodepDockerHttpClient;
 import org.junit.Assume;
 import org.junit.rules.ExternalResource;
 
+import java.util.Optional;
+
 /**
  * <p>A JUnit test rule to provision a Docker API client.</p>
  * <p>This includes a flag to automatically skip tests using this rule if the configured Docker Engine is unusable.</p>
@@ -33,7 +35,7 @@ import org.junit.rules.ExternalResource;
  */
 public class DockerClientRule extends ExternalResource {
     //@VisibleForTesting
-    static final String DEFAULT_DOCKER_HOST = "unix:///var/run/docker.sock";
+    static final String DEFAULT_DOCKER_HOST = Optional.ofNullable(System.getenv("DOCKER_HOST")).orElse("unix:///var/run/docker.sock");
 
     private final String dockerHostUrl;
     private final boolean skipIfUnusable;

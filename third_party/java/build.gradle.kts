@@ -32,14 +32,14 @@ repositories {
 }
 
 // BOMs
-extra["aws-sdk-v2.version"] = "2.25.14"
-extra["azure-sdk-bom.version"] = "1.2.22"
+extra["aws-sdk-v2.version"] = "2.25.40"
+extra["azure-sdk-bom.version"] = "1.2.23"
 extra["google-cloud-libraries-bom.version"] = "26.37.0"
-extra["grpc-java.version"] = "1.62.2"
+extra["grpc-java.version"] = "1.63.0"
 extra["kotlin.version"] = "1.9.23"
 extra["okhttp.version"] = "4.12.0"
 extra["protobuf-java.version"] = "3.25.3"
-extra["spring-boot.version"] = "3.2.4"
+extra["spring-boot.version"] = "3.2.5"
 extra["spring-cloud.version"] = "2023.0.1"
 
 extra["commons-compress.version"] = "1.26.1"

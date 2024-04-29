@@ -1,43 +1,51 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
-load("//third_party/protobuf:protobuf_repositories.bzl", "protobuf_repositories")
 load("//third_party/grpc:grpc_repositories.bzl", "grpc_repositories")
+load("//third_party/protobuf:protobuf_repositories.bzl", "protobuf_repositories")
 
 def libeopp_dependencies():
     maybe(
         http_archive,
         name = "platforms",
         urls = [
-            "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.9/platforms-0.0.9.tar.gz",
-            "https://github.com/bazelbuild/platforms/releases/download/0.0.9/platforms-0.0.9.tar.gz",
+            "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.10/platforms-0.0.10.tar.gz",
+            "https://github.com/bazelbuild/platforms/releases/download/0.0.10/platforms-0.0.10.tar.gz",
         ],
-        sha256 = "5eda539c841265031c2f82d8ae7a3a6490bd62176e0c038fc469eabf91f6149b",
+        sha256 = "218efe8ee736d26a3572663b374a253c012b716d8af0c07e842e82f238a0a7ee",
     )
 
     maybe(
         http_archive,
         name = "google_bazel_common",
-        sha256 = "6408e7dd11456b64a17fd63ed562045aae2b10eff29db9128d52c6eb85f5c140",
-        strip_prefix = "bazel-common-5a98ecc1193057db05a19c19a5853f95703749c4",
-        urls = ["https://github.com/google/bazel-common/archive/5a98ecc1193057db05a19c19a5853f95703749c4.tar.gz"],
+        sha256 = "32617f8f6ccce5d21bca9483674bd4a5d62f9d3daa6a68c309766c206214df6d",
+        strip_prefix = "bazel-common-998614b6b1554428212b97e7174297a527fc6b90",
+        urls = ["https://github.com/google/bazel-common/archive/998614b6b1554428212b97e7174297a527fc6b90.tar.gz"],
     )
 
     maybe(
         http_archive,
         name = "bazel_skylib",
-        sha256 = "cd55a062e763b9349921f0f5db8c3933288dc8ba4f76dd9416aac68acee3cb94",
+        sha256 = "41449d7c7372d2e270e8504dfab09ee974325b0b40fdd98172c7fbe257b8bcc9",
         urls = [
-            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.5.0/bazel-skylib-1.5.0.tar.gz",
-            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.5.0/bazel-skylib-1.5.0.tar.gz",
+            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.6.0/bazel-skylib-1.6.0.tar.gz",
+            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.6.0/bazel-skylib-1.6.0.tar.gz",
         ],
     )
 
     maybe(
         http_archive,
+        name = "bazel_features",
+        sha256 = "95fb3cfd11466b4cad6565e3647a76f89886d875556a4b827c021525cb2482bb",
+        strip_prefix = "bazel_features-1.10.0",
+        url = "https://github.com/bazel-contrib/bazel_features/releases/download/v1.10.0/bazel_features-v1.10.0.tar.gz",
+    )
+
+    maybe(
+        http_archive,
         name = "aspect_bazel_lib",
-        sha256 = "357dad9d212327c35d9244190ef010aad315e73ffa1bed1a29e20c372f9ca346",
-        strip_prefix = "bazel-lib-2.7.0",
-        url = "https://github.com/aspect-build/bazel-lib/releases/download/v2.7.0/bazel-lib-v2.7.0.tar.gz",
+        sha256 = "b554eb7942a5ab44c90077df6a0c76fc67c5874c9446a007e9ba68be82bd4796",
+        strip_prefix = "bazel-lib-2.7.1",
+        url = "https://github.com/aspect-build/bazel-lib/releases/download/v2.7.1/bazel-lib-v2.7.1.tar.gz",
     )
 
     HERMETIC_CC_TOOLCHAIN_VERSION = "v3.0.1"
@@ -60,8 +68,9 @@ def libeopp_dependencies():
     maybe(
         http_archive,
         name = "rules_cc",
-        urls = ["https://github.com/bazelbuild/rules_cc/releases/download/0.0.10-rc1/rules_cc-0.0.10-rc1.tar.gz"],
-        sha256 = "d75a040c32954da0d308d3f2ea2ba735490f49b3a7aa3e4b40259ca4b814f825",
+        urls = ["https://github.com/bazelbuild/rules_cc/releases/download/0.0.9/rules_cc-0.0.9.tar.gz"],
+        sha256 = "2037875b9a4456dce4a79d112a8ae885bbc4aad968e6587dca6e64f3a0900cdf",
+        strip_prefix = "rules_cc-0.0.9",
     )
 
     maybe(
@@ -92,22 +101,14 @@ def libeopp_dependencies():
 
     maybe(
         http_archive,
-        name = "bazel_features",
-        sha256 = "d7787da289a7fb497352211ad200ec9f698822a9e0757a4976fd9f713ff372b3",
-        strip_prefix = "bazel_features-1.9.1",
-        url = "https://github.com/bazel-contrib/bazel_features/releases/download/v1.9.1/bazel_features-v1.9.1.tar.gz",
-    )
-
-    maybe(
-        http_archive,
         name = "rules_proto",
-        sha256 = "71fdbed00a0709521ad212058c60d13997b922a5d01dbfd997f0d57d689e7b67",
-        strip_prefix = "rules_proto-6.0.0-rc2",
-        url = "https://github.com/bazelbuild/rules_proto/releases/download/6.0.0-rc2/rules_proto-6.0.0-rc2.tar.gz",
+        sha256 = "303e86e722a520f6f326a50b41cfc16b98fe6d1955ce46642a5b7a67c11c0f5d",
+        strip_prefix = "rules_proto-6.0.0",
+        url = "https://github.com/bazelbuild/rules_proto/releases/download/6.0.0/rules_proto-6.0.0.tar.gz",
     )
 
-    RULES_JVM_EXTERNAL_TAG = "6.0"
-    RULES_JVM_EXTERNAL_SHA = "85fd6bad58ac76cc3a27c8e051e4255ff9ccd8c92ba879670d195622e7c0a9b7"
+    RULES_JVM_EXTERNAL_TAG = "6.1"
+    RULES_JVM_EXTERNAL_SHA = "08ea921df02ffe9924123b0686dc04fd0ff875710bfadb7ad42badb931b0fd50"
 
     maybe(
         http_archive,
@@ -120,8 +121,8 @@ def libeopp_dependencies():
     maybe(
         http_archive,
         name = "rules_kotlin",
-        sha256 = "76c0fcc2c23edf736320aded1acd9dde0bae418e5731df12933d886cba86b795",
-        url = "https://github.com/bazelbuild/rules_kotlin/releases/download/v1.9.4/rules_kotlin-v1.9.4.tar.gz",
+        sha256 = "34e8c0351764b71d78f76c8746e98063979ce08dcf1a91666f3f3bc2949a533d",
+        url = "https://github.com/bazelbuild/rules_kotlin/releases/download/v1.9.5/rules_kotlin-v1.9.5.tar.gz",
     )
 
     maybe(
