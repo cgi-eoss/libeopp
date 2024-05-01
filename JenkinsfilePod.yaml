@@ -15,6 +15,7 @@ spec:
             matchLabels:
               jenkins/cgici-jenkins-jenkins-agent: "true"
           topologyKey: kubernetes.io/hostname
+  serviceAccountName: cgici-gaiascope
   securityContext:
     runAsUser: 1000
     runAsGroup: 1000
@@ -32,6 +33,11 @@ spec:
     - mountPath: /home/jenkins/.cache
       name: workspace-volume
       subPath: .cache
+    - name: kubedock-socket
+      mountPath: /var/run/kubedock
+    env:
+    - name: DOCKER_HOST
+      value: "unix:///var/run/kubedock/docker.sock"
     # Update bazelrc flags at top of Jenkinsfile if changing resources
     resources:
       limits:
@@ -40,3 +46,30 @@ spec:
       requests:
         cpu: "4"
         memory: "8Gi"
+
+  # Kubedock provides a limited Docker API backed by the local Kubernetes environment
+  # we use this for container testing (e.g. our DockerRegistryRule)
+  - name: kubedock
+    image: docker.io/joyrex2001/kubedock:0.16.0
+    imagePullPolicy: Always
+    args:
+    - server
+    - --reverse-proxy
+    - --unix-socket
+    - /var/run/kubedock/docker.sock
+    volumeMounts:
+    - name: workspace-volume
+      mountPath: /home/jenkins/agent
+    - mountPath: /home/jenkins/.cache
+      name: workspace-volume
+      subPath: .cache
+    - name: kubedock-socket
+      mountPath: /var/run/kubedock
+    resources:
+      limits:
+        cpu: 100m
+        memory: 80Mi
+
+  volumes:
+    - name: kubedock-socket
+      emptyDir: { }

@@ -19,7 +19,14 @@ package com.cgi.eoss.eopp.testing.docker;
 import com.cgi.eoss.eopp.util.Lazy;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerCmd;
+import com.github.dockerjava.api.command.InfoCmd;
+import com.github.dockerjava.api.command.InspectContainerCmd;
 import com.github.dockerjava.api.command.InspectContainerResponse;
+import com.github.dockerjava.api.command.PullImageCmd;
+import com.github.dockerjava.api.command.RemoveContainerCmd;
+import com.github.dockerjava.api.command.StartContainerCmd;
+import com.github.dockerjava.api.command.StopContainerCmd;
+import com.github.dockerjava.api.command.WaitContainerCmd;
 import com.github.dockerjava.api.model.ContainerNetwork;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.HostConfig;
@@ -46,7 +53,7 @@ import static org.awaitility.Awaitility.await;
  * <p>Alternatively, it may be configured to connect to an existing registry running on a specific host and port.</p>
  */
 public class DockerRegistryRule extends ExternalResource {
-    private static final String DEFAULT_REGISTRY_IMAGE = "registry:2";
+    private static final String DEFAULT_REGISTRY_IMAGE = "docker.io/registry:2";
 
     private final boolean startupRegistry;
     private Supplier<DockerClient> dockerClient;
@@ -95,8 +102,8 @@ public class DockerRegistryRule extends ExternalResource {
         Objects.requireNonNull(dockerClient.get());
 
         if (startupRegistry) {
-            try {
-                dockerClient.get().infoCmd().exec();
+            try (InfoCmd infoCmd = dockerClient.get().infoCmd()) {
+                infoCmd.exec();
             } catch (Exception e) {
                 Assume.assumeNoException("Docker client cannot connect to engine", e);
             }
@@ -110,7 +117,9 @@ public class DockerRegistryRule extends ExternalResource {
     }
 
     private void startRegistryContainer() throws InterruptedException {
-        dockerClient.get().pullImageCmd(DEFAULT_REGISTRY_IMAGE).start().awaitCompletion();
+        try (PullImageCmd pullImageCmd = dockerClient.get().pullImageCmd(DEFAULT_REGISTRY_IMAGE)) {
+            pullImageCmd.start().awaitCompletion();
+        }
 
         ExposedPort internalPort = ExposedPort.tcp(5000);
 
@@ -121,33 +130,37 @@ public class DockerRegistryRule extends ExternalResource {
                     .exec().getId();
         }
 
-        dockerClient.get().startContainerCmd(registryContainer).exec();
-
-        // Find the ephemeral Docker port
-        InspectContainerResponse inspectResponse = dockerClient.get().inspectContainerCmd(registryContainer).exec();
-
-        Map<String, ContainerNetwork> networks = inspectResponse.getNetworkSettings().getNetworks();
-        if (networks.size() == 1) {
-            registryHost = networks.values().iterator().next().getGateway();
-        } else if (networks.containsKey("bridge")) {
-            registryHost = networks.get("bridge").getGateway();
-        } else {
-            throw new UnsupportedOperationException("Unable to detect primary host address for Docker networking");
+        try (StartContainerCmd startContainerCmd = dockerClient.get().startContainerCmd(registryContainer)) {
+            startContainerCmd.exec();
         }
 
-        registryPort = Arrays.stream(inspectResponse.getNetworkSettings().getPorts().getBindings().get(internalPort))
-                .findFirst().map(Ports.Binding::getHostPortSpec).orElseThrow(RuntimeException::new);
+        // Find the ephemeral Docker port
+        try (InspectContainerCmd inspectContainerCmd = dockerClient.get().inspectContainerCmd(registryContainer)) {
+            InspectContainerResponse inspectResponse = inspectContainerCmd.exec();
 
-        try {
-            await().atMost(30, TimeUnit.SECONDS)
-                    .ignoreExceptions()
-                    .untilAsserted(() -> new Socket(registryHost, Integer.parseInt(registryPort)));
-        } catch (ConditionTimeoutException e) {
-            after();
-            if (e.getCause().getClass().equals(ConnectException.class)) {
-                Assume.assumeNoException(e.getCause());
+            Map<String, ContainerNetwork> networks = inspectResponse.getNetworkSettings().getNetworks();
+            if (networks.containsKey("bridge")) {
+                registryHost = networks.get("bridge").getIpAddress();
+            } else if (networks.size() == 1) {
+                registryHost = networks.values().iterator().next().getIpAddress();
             } else {
-                throw e;
+                throw new UnsupportedOperationException("Unable to detect primary host address for Docker networking");
+            }
+
+            registryPort = Arrays.stream(inspectResponse.getNetworkSettings().getPorts().getBindings().get(internalPort))
+                    .findFirst().map(Ports.Binding::getHostPortSpec).orElseThrow(RuntimeException::new);
+
+            try {
+                await().atMost(30, TimeUnit.SECONDS)
+                        .ignoreExceptions()
+                        .untilAsserted(() -> new Socket(registryHost, Integer.parseInt(registryPort)).close());
+            } catch (ConditionTimeoutException e) {
+                after();
+                if (e.getCause().getClass().equals(ConnectException.class)) {
+                    Assume.assumeNoException(e.getCause());
+                } else {
+                    throw e;
+                }
             }
         }
     }
@@ -157,9 +170,15 @@ public class DockerRegistryRule extends ExternalResource {
         if (!startupRegistry) {
             return;
         }
-        dockerClient.get().stopContainerCmd(registryContainer).exec();
-        dockerClient.get().waitContainerCmd(registryContainer).start().awaitStatusCode();
-        dockerClient.get().removeContainerCmd(registryContainer).withRemoveVolumes(true).exec();
+        try (StopContainerCmd stopContainerCmd = dockerClient.get().stopContainerCmd(registryContainer)) {
+            stopContainerCmd.exec();
+        }
+        try (WaitContainerCmd waitContainerCmd = dockerClient.get().waitContainerCmd(registryContainer)) {
+            waitContainerCmd.start().awaitStatusCode();
+        }
+        try (RemoveContainerCmd removeContainerCmd = dockerClient.get().removeContainerCmd(registryContainer)) {
+            removeContainerCmd.withRemoveVolumes(true).exec();
+        }
     }
 
     /**
