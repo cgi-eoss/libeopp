@@ -17,14 +17,18 @@
 package com.cgi.eoss.eopp.testing.docker;
 
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.InfoCmd;
+import com.github.dockerjava.api.model.Info;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.core.RemoteApiVersion;
 import com.github.dockerjava.transport.DockerHttpClient;
 import com.github.dockerjava.zerodep.ZerodepDockerHttpClient;
 import org.junit.Assume;
+import org.junit.AssumptionViolatedException;
 import org.junit.rules.ExternalResource;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -38,7 +42,7 @@ public class DockerClientRule extends ExternalResource {
     static final String DEFAULT_DOCKER_HOST = Optional.ofNullable(System.getenv("DOCKER_HOST")).orElse("unix:///var/run/docker.sock");
 
     private final String dockerHostUrl;
-    private final boolean skipIfUnusable;
+    private final boolean requireProperDocker;
     private DockerClient dockerClient;
 
     /**
@@ -54,16 +58,26 @@ public class DockerClientRule extends ExternalResource {
      * unusable.</p>
      */
     public DockerClientRule(String dockerHostUrl) {
-        this(dockerHostUrl, true);
+        this(dockerHostUrl, false);
     }
 
     /**
-     * <p>Prepare a new Docker client connection to an Engine running at the specified URL, optionally skipping tests if
-     * it is unusable.</p>
+     * <p>Prepare a new Docker client connection to an Engine running at the specified URL, skipping tests if it is
+     * unusable.</p>
+     * <p>An additional (naive) check enables skipping tests in a non-standard environment, e.g. Kubedock.</p>
      */
-    public DockerClientRule(String dockerHostUrl, boolean skipIfUnusable) {
+    public DockerClientRule(boolean requireProperDocker) {
+        this(DEFAULT_DOCKER_HOST, requireProperDocker);
+    }
+
+    /**
+     * <p>Prepare a new Docker client connection to an Engine running at the specified URL, skipping tests if it is
+     * unusable.</p>
+     * <p>An additional (naive) check enables skipping tests in a non-standard environment, e.g. Kubedock.</p>
+     */
+    public DockerClientRule(String dockerHostUrl, boolean requireProperDocker) {
         this.dockerHostUrl = dockerHostUrl;
-        this.skipIfUnusable = skipIfUnusable;
+        this.requireProperDocker = requireProperDocker;
     }
 
     @Override
@@ -81,13 +95,16 @@ public class DockerClientRule extends ExternalResource {
                     .sslConfig(dockerClientConfig.getSSLConfig())
                     .build();
             this.dockerClient = DockerClientImpl.getInstance(dockerClientConfig, dockerHttpClient);
-            dockerClient.infoCmd().exec();
-        } catch (Exception e) {
-            if (skipIfUnusable) {
-                Assume.assumeNoException("Docker client cannot connect to engine", e);
-            } else {
-                throw e;
+            try (InfoCmd infoCmd = dockerClient.infoCmd()) {
+                Info info = infoCmd.exec();
+                if (this.requireProperDocker) {
+                    Assume.assumeTrue("Docker server indicates non-standard environment", isProperDocker(info));
+                }
             }
+        } catch (AssumptionViolatedException e) {
+            throw e;
+        } catch (Exception e) {
+            Assume.assumeNoException("Docker client cannot connect to engine", e);
         }
     }
 
@@ -103,5 +120,10 @@ public class DockerClientRule extends ExternalResource {
      */
     public String getDockerHostUrl() {
         return dockerHostUrl;
+    }
+
+    private boolean isProperDocker(Info info) {
+        // If the OS is 'kubernetes' this is kubedock, and therefore 'not proper'
+        return !Objects.equals("kubernetes", info.getOperatingSystem());
     }
 }

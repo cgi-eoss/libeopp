@@ -16,6 +16,8 @@
 
 package com.cgi.eoss.eopp.testing.docker;
 
+import org.junit.AssumptionViolatedException;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -37,13 +39,26 @@ public class DockerClientRuleTest {
     }
 
     @Test
-    public void testUnskippable() {
+    public void testSkippable() {
         DockerClientRule dockerClientRule = new DockerClientRule("tcp://non-existent-host:2375", false);
         try {
             dockerClientRule.before();
             fail("Expected exception");
         } catch (Throwable throwable) {
-            assertThat(throwable).hasCauseThat().isInstanceOf(UnknownHostException.class);
+            assertThat(throwable).hasCauseThat().hasCauseThat().isInstanceOf(UnknownHostException.class);
+        }
+    }
+
+    @Test
+    @Ignore("Requires manually setting the Docker environment to a non-standard configuration")
+    public void testNonStandard() {
+        DockerClientRule dockerClientRule = new DockerClientRule(true);
+        try {
+            dockerClientRule.before();
+            fail("Expected exception");
+        } catch (Throwable throwable) {
+            assertThat(throwable).isInstanceOf(AssumptionViolatedException.class);
+            assertThat(throwable).hasMessageThat().isEqualTo("Docker server indicates non-standard environment");
         }
     }
 
