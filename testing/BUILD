@@ -25,11 +25,29 @@ maven_library(
     ],
 )
 
+maven_library(
+    name = "testcontainers-modules",
+    srcs = [
+        "src/main/java/com/cgi/eoss/eopp/testing/containers/RegistryContainer.java",
+        "src/main/java/com/cgi/eoss/eopp/testing/docker/package-info.java",
+    ],
+    artifact_name = "libeopp :: testing :: testcontainers-modules",
+    generate_sonarqube_project = False,
+    group_id = "com.cgi.eoss.eopp.testing",
+    root_packages = ["com.cgi.eoss.eopp.testing"],
+    test_suite = [":testing_tests"],
+    deps = [
+        "//third_party/java:org_springframework_spring_core_neverlink",
+        "@maven//:org_testcontainers_testcontainers",
+    ],
+)
+
 gen_java_tests(
     name = "testing_tests",
     srcs = glob(["src/test/java/**/*.java"]),
     deps = [
         ":docker-junit-rules",
+        ":testcontainers-modules",
         "@maven//:com_github_docker_java_docker_java_api",
         "@maven//:com_github_docker_java_docker_java_core",
         "@maven//:com_google_truth_truth",

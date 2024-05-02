@@ -115,6 +115,7 @@ dependencies {
     generate("org.springframework.cloud:spring-cloud-commons")
     generate("org.springframework:spring-core")
     generate("org.springframework:spring-web")
+    generate("org.testcontainers:testcontainers")
     generate("software.amazon.awssdk:s3")
 
     // grpc-java dependencies

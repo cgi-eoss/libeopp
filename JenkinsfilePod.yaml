@@ -38,6 +38,10 @@ spec:
     env:
     - name: DOCKER_HOST
       value: "unix:///var/run/kubedock/docker.sock"
+    - name: TESTCONTAINERS_RYUK_DISABLED
+      value: "true"
+    - name: TESTCONTAINERS_CHECKS_DISABLE
+      value: "true"
     # Update bazelrc flags at top of Jenkinsfile if changing resources
     resources:
       limits:
