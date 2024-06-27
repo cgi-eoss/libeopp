@@ -59,6 +59,9 @@ message JobConfiguration {
     repeated JobConfigurationInput inputs = 7;
     // Output data from the workflow.
     repeated JobConfigurationOutput outputs = 8;
+    // Additional application-specific activities to perform when associated
+    // jobs are completed, e.g. notification, or output ingestion or indexing.
+    repeated google.protobuf.Any post_processors = 9;
 }
 
 // Data or parameter input to a Workflow.
@@ -86,7 +89,10 @@ message JobConfigurationOutput {
     string identifier = 1;
     // Additional application-specific activities to perform when processing
     // this output data, e.g. notification, ingestion or indexing.
-    repeated google.protobuf.Any post_processors = 2;
+    //
+    // Deprecated: use `JobConfiguration.post_processors` with output-specific
+    // types.
+    repeated google.protobuf.Any post_processors = 2 [deprecated = true];
 }
 
 // A batch of jobs that have been launched from the same JobConfiguration.
