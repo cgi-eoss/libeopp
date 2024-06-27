@@ -3,7 +3,7 @@ load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 
 GRPC_VERSION = "1.65.1"
 GRPC_JAVA_VERSION = "1.65.1"
-GRPC_KOTLIN_VERSION = "1.4.1"
+GRPC_KOTLIN_VERSION = "1.4.2"
 REACTOR_GRPC_VERSION = "1.2.4"
 
 def grpc_repositories():
@@ -37,7 +37,7 @@ def grpc_repositories():
         name = "com_github_grpc_grpc_kotlin",
         patch_args = ["-p1"],
         patches = ["@com_cgi_eoss_eopp//third_party/grpc:com_github_grpc_grpc_kotlin.patch"],
-        sha256 = "b576019f9222f47eef42258e5d964c04d87a01532c0df1a40a8f9fa1acc301c8",
+        sha256 = "a218306e681318cbbc3b0e72ec9fe1241b2166b735427a51a3c8921c3250216f",
         strip_prefix = "grpc-kotlin-%s" % GRPC_KOTLIN_VERSION,
         url = "https://github.com/grpc/grpc-kotlin/archive/v%s.zip" % GRPC_KOTLIN_VERSION,
     )

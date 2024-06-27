@@ -32,12 +32,12 @@ repositories {
 }
 
 // BOMs
-extra["aws-sdk-v2.version"] = "2.26.20"
-extra["azure-sdk-bom.version"] = "1.2.25"
-extra["google-cloud-libraries-bom.version"] = "26.43.0"
+extra["aws-sdk-v2.version"] = "2.26.29"
+extra["azure-sdk-bom.version"] = "1.2.26"
 extra["grpc-java.version"] = "1.65.1"
 extra["kotlin.version"] = "1.9.24"
 extra["okhttp.version"] = "4.12.0"
+extra["opentelemetry.version"] = "1.40.0"
 extra["protobuf-java.version"] = "3.25.3"
 extra["spring-boot.version"] = "3.3.2"
 extra["spring-cloud.version"] = "2023.0.3"
@@ -45,11 +45,12 @@ extra["spring-cloud.version"] = "2023.0.3"
 extra["commons-compress.version"] = "1.26.2"
 extra["docker-java.version"] = "3.4.0"
 extra["failsafe.version"] = "3.3.2"
+extra["google-cloud-storage.version"] = "2.41.0"
 extra["grpc-kotlin.version"] = "1.4.1"
 extra["guava.version"] = "33.2.1-jre"
 extra["jetbrains-annotations.version"] = "24.1.0"
 extra["jimfs.version"] = "1.3.0"
-extra["json-schema-validator.version"] = "1.5.0"
+extra["json-schema-validator.version"] = "1.5.1"
 extra["jts-core.version"] = "1.19.0"
 extra["pitest.version"] = "1.16.1"
 extra["reactor-grpc.version"] = "1.2.4"
@@ -60,15 +61,16 @@ extra["com.google.auto.value:auto-value.version"] = "1.10.4"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
 
 dependencies {
-    generate(platform("org.springframework.cloud:spring-cloud-dependencies:${property("spring-cloud.version")}"))
-    generate(platform("org.springframework.boot:spring-boot-dependencies:${property("spring-boot.version")}"))
-    generate(platform("software.amazon.awssdk:bom:${property("aws-sdk-v2.version")}"))
-    generate(platform("com.azure:azure-sdk-bom:${property("azure-sdk-bom.version")}"))
-    generate(platform("com.google.cloud:libraries-bom:${property("google-cloud-libraries-bom.version")}"))
-    generate(platform("com.squareup.okhttp3:okhttp-bom:${property("okhttp.version")}"))
-    generate(platform("org.jetbrains.kotlin:kotlin-bom:${property("kotlin.version")}"))
-    generate(platform("com.google.protobuf:protobuf-bom:${property("protobuf-java.version")}"))
-    generate(platform("io.grpc:grpc-bom:${property("grpc-java.version")}"))
+    generate(enforcedPlatform("org.springframework.cloud:spring-cloud-dependencies:${property("spring-cloud.version")}"))
+    generate(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:${property("spring-boot.version")}"))
+    generate(enforcedPlatform("software.amazon.awssdk:bom:${property("aws-sdk-v2.version")}"))
+    generate(enforcedPlatform("com.azure:azure-sdk-bom:${property("azure-sdk-bom.version")}"))
+    generate(enforcedPlatform("com.squareup.okhttp3:okhttp-bom:${property("okhttp.version")}"))
+    generate(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:${property("kotlin.version")}"))
+    generate(enforcedPlatform("com.google.protobuf:protobuf-bom:${property("protobuf-java.version")}"))
+    generate(enforcedPlatform("io.grpc:grpc-bom:${property("grpc-java.version")}"))
+    generate(enforcedPlatform("io.opentelemetry:opentelemetry-bom:${property("opentelemetry.version")}"))
+    generate(enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${property("opentelemetry.version")}-alpha"))
 
     generate("ch.qos.logback:logback-classic")
     generate("com.azure:azure-storage-blob")
@@ -78,7 +80,7 @@ dependencies {
     generate("com.github.docker-java:docker-java-core:${property("docker-java.version")}")
     generate("com.github.docker-java:docker-java-transport-zerodep:${property("docker-java.version")}")
     generate("com.google.api.grpc:proto-google-common-protos")
-    generate("com.google.cloud:google-cloud-storage")
+    generate("com.google.cloud:google-cloud-storage:${property("google-cloud-storage.version")}")
     generate("com.google.guava:guava:${property("guava.version")}")
     generate("com.google.jimfs:jimfs:${property("jimfs.version")}")
     generate("com.google.protobuf:protobuf-java")

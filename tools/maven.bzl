@@ -1,6 +1,3 @@
-load(":pom_file.bzl", "DEFAULT_POM_VERSION", "pom_file")
-load("//tools/pitest:pitest.bzl", "pitest_mutation_coverage_test")
-load("//tools/maven_publish:maven_publish.bzl", "maven_publish")
 load("@bazel_sonarqube//:defs.bzl", "sq_project")
 load("@com_github_grpc_grpc_kotlin//:kt_jvm_grpc.bzl", "kt_jvm_proto_library")
 load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
@@ -10,6 +7,10 @@ load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 load("@rules_python//python:proto.bzl", "py_proto_library")
 #load("@com_github_grpc_grpc//bazel:python_rules.bzl", "py_proto_library")
+
+load("//tools/maven_publish:maven_publish.bzl", "maven_publish")
+load("//tools/pitest:pitest.bzl", "pitest_mutation_coverage_test")
+load(":pom_file.bzl", "DEFAULT_POM_VERSION", "pom_file")
 
 def maven_coordinates(name, group_id = "com.cgi.eoss.eopp", artifact_id = None):
     return "%s:%s:%s" % (group_id, (artifact_id or name), DEFAULT_POM_VERSION)
@@ -67,7 +68,7 @@ def maven_library(
         if build_kt_jvm_proto_library:
             kt_jvm_proto_library(
                 name = "%s_kt_jvm_proto" % proto.get("name"),
-                java_proto_target = "%s_java_proto" % proto.get("name"),
+                java_deps = ["%s_java_proto" % proto.get("name")],
                 deps = [":%s_proto" % proto.get("name")],
                 testonly = testonly,
                 visibility = visibility,

@@ -43,9 +43,9 @@ def libeopp_dependencies():
     maybe(
         http_archive,
         name = "aspect_bazel_lib",
-        sha256 = "714cf8ce95a198bab0a6a3adaffea99e929d2f01bf6d4a59a2e6d6af72b4818c",
-        strip_prefix = "bazel-lib-2.7.8",
-        url = "https://github.com/aspect-build/bazel-lib/releases/download/v2.7.8/bazel-lib-v2.7.8.tar.gz",
+        sha256 = "c780120ab99a4ca9daac69911eb06434b297214743ee7e0a1f1298353ef686db",
+        strip_prefix = "bazel-lib-2.7.9",
+        url = "https://github.com/aspect-build/bazel-lib/releases/download/v2.7.9/bazel-lib-v2.7.9.tar.gz",
     )
 
     HERMETIC_CC_TOOLCHAIN_VERSION = "v3.1.0"
@@ -95,9 +95,9 @@ def libeopp_dependencies():
         http_archive,
         name = "rules_java",
         urls = [
-            "https://github.com/bazelbuild/rules_java/releases/download/7.7.2/rules_java-7.7.2.tar.gz",
+            "https://github.com/bazelbuild/rules_java/releases/download/7.8.0/rules_java-7.8.0.tar.gz",
         ],
-        sha256 = "3471c79b7fd6f657da8ead0e847b38cdf4a3f16d4ffd9fecbd1ae536eaca0187",
+        sha256 = "647bb31c0d51882549def6f67ee9078df697043406ed4a5144bbdf3b17f91e33",
     )
 
     maybe(

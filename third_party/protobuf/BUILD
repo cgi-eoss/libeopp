@@ -1,5 +1,5 @@
-load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
 load("@com_github_grpc_grpc_kotlin//:kt_jvm_grpc.bzl", "kt_jvm_proto_library")
+load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
 
 # Re-exports with Maven coordinates for POM generation
 load(":protobuf_repositories.bzl", "PROTOBUF_JAVA_VERSION")
@@ -81,7 +81,7 @@ WELL_KNOWN_PROTOS = [
 [
     kt_jvm_proto_library(
         name = "%s_kt_jvm_proto" % proto,
-        java_proto_target = "%s_java_proto" % proto,
+        java_deps = ["%s_java_proto" % proto],
         tags = [
             "manual",
             "maven_coordinates=com.google.protobuf:protobuf-kotlin:" + PROTOBUF_JAVA_VERSION,
