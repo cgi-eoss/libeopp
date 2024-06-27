@@ -1,8 +1,8 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 
-GRPC_VERSION = "1.63.0"
-GRPC_JAVA_VERSION = "1.63.0"
+GRPC_VERSION = "1.65.1"
+GRPC_JAVA_VERSION = "1.65.1"
 GRPC_KOTLIN_VERSION = "1.4.1"
 REACTOR_GRPC_VERSION = "1.2.4"
 
@@ -10,14 +10,14 @@ def grpc_repositories():
     maybe(
         http_archive,
         name = "com_github_grpc_grpc",
-        sha256 = "daa1b06a19b5f7e4603e1f8980eeab43cf69b6e89bee3b2547f275fa5af7f480",
+        sha256 = "0499a344a56cbd961836a1821b4c42f37d6d5698b373c5324492b01bb0377d25",
         strip_prefix = "grpc-%s" % GRPC_VERSION,
         urls = ["https://github.com/grpc/grpc/archive/v%s.zip" % GRPC_VERSION],
     )
     maybe(
         http_archive,
         name = "io_grpc_grpc_java",
-        sha256 = "cc4853d9ff7fbd866a2175f48ff02e9615d02907eb946892954ea25ef62aeca3",
+        sha256 = "109c9f05068d8e01e4d371cb704d47515b0ececd12867dc065d774fadc328bfb",
         strip_prefix = "grpc-java-%s" % GRPC_JAVA_VERSION,
         urls = ["https://github.com/grpc/grpc-java/archive/v%s.zip" % GRPC_JAVA_VERSION],
     )
@@ -46,9 +46,9 @@ def grpc_repositories():
     maybe(
         http_archive,
         name = "io_grpc_grpc_proto",
-        sha256 = "464e97a24d7d784d9c94c25fa537ba24127af5aae3edd381007b5b98705a0518",
-        strip_prefix = "grpc-proto-08911e9d585cbda3a55eb1dcc4b99c89aebccff8",
-        urls = ["https://github.com/grpc/grpc-proto/archive/08911e9d585cbda3a55eb1dcc4b99c89aebccff8.zip"],
+        sha256 = "729ac127a003836d539ed9da72a21e094aac4c4609e0481d6fc9e28a844e11af",
+        strip_prefix = "grpc-proto-4f245d272a28a680606c0739753506880cf33b5f",
+        urls = ["https://github.com/grpc/grpc-proto/archive/4f245d272a28a680606c0739753506880cf33b5f.zip"],
     )
 
 IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS = {

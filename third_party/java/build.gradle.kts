@@ -32,28 +32,28 @@ repositories {
 }
 
 // BOMs
-extra["aws-sdk-v2.version"] = "2.25.69"
-extra["azure-sdk-bom.version"] = "1.2.24"
-extra["google-cloud-libraries-bom.version"] = "26.40.0"
-extra["grpc-java.version"] = "1.64.0"
+extra["aws-sdk-v2.version"] = "2.26.20"
+extra["azure-sdk-bom.version"] = "1.2.25"
+extra["google-cloud-libraries-bom.version"] = "26.43.0"
+extra["grpc-java.version"] = "1.65.1"
 extra["kotlin.version"] = "1.9.24"
 extra["okhttp.version"] = "4.12.0"
 extra["protobuf-java.version"] = "3.25.3"
-extra["spring-boot.version"] = "3.3.0"
-extra["spring-cloud.version"] = "2023.0.2"
+extra["spring-boot.version"] = "3.3.2"
+extra["spring-cloud.version"] = "2023.0.3"
 
 extra["commons-compress.version"] = "1.26.2"
-extra["docker-java.version"] = "3.3.6"
+extra["docker-java.version"] = "3.4.0"
 extra["failsafe.version"] = "3.3.2"
 extra["grpc-kotlin.version"] = "1.4.1"
 extra["guava.version"] = "33.2.1-jre"
 extra["jetbrains-annotations.version"] = "24.1.0"
 extra["jimfs.version"] = "1.3.0"
-extra["json-schema-validator.version"] = "1.4.0"
+extra["json-schema-validator.version"] = "1.5.0"
 extra["jts-core.version"] = "1.19.0"
 extra["pitest.version"] = "1.16.1"
 extra["reactor-grpc.version"] = "1.2.4"
-extra["truth.version"] = "1.4.2"
+extra["truth.version"] = "1.4.4"
 
 // Dependencies from grpc-java
 extra["com.google.auto.value:auto-value.version"] = "1.10.4"
