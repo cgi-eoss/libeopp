@@ -56,6 +56,7 @@ import com.google.protobuf.Message
 import com.google.protobuf.StringValue
 import com.google.protobuf.UInt32Value
 import com.google.protobuf.UInt64Value
+import java.util.Optional
 import com.google.protobuf.Any as ProtoAny
 
 /** @return `true` if this [com.google.protobuf.Any] contains a message of type `T`. */
@@ -75,36 +76,51 @@ inline fun <reified T : Message> ProtoAny.unpack(): T = unpack(T::class.java)
 inline fun <reified T : Message> T.toAny(): ProtoAny = ProtoAny.pack(this)
 
 /**
+ * @return the message of type `T` encoded in this [com.google.protobuf.Any].
+ *
+ * @throws com.google.protobuf.InvalidProtocolBufferException if this [com.google.protobuf.Any] does not contain a `T`
+ * message.
+ */
+fun <T : Message> unpack(any: ProtoAny, clazz: Class<T>): T = any.unpack(clazz)
+
+/**
+ * @return an Optional containing the message of type `T` encoded in this [com.google.protobuf.Any], or an empty
+ * Optional if this [com.google.protobuf.Any] does not contain a `T` message.
+ */
+fun <T : Message> safeUnpack(any: ProtoAny, clazz: Class<T>): Optional<T> =
+    if (any.`is`(clazz)) Optional.of(any.unpack(clazz)) else Optional.empty()
+
+/**
  * @return A proto [Any] packing the given [String] in a [StringValue].
  */
-fun AnyKt.from(value: String) = StringValue.of(value).toAny()
+fun from(value: String) = StringValue.of(value).toAny()
 
 /**
  * @return A proto [Any] packing the given [Int] in an [Int32Value].
  */
-fun AnyKt.from(value: Int) = Int32Value.of(value).toAny()
+fun from(value: Int) = Int32Value.of(value).toAny()
 
 /**
  * @return A proto [Any] packing the given [Int] in a [UInt32Value].
  */
-fun AnyKt.unsignedFrom(value: Int) = UInt32Value.of(value).toAny()
+fun unsignedFrom(value: Int) = UInt32Value.of(value).toAny()
 
 /**
  * @return A proto [Any] packing the given [Long] in an [Int64Value].
  */
-fun AnyKt.from(value: Long) = Int64Value.of(value).toAny()
+fun from(value: Long) = Int64Value.of(value).toAny()
 
 /**
  * @return A proto [Any] packing the given [Long] in a [UInt64Value].
  */
-fun AnyKt.unsignedFrom(value: Long) = UInt64Value.of(value).toAny()
+fun unsignedFrom(value: Long) = UInt64Value.of(value).toAny()
 
 /**
  * @return A proto [Any] packing the given [Boolean] in a [BoolValue].
  */
-fun AnyKt.from(value: Boolean) = BoolValue.of(value).toAny()
+fun from(value: Boolean) = BoolValue.of(value).toAny()
 
 /**
  * @return A proto [Any] packing the given [ByteArray] in a [BytesValue].
  */
-fun AnyKt.from(value: ByteArray) = BytesValue.of(ByteString.copyFrom(value)).toAny()
+fun from(value: ByteArray) = BytesValue.of(ByteString.copyFrom(value)).toAny()

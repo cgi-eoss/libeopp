@@ -1,5 +1,5 @@
-load("//tools:maven.bzl", "maven_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
+load("//tools:maven.bzl", "maven_library")
 
 maven_library(
     name = "util",
@@ -79,10 +79,13 @@ gen_java_tests(
     name = "util_tests",
     srcs = glob(["src/test/java/**/*.java"]),
     deps = [
+        ":anies",
         ":timestamps",
         ":util",
         "@maven//:com_google_protobuf_protobuf_java",
         "@maven//:com_google_protobuf_protobuf_kotlin",
+        "@maven//:com_google_truth_extensions_truth_java8_extension",
+        "@maven//:com_google_truth_extensions_truth_proto_extension",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
     ],
