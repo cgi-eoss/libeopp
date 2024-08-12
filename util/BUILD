@@ -8,6 +8,7 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/util/AbortedException.java",
         "src/main/java/com/cgi/eoss/eopp/util/Lazy.java",
         "src/main/java/com/cgi/eoss/eopp/util/package-info.java",
+        "src/main/kotlin/EqualsComparable.kt",
     ],
     analysis_srcs = glob(["src/main/java/**"]),
     analysis_targets = [
@@ -18,6 +19,7 @@ maven_library(
         ":io",
     ],
     artifact_name = "libeopp :: util",
+    build_kt_jvm_library = True,
     root_packages = ["com.cgi.eoss.eopp.util"],
     test_suite = [":util_tests"],
     deps = [
