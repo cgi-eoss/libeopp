@@ -1,6 +1,6 @@
 load("@rules_java//java:defs.bzl", "java_test")
-load("@rules_pkg//:pkg.bzl", "pkg_zip")
 load("@rules_pkg//:mappings.bzl", "pkg_filegroup", "pkg_files", "strip_prefix")
+load("@rules_pkg//:pkg.bzl", "pkg_zip")
 
 def _quote(filename, protect = "="):
     """Quote the filename, by escaping = by \\= and \\ by \\\\"""
@@ -11,7 +11,7 @@ def _java_transitive_runtime_dependencies_impl(ctx):
 
     for target in ctx.attr.targets:
         transitive_dependency_depsets.append(target[JavaInfo].compilation_info.runtime_classpath)
-        transitive_dependency_depsets.append(target[JavaInfo].transitive_runtime_deps)
+        transitive_dependency_depsets.append(target[JavaInfo].transitive_runtime_jars)
 
     return [
         DefaultInfo(files = depset(transitive = transitive_dependency_depsets)),
