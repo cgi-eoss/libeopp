@@ -32,27 +32,27 @@ repositories {
 }
 
 // BOMs
-extra["aws-sdk-v2.version"] = "2.26.29"
-extra["azure-sdk-bom.version"] = "1.2.26"
-extra["grpc-java.version"] = "1.65.1"
+extra["aws-sdk-v2.version"] = "2.28.5"
+extra["grpc-java.version"] = "1.66.0"
 extra["kotlin.version"] = "1.9.24"
 extra["okhttp.version"] = "4.12.0"
-extra["opentelemetry.version"] = "1.40.0"
+extra["opentelemetry.version"] = "1.42.1"
 extra["protobuf-java.version"] = "3.25.3"
-extra["spring-boot.version"] = "3.3.2"
+extra["spring-boot.version"] = "3.3.4"
 extra["spring-cloud.version"] = "2023.0.3"
 
-extra["commons-compress.version"] = "1.26.2"
+extra["azure-storage-blob.version"] = "12.28.0"
+extra["commons-compress.version"] = "1.27.1"
 extra["docker-java.version"] = "3.4.0"
 extra["failsafe.version"] = "3.3.2"
-extra["google-cloud-storage.version"] = "2.41.0"
+extra["google-cloud-storage.version"] = "2.43.0"
 extra["grpc-kotlin.version"] = "1.4.1"
 extra["guava.version"] = "33.2.1-jre"
 extra["jetbrains-annotations.version"] = "24.1.0"
 extra["jimfs.version"] = "1.3.0"
-extra["json-schema-validator.version"] = "1.5.1"
-extra["jts-core.version"] = "1.19.0"
-extra["pitest.version"] = "1.16.1"
+extra["json-schema-validator.version"] = "1.5.2"
+extra["jts-core.version"] = "1.20.0"
+extra["pitest.version"] = "1.17.0"
 extra["reactor-grpc.version"] = "1.2.4"
 extra["truth.version"] = "1.4.4"
 
@@ -64,7 +64,6 @@ dependencies {
     generate(enforcedPlatform("org.springframework.cloud:spring-cloud-dependencies:${property("spring-cloud.version")}"))
     generate(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:${property("spring-boot.version")}"))
     generate(enforcedPlatform("software.amazon.awssdk:bom:${property("aws-sdk-v2.version")}"))
-    generate(enforcedPlatform("com.azure:azure-sdk-bom:${property("azure-sdk-bom.version")}"))
     generate(enforcedPlatform("com.squareup.okhttp3:okhttp-bom:${property("okhttp.version")}"))
     generate(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:${property("kotlin.version")}"))
     generate(enforcedPlatform("com.google.protobuf:protobuf-bom:${property("protobuf-java.version")}"))
@@ -73,7 +72,7 @@ dependencies {
     generate(enforcedPlatform("io.opentelemetry:opentelemetry-bom-alpha:${property("opentelemetry.version")}-alpha"))
 
     generate("ch.qos.logback:logback-classic")
-    generate("com.azure:azure-storage-blob")
+    generate("com.azure:azure-storage-blob:${property("azure-storage-blob.version")}")
     generate("com.fasterxml.jackson.core:jackson-databind")
     generate("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     generate("com.fasterxml.jackson.module:jackson-module-kotlin")
