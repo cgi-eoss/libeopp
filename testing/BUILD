@@ -1,5 +1,5 @@
-load("//tools:maven.bzl", "maven_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
+load("//tools:maven.bzl", "maven_library")
 
 maven_library(
     name = "docker-junit-rules",
@@ -50,6 +50,7 @@ gen_java_tests(
         ":testcontainers-modules",
         "@maven//:com_github_docker_java_docker_java_api",
         "@maven//:com_github_docker_java_docker_java_core",
+        "@maven//:com_github_docker_java_docker_java_transport_zerodep",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
         "@maven//:org_apache_commons_commons_compress",

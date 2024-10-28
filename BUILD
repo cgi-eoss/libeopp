@@ -103,3 +103,4 @@ sonarqube(
     scm_info = [":git"],
     tags = ["manual"],
 )
+
