@@ -23,7 +23,7 @@ bazelDependencies {
     configuration = generate
     outputFile = project.layout.projectDirectory.file("java_repositories.bzl")
     rulesJvmExternal {
-        version = "6.0"
+        version = "6.5"
     }
 }
 
@@ -32,32 +32,32 @@ repositories {
 }
 
 // BOMs
-extra["aws-sdk-v2.version"] = "2.29.1"
-extra["grpc-java.version"] = "1.67.1"
+extra["aws-sdk-v2.version"] = "2.29.20"
+extra["grpc-java.version"] = "1.68.1"
 extra["kotlin.version"] = "1.9.24"
 extra["okhttp.version"] = "4.12.0"
-extra["opentelemetry.version"] = "1.43.0"
-extra["protobuf-java.version"] = "3.25.3"
-extra["spring-boot.version"] = "3.3.5"
+extra["opentelemetry.version"] = "1.44.1"
+extra["protobuf-java.version"] = "4.28.3"
+extra["spring-boot.version"] = "3.4.0"
 extra["spring-cloud.version"] = "2023.0.3"
 
 extra["azure-storage-blob.version"] = "12.28.1"
 extra["commons-compress.version"] = "1.27.1"
 extra["docker-java.version"] = "3.4.0"
 extra["failsafe.version"] = "3.3.2"
-extra["google-cloud-storage.version"] = "2.44.1"
+extra["google-cloud-storage.version"] = "2.45.0"
 extra["grpc-kotlin.version"] = "1.4.1"
 extra["guava.version"] = "33.2.1-jre"
-extra["jetbrains-annotations.version"] = "24.1.0"
+extra["jetbrains-annotations.version"] = "26.0.1"
 extra["jimfs.version"] = "1.3.0"
-extra["json-schema-validator.version"] = "1.5.2"
+extra["json-schema-validator.version"] = "1.5.3"
 extra["jts-core.version"] = "1.20.0"
-extra["pitest.version"] = "1.17.0"
+extra["pitest.version"] = "1.17.1"
 extra["reactor-grpc.version"] = "1.2.4"
 extra["truth.version"] = "1.4.4"
 
-// Dependencies from grpc-java
-extra["com.google.auto.value:auto-value.version"] = "1.10.4"
+// Dependencies from IO_GRPC_GRPC_JAVA_ARTIFACTS in https://github.com/grpc/grpc-java/blob/v1.68.1/repositories.bzl
+extra["com.google.auto.value:auto-value.version"] = "1.11.0"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
 
 dependencies {

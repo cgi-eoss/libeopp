@@ -16,6 +16,7 @@
 
 package com.cgi.eoss.eopp.geojson;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,7 +32,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toUnmodifiableList;
 
 /**
  * <p>A collection of zero or more {@link Geometry} objects.</p>
@@ -46,7 +47,7 @@ public class GeometryCollection extends Geometry<Object, org.locationtech.jts.ge
     @JsonCreator
     public GeometryCollection(
             @JsonProperty("bbox") List<BigDecimal> bbox,
-            @JsonProperty("foreignMembers") Map<String, Object> foreignMembers,
+            @JsonAnySetter @JsonProperty("foreignMembers") Map<String, Object> foreignMembers,
             @JsonProperty("geometries") List<Geometry<?, ? extends org.locationtech.jts.geom.Geometry>> geometries) {
         super(GeoJSONType.GeometryCollection, bbox, foreignMembers);
 
@@ -70,12 +71,12 @@ public class GeometryCollection extends Geometry<Object, org.locationtech.jts.ge
     @JsonIgnore
     @Override
     public List<Object> getCoordinates() {
-        return geometries.stream().map(Geometry::getCoordinates).collect(toList());
+        return geometries.stream().map(Geometry::getCoordinates).collect(toUnmodifiableList());
     }
 
     @Override
     public List<Position> computeFlattenedCoordinates() {
-        return flattenCoordinates(geometries).collect(toList());
+        return flattenCoordinates(geometries).toList();
     }
 
     @Override
@@ -103,9 +104,9 @@ public class GeometryCollection extends Geometry<Object, org.locationtech.jts.ge
     @Override
     public String toString() {
         return "GeometryCollection{" +
-                "geometries=" + geometries +
-                toStringProperties() +
-                '}';
+               "geometries=" + geometries +
+               toStringProperties() +
+               '}';
     }
 
     public Builder toBuilder() {

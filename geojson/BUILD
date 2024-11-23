@@ -1,6 +1,6 @@
-load("//tools:maven.bzl", "maven_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@rules_java//java:defs.bzl", "java_library")
+load("//tools:maven.bzl", "maven_library")
 
 maven_library(
     name = "geojson",

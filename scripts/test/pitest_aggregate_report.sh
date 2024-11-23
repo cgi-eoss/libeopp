@@ -4,6 +4,7 @@ set -eu
 
 loc=$(dirname "$(readlink -f "$0")")
 workspace=$(readlink -f "${loc}/../..")
+cd "$workspace"
 
 classes_path=$(readlink -m "${workspace}/target/classes")
 rm -rf "$classes_path" && mkdir -p "$classes_path"
@@ -20,7 +21,7 @@ bazel test "${pitest_targets[@]}"
 printf "\nLocating test dependencies to provide classes for pitest aggregation\n\n"
 pitest_outputs=()
 dep_targets=()
-for t in ${pitest_targets[*]}; do
+for t in "${pitest_targets[@]}"; do
   x=${t:2}
   test_pkg=${x%\:*}
   test_name=${x#*:}

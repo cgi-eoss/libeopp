@@ -90,8 +90,8 @@ public class LinearRing implements JtsGeometry<org.locationtech.jts.geom.LinearR
     @Override
     public String toString() {
         return "LinearRing{" +
-                "coordinates=" + coordinates +
-                '}';
+               "coordinates=" + coordinates +
+               '}';
     }
 
     public LineString toLineString() {

@@ -107,21 +107,21 @@ public abstract class GeoJSON {
         if (o == null || getClass() != o.getClass()) return false;
         GeoJSON geoJSON = (GeoJSON) o;
         return type == geoJSON.type &&
-                (bbox == null ? geoJSON.bbox == null : bbox.size() == geoJSON.bbox.size() && IntStream.range(0, bbox.size()).allMatch(i -> bbox.get(i).compareTo(geoJSON.bbox.get(i)) == 0)) &&
-                Objects.equals(foreignMembers, geoJSON.foreignMembers);
+               (bbox == null ? geoJSON.bbox == null : bbox.size() == geoJSON.bbox.size() && IntStream.range(0, bbox.size()).allMatch(i -> bbox.get(i).compareTo(geoJSON.bbox.get(i)) == 0)) &&
+               Objects.equals(foreignMembers, geoJSON.foreignMembers);
     }
 
     @Override
     public String toString() {
         return "GeoJSON{" +
-                "type=" + type +
-                toStringProperties() +
-                '}';
+               "type=" + type +
+               toStringProperties() +
+               '}';
     }
 
     protected String toStringProperties() {
         return ", bbox=" + bbox +
-                ", foreignMembers=" + foreignMembers;
+               ", foreignMembers=" + foreignMembers;
     }
 
     public interface Builder<T extends GeoJSON, B extends Builder<T, B>> {

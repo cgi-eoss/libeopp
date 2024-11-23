@@ -75,7 +75,7 @@ public class EoppPathResourceTest {
         EoppResource resource = new EoppPathResource(testfile);
         assertThat(resource.getFileMeta()).comparingExpectedFieldsOnly().isEqualTo(manualFileMeta);
         assertThat(resource.getFileMeta().getChecksum()).isNotEmpty();
-        assertThat(resource.getFileMeta().getLastModified()).isNotNull();
+        assertThat(resource.getFileMeta().hasLastModified()).isTrue();
     }
 
 }

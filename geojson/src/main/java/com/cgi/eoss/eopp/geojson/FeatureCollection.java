@@ -16,6 +16,7 @@
 
 package com.cgi.eoss.eopp.geojson;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -42,7 +43,7 @@ public class FeatureCollection extends GeoJSON {
     @JsonCreator
     public FeatureCollection(
             @JsonProperty("bbox") List<BigDecimal> bbox,
-            @JsonProperty("foreignMembers") Map<String, Object> foreignMembers,
+            @JsonAnySetter @JsonProperty("foreignMembers") Map<String, Object> foreignMembers,
             @JsonProperty("features") List<Feature> features) {
         super(GeoJSONType.FeatureCollection, bbox, foreignMembers);
 
@@ -76,9 +77,9 @@ public class FeatureCollection extends GeoJSON {
     @Override
     public String toString() {
         return "FeatureCollection{" +
-                "features=" + features +
-                toStringProperties() +
-                '}';
+               "features=" + features +
+               toStringProperties() +
+               '}';
     }
 
     public Builder toBuilder() {

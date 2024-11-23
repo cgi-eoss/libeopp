@@ -16,6 +16,7 @@
 
 package com.cgi.eoss.eopp.geojson;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -30,8 +31,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * <p>A Geometry construct comprising one or more {@link LinearRing} objects.</p>
  *
@@ -45,7 +44,7 @@ public class Polygon extends Geometry<List<LinearRing>, org.locationtech.jts.geo
     @JsonCreator
     public Polygon(
             @JsonProperty("bbox") List<BigDecimal> bbox,
-            @JsonProperty("foreignMembers") Map<String, Object> foreignMembers,
+            @JsonAnySetter @JsonProperty("foreignMembers") Map<String, Object> foreignMembers,
             @JsonProperty("coordinates") List<LinearRing> coordinates) {
         super(GeoJSONType.Polygon, bbox, foreignMembers);
 
@@ -78,7 +77,7 @@ public class Polygon extends Geometry<List<LinearRing>, org.locationtech.jts.geo
 
     @Override
     public List<Position> computeFlattenedCoordinates() {
-        return flattenCoordinates(coordinates).collect(toList());
+        return flattenCoordinates(coordinates).toList();
     }
 
     @Override
@@ -106,9 +105,9 @@ public class Polygon extends Geometry<List<LinearRing>, org.locationtech.jts.geo
     @Override
     public String toString() {
         return "Polygon{" +
-                "coordinates=" + coordinates +
-                toStringProperties() +
-                '}';
+               "coordinates=" + coordinates +
+               toStringProperties() +
+               '}';
     }
 
     public Builder toBuilder() {

@@ -16,6 +16,7 @@
 
 package com.cgi.eoss.eopp.geojson;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -50,7 +51,7 @@ public class Feature extends GeoJSON {
     @JsonCreator
     public Feature(
             @JsonProperty("bbox") List<BigDecimal> bbox,
-            @JsonProperty("foreignMembers") Map<String, Object> foreignMembers,
+            @JsonAnySetter @JsonProperty("foreignMembers") Map<String, Object> foreignMembers,
             @JsonProperty("id") Object id,
             @JsonProperty("geometry") Geometry<?, ? extends org.locationtech.jts.geom.Geometry> geometry,
             @JsonProperty("properties") Map<String, Object> properties) {
@@ -115,18 +116,18 @@ public class Feature extends GeoJSON {
         if (!super.equals(o)) return false;
         Feature feature = (Feature) o;
         return Objects.equals(id, feature.id) &&
-                Objects.equals(geometry, feature.geometry) &&
-                Objects.equals(properties, feature.properties);
+               Objects.equals(geometry, feature.geometry) &&
+               Objects.equals(properties, feature.properties);
     }
 
     @Override
     public String toString() {
         return "Feature{" +
-                "id=" + id +
-                ", properties=" + properties +
-                ", geometry=" + geometry +
-                toStringProperties() +
-                '}';
+               "id=" + id +
+               ", properties=" + properties +
+               ", geometry=" + geometry +
+               toStringProperties() +
+               '}';
     }
 
     public Builder toBuilder() {

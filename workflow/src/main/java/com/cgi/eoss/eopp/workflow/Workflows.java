@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
-import com.google.protobuf.GeneratedMessageV3;
+import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.util.JsonFormat;
 
 import java.io.IOException;
@@ -96,7 +96,7 @@ public final class Workflows {
         return builder.build();
     }
 
-    private static <T extends GeneratedMessageV3.Builder<T>> void readYamlToProtobuf(Reader yamlReader, List<YamlTransformer> yamlTransformers, T builder) throws IOException {
+    private static <T extends GeneratedMessage.Builder<T>> void readYamlToProtobuf(Reader yamlReader, List<YamlTransformer> yamlTransformers, T builder) throws IOException {
         // JSON -> Protobuf is easily achieved by the provided JsonFormat, so convert the YAML into JSON and use that.
         ObjectNode yamlObject;
         try (YAMLParser yamlParser = new YAMLMapper().getFactory().createParser(yamlReader)) {
@@ -108,16 +108,15 @@ public final class Workflows {
         yamlTransformers.forEach(it -> it.transform(yamlObject));
 
         // Link the Writer (for Jackson to serialise JSON) and the Reader (for JsonFormat.parser() to deserialise)
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        try (PipedWriter pipedWriter = new PipedWriter(); PipedReader protobufReader = new PipedReader(pipedWriter)) {
+        try (ExecutorService executorService = Executors.newSingleThreadExecutor();
+             PipedWriter pipedWriter = new PipedWriter();
+             PipedReader protobufReader = new PipedReader(pipedWriter)) {
             // Do the write in a new thread to avoid blocking on the pipe
             executorService.submit((Callable<Void>) () -> {
                 new JsonMapper().getFactory().createGenerator(pipedWriter).writeTree(yamlObject);
                 return null;
             });
             JsonFormat.parser().merge(protobufReader, builder);
-        } finally {
-            executorService.shutdownNow();
         }
     }
 

@@ -61,7 +61,7 @@ public class DiscoveryClientNameResolver extends NameResolver {
         List<EquivalentAddressGroup> servers = discoveryClient.getInstances(serviceId).stream()
                 .map(serviceInstance -> new InetSocketAddress(serviceInstance.getHost(), getGrpcPort(serviceInstance)))
                 .map(EquivalentAddressGroup::new) // TODO
-                .collect(toList());
+                .toList();
         // TODO Extract service config attributes?
         this.listener.onAddresses(servers, Attributes.EMPTY);
     }

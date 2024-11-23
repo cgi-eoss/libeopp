@@ -16,6 +16,7 @@
 
 package com.cgi.eoss.eopp.geojson;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,8 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * <p>A Geometry construct with plain coordinates, i.e. a {@link Position}.</p>
@@ -56,7 +55,7 @@ public class Point extends Geometry<Position, org.locationtech.jts.geom.Point> {
     @JsonCreator
     public Point(
             @JsonProperty("bbox") List<BigDecimal> bbox,
-            @JsonProperty("foreignMembers") Map<String, Object> foreignMembers,
+            @JsonAnySetter @JsonProperty("foreignMembers") Map<String, Object> foreignMembers,
             @JsonProperty("coordinates") Position coordinates) {
         super(GeoJSONType.Point, bbox, foreignMembers);
 
@@ -78,7 +77,7 @@ public class Point extends Geometry<Position, org.locationtech.jts.geom.Point> {
 
     @Override
     public List<Position> computeFlattenedCoordinates() {
-        return flattenCoordinates(coordinates).collect(toList());
+        return flattenCoordinates(coordinates).toList();
     }
 
     @Override
@@ -103,9 +102,9 @@ public class Point extends Geometry<Position, org.locationtech.jts.geom.Point> {
     @Override
     public String toString() {
         return "Point{" +
-                "coordinates=" + coordinates +
-                toStringProperties() +
-                '}';
+               "coordinates=" + coordinates +
+               toStringProperties() +
+               '}';
     }
 
     public Builder toBuilder() {

@@ -95,8 +95,8 @@ public final class Position {
     @JsonIgnore
     public int getMaxPrecision() {
         return IntStream.of(longitude.scale(),
-                latitude.scale(),
-                altitude == null ? 0 : altitude.scale())
+                        latitude.scale(),
+                        altitude == null ? 0 : altitude.scale())
                 .max()
                 .orElseThrow(() -> new IllegalStateException("Cannot determine maximum precision"));
     }
@@ -144,10 +144,10 @@ public final class Position {
     @Override
     public String toString() {
         return "Position{" +
-                "longitude=" + longitude +
-                ", latitude=" + latitude +
-                ", altitude=" + altitude +
-                '}';
+               "longitude=" + longitude +
+               ", latitude=" + latitude +
+               ", altitude=" + altitude +
+               '}';
     }
 
     public Coordinate toJts() {

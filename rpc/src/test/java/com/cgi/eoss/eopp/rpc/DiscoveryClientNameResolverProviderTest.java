@@ -65,7 +65,7 @@ public class DiscoveryClientNameResolverProviderTest {
         SimpleDiscoveryProperties simpleDiscoveryProperties = new SimpleDiscoveryProperties();
         simpleDiscoveryProperties.setInstances(Map.of("helloService", server.getListenSockets().stream()
                 .map(listenSocket -> new DefaultServiceInstance(null, "helloService", ((InetSocketAddress) listenSocket).getHostString(), ((InetSocketAddress) listenSocket).getPort(), false))
-                .collect(toList())));
+                .toList()));
         DiscoveryClient discoveryClient = new SimpleDiscoveryClient(simpleDiscoveryProperties);
 
         DiscoveryClientNameResolverProvider discoveryClientNameResolverProvider = new DiscoveryClientNameResolverProvider(discoveryClient);

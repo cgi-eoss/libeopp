@@ -1,9 +1,9 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 
-PROTOBUF_VERSION = "25.3"
-PROTOBUF_JAVA_VERSION = "3.25.3"
-PROTOBUF_SHA256 = "5156b22536feaa88cf95503153a6b2cd67cc80f20f1218f154b84a12c288a220"
+PROTOBUF_VERSION = "28.3"
+PROTOBUF_JAVA_VERSION = "4.28.3"
+PROTOBUF_SHA256 = "5b2ff0f72e85dc1350b7bb1b4ea94d7e92e297f7a58b630e46fa6b430b5b253b"
 
 def protobuf_repositories():
     maybe(

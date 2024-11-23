@@ -44,7 +44,7 @@ public class DefaultResolverFacade implements ResolverFacade {
     public EoppResource resolveUri(URI uri) {
         List<Resolver> availableResolvers = getAvailableResolvers(uri)
                 .sorted(Comparator.comparingInt(o -> o.getPriority(uri)))
-                .collect(toList());
+                .toList();
 
         for (Resolver resolver : availableResolvers) {
             try {

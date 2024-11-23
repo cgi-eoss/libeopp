@@ -16,6 +16,7 @@
 
 package com.cgi.eoss.eopp.geojson;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -31,8 +32,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * <p>A Geometry construct comprising multiple {@link Position} objects.</p>
  *
@@ -46,7 +45,7 @@ public class MultiPoint extends Geometry<List<Position>, org.locationtech.jts.ge
     @JsonCreator
     public MultiPoint(
             @JsonProperty("bbox") List<BigDecimal> bbox,
-            @JsonProperty("foreignMembers") Map<String, Object> foreignMembers,
+            @JsonAnySetter @JsonProperty("foreignMembers") Map<String, Object> foreignMembers,
             @JsonProperty("coordinates") List<Position> coordinates) {
         super(GeoJSONType.MultiPoint, bbox, foreignMembers);
 
@@ -69,7 +68,7 @@ public class MultiPoint extends Geometry<List<Position>, org.locationtech.jts.ge
 
     @Override
     public List<Position> computeFlattenedCoordinates() {
-        return flattenCoordinates(coordinates).collect(toList());
+        return flattenCoordinates(coordinates).toList();
     }
 
     @Override
@@ -96,9 +95,9 @@ public class MultiPoint extends Geometry<List<Position>, org.locationtech.jts.ge
     @Override
     public String toString() {
         return "MultiPoint{" +
-                "coordinates=" + coordinates +
-                toStringProperties() +
-                '}';
+               "coordinates=" + coordinates +
+               toStringProperties() +
+               '}';
     }
 
     public Builder toBuilder() {

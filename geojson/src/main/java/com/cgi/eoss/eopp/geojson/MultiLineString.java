@@ -16,6 +16,7 @@
 
 package com.cgi.eoss.eopp.geojson;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -30,8 +31,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * <p>A Geometry construct comprising multiple {@link LineString} coordinate arrays.</p>
  *
@@ -45,11 +44,11 @@ public class MultiLineString extends Geometry<List<List<Position>>, org.location
     @JsonCreator
     public MultiLineString(
             @JsonProperty("bbox") List<BigDecimal> bbox,
-            @JsonProperty("foreignMembers") Map<String, Object> foreignMembers,
+            @JsonAnySetter @JsonProperty("foreignMembers") Map<String, Object> foreignMembers,
             @JsonProperty("coordinates") List<List<Position>> coordinates) {
         super(GeoJSONType.MultiLineString, bbox, foreignMembers);
 
-        this.coordinates = Optional.ofNullable(coordinates).map(it -> Collections.unmodifiableList(it.stream().map(Collections::unmodifiableList).collect(toList())))
+        this.coordinates = Optional.ofNullable(coordinates).map(it -> it.stream().map(Collections::unmodifiableList).toList())
                 .orElseThrow(() -> new IllegalArgumentException("MultiLineString is missing required 'coordinates' property"));
     }
 
@@ -66,7 +65,7 @@ public class MultiLineString extends Geometry<List<List<Position>>, org.location
     }
 
     public List<LineString> toLineStrings() {
-        return coordinates.stream().map(it -> new LineString(null, null, it)).collect(toList());
+        return coordinates.stream().map(it -> new LineString(null, null, it)).toList();
     }
 
     @Override
@@ -76,7 +75,7 @@ public class MultiLineString extends Geometry<List<List<Position>>, org.location
 
     @Override
     public List<Position> computeFlattenedCoordinates() {
-        return flattenCoordinates(coordinates).collect(toList());
+        return flattenCoordinates(coordinates).toList();
     }
 
     @Override
@@ -103,9 +102,9 @@ public class MultiLineString extends Geometry<List<List<Position>>, org.location
     @Override
     public String toString() {
         return "MultiLineString{" +
-                "coordinates=" + coordinates +
-                toStringProperties() +
-                '}';
+               "coordinates=" + coordinates +
+               toStringProperties() +
+               '}';
     }
 
     public Builder toBuilder() {

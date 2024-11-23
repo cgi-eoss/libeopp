@@ -1,8 +1,8 @@
-load("//tools:maven.bzl", "maven_library")
+load("@com_google_protobuf//bazel:java_proto_library.bzl", "java_proto_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
 load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
-load("@rules_java//java:defs.bzl", "java_proto_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
+load("//tools:maven.bzl", "maven_library")
 
 maven_library(
     name = "rpc",
