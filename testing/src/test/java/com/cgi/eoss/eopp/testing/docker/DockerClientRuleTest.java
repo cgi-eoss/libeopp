@@ -45,7 +45,7 @@ public class DockerClientRuleTest {
             dockerClientRule.before();
             fail("Expected exception");
         } catch (Throwable throwable) {
-            assertThat(throwable).hasCauseThat().hasCauseThat().isInstanceOf(UnknownHostException.class);
+            assertThat(throwable).hasMessageThat().startsWith("Docker client cannot connect to engine");
         }
     }
 

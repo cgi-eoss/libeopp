@@ -32,14 +32,14 @@ repositories {
 }
 
 // BOMs
-extra["aws-sdk-v2.version"] = "2.29.20"
-extra["grpc-java.version"] = "1.68.1"
+extra["aws-sdk-v2.version"] = "2.29.27"
+extra["grpc-java.version"] = "1.68.2"
 extra["kotlin.version"] = "1.9.24"
 extra["okhttp.version"] = "4.12.0"
 extra["opentelemetry.version"] = "1.44.1"
-extra["protobuf-java.version"] = "4.28.3"
+extra["protobuf-java.version"] = "4.29.0"
 extra["spring-boot.version"] = "3.4.0"
-extra["spring-cloud.version"] = "2023.0.3"
+extra["spring-cloud.version"] = "2024.0.0"
 
 extra["azure-storage-blob.version"] = "12.28.1"
 extra["commons-compress.version"] = "1.27.1"
@@ -50,9 +50,9 @@ extra["grpc-kotlin.version"] = "1.4.1"
 extra["guava.version"] = "33.2.1-jre"
 extra["jetbrains-annotations.version"] = "26.0.1"
 extra["jimfs.version"] = "1.3.0"
-extra["json-schema-validator.version"] = "1.5.3"
+extra["json-schema-validator.version"] = "1.5.4"
 extra["jts-core.version"] = "1.20.0"
-extra["pitest.version"] = "1.17.1"
+extra["pitest.version"] = "1.17.2"
 extra["reactor-grpc.version"] = "1.2.4"
 extra["truth.version"] = "1.4.4"
 

@@ -45,17 +45,13 @@ load("@rules_java//java:rules_java_deps.bzl", "rules_java_dependencies")
 
 rules_java_dependencies()
 
+load("@com_google_protobuf//bazel/private:proto_bazel_features.bzl", "proto_bazel_features")  # buildifier: disable=bzl-visibility
+
+proto_bazel_features(name = "proto_bazel_features")
+
 load("@rules_java//java:repositories.bzl", "rules_java_toolchains")
 
 rules_java_toolchains()
-
-load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies")
-
-rules_proto_dependencies()
-
-load("@rules_proto//proto:toolchains.bzl", "rules_proto_toolchains")
-
-rules_proto_toolchains()
 
 load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
 
