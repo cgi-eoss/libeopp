@@ -1,5 +1,6 @@
-load("//tools:maven.bzl", "maven_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
+load("@rules_java//java:defs.bzl", "java_library")
+load("//tools:maven.bzl", "maven_library")
 
 maven_library(
     name = "resource",
@@ -10,6 +11,7 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/resource/ResourceMetadataWrapper.java",
         "src/main/java/com/cgi/eoss/eopp/resource/WritableEoppResource.java",
         "src/main/java/com/cgi/eoss/eopp/resource/ZipCombiningResource.java",
+        "src/main/java/com/cgi/eoss/eopp/resource/ZipResourceEntry.java",
         "src/main/java/com/cgi/eoss/eopp/resource/package-info.java",
     ],
     analysis_srcs = glob(["src/main/java/**"]),
@@ -29,6 +31,8 @@ maven_library(
         "//util:io",
         "//util:timestamps",
         "@maven//:com_google_guava_guava",
+        "@maven//:org_apache_commons_commons_compress",
+        "@maven//:org_slf4j_slf4j_api",
         "@maven//:org_springframework_spring_core",
     ],
 )
@@ -169,6 +173,7 @@ gen_java_tests(
         "@maven//:com_squareup_okio_okio_jvm",
         "@maven//:junit_junit",
         "@maven//:org_slf4j_slf4j_api",
+        "@maven//:org_springframework_spring_core",
         "@maven//:software_amazon_awssdk_auth",
         "@maven//:software_amazon_awssdk_regions",
         "@maven//:software_amazon_awssdk_s3",

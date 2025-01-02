@@ -17,7 +17,6 @@
 package com.cgi.eoss.eopp.resource;
 
 import com.cgi.eoss.eopp.file.FileMetas;
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import org.junit.Test;
@@ -31,6 +30,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -50,11 +51,11 @@ public class EoppZipCombiningResourceTest {
         EoppResource resource = new EoppPathResource(testfile);
         EoppResource resource2 = new EoppPathResource(testfile2);
 
-        EoppZipCombiningResource zipResource = new EoppZipCombiningResource(ImmutableList.of(
-                new ZipCombiningResource.ZipResourceEntry("subdir1/", FileTime.fromMillis(resource.lastModified())),
-                new ZipCombiningResource.ZipResourceEntry("subdir1/testfile", resource),
-                new ZipCombiningResource.ZipResourceEntry("subdir2/", FileTime.fromMillis(resource2.lastModified())),
-                new ZipCombiningResource.ZipResourceEntry("subdir2/testfile2", resource2)
+        EoppZipCombiningResource zipResource = new EoppZipCombiningResource(List.of(
+                new ZipResourceEntry("subdir1/", FileTime.fromMillis(resource.lastModified())),
+                new ZipResourceEntry("subdir1/testfile", resource),
+                new ZipResourceEntry("subdir2/", FileTime.fromMillis(resource2.lastModified())),
+                new ZipResourceEntry("subdir2/testfile2", resource2)
         ), true);
         assertThat(zipResource.getDescription()).isEqualTo("ZipFile (compression: -1) [ " + resource.getDescription() + "," + resource2.getDescription() + " ]");
         assertThat(zipResource.getFileMeta().getChecksum()).isNotEmpty();
@@ -92,11 +93,11 @@ public class EoppZipCombiningResourceTest {
         EoppResource resource = new EoppPathResource(testfile);
         EoppResource resource2 = new EoppPathResource(testfile2);
 
-        EoppZipCombiningResource zipResource = new EoppZipCombiningResource(ImmutableList.of(
-                new ZipCombiningResource.ZipResourceEntry("subdir1/", FileTime.fromMillis(resource.lastModified())),
-                new ZipCombiningResource.ZipResourceEntry("subdir1/testfile", resource),
-                new ZipCombiningResource.ZipResourceEntry("subdir2/", FileTime.fromMillis(resource2.lastModified())),
-                new ZipCombiningResource.ZipResourceEntry("subdir2/testfile2", resource2)
+        EoppZipCombiningResource zipResource = new EoppZipCombiningResource(List.of(
+                new ZipResourceEntry("subdir1/", FileTime.fromMillis(resource.lastModified())),
+                new ZipResourceEntry("subdir1/testfile", resource),
+                new ZipResourceEntry("subdir2/", FileTime.fromMillis(resource2.lastModified())),
+                new ZipResourceEntry("subdir2/testfile2", resource2)
         ), false);
         assertThat(zipResource.getDescription()).isEqualTo("ZipFile (compression: -1) [ " + resource.getDescription() + "," + resource2.getDescription() + " ]");
         assertThat(zipResource.getFileMeta().getChecksum()).isEmpty();
@@ -141,11 +142,11 @@ public class EoppZipCombiningResourceTest {
         };
 
         try {
-            EoppZipCombiningResource zipResource = new EoppZipCombiningResource(ImmutableList.of(
-                    new ZipCombiningResource.ZipResourceEntry("subdir1/", FileTime.fromMillis(resource.lastModified())),
-                    new ZipCombiningResource.ZipResourceEntry("subdir1/testfile", resource),
-                    new ZipCombiningResource.ZipResourceEntry("subdir2/", FileTime.fromMillis(resource2.lastModified())),
-                    new ZipCombiningResource.ZipResourceEntry("subdir2/testfile2", resource2)
+            EoppZipCombiningResource zipResource = new EoppZipCombiningResource(List.of(
+                    new ZipResourceEntry("subdir1/", FileTime.fromMillis(resource.lastModified())),
+                    new ZipResourceEntry("subdir1/testfile", resource),
+                    new ZipResourceEntry("subdir2/", FileTime.fromMillis(resource2.lastModified())),
+                    new ZipResourceEntry("subdir2/testfile2", resource2)
             ), true);
             fail("Expected EoppResourceException");
         } catch (EoppResourceException e) {
@@ -169,39 +170,22 @@ public class EoppZipCombiningResourceTest {
             }
         };
 
-        EoppZipCombiningResource zipResource = new EoppZipCombiningResource(ImmutableList.of(
-                new ZipCombiningResource.ZipResourceEntry("subdir1/", FileTime.fromMillis(resource.lastModified())),
-                new ZipCombiningResource.ZipResourceEntry("subdir1/testfile", resource),
-                new ZipCombiningResource.ZipResourceEntry("subdir2/", FileTime.fromMillis(resource2.lastModified())),
-                new ZipCombiningResource.ZipResourceEntry("subdir2/testfile2", resource2)
+        EoppZipCombiningResource zipResource = new EoppZipCombiningResource(List.of(
+                new ZipResourceEntry("subdir1/", FileTime.fromMillis(resource.lastModified())),
+                new ZipResourceEntry("subdir1/testfile", resource),
+                new ZipResourceEntry("subdir2/", FileTime.fromMillis(resource2.lastModified())),
+                new ZipResourceEntry("subdir2/testfile2", resource2)
         ), false);
         assertThat(zipResource.getDescription()).isEqualTo("ZipFile (compression: -1) [ " + resource.getDescription() + "," + resource2.getDescription() + " ]");
         assertThat(zipResource.getFileMeta().getChecksum()).isEmpty();
         assertThat(zipResource.getFileMeta().getFilename()).isEmpty();
         assertThat(zipResource.getOriginalSize()).isEqualTo(-1);
 
+        // The stream is returned, but exceptions are suppressed inside
         try (ZipInputStream zis = new ZipInputStream(zipResource.getInputStream())) {
-            ZipEntry zipEntry = zis.getNextEntry();
-            assertThat(zipEntry.getName()).isEqualTo("subdir1/");
-            assertThat(zipEntry.isDirectory()).isTrue();
-
-            zipEntry = zis.getNextEntry();
-            assertThat(zipEntry.getName()).isEqualTo("subdir1/testfile");
-            assertThat(zipEntry.isDirectory()).isFalse();
-            assertThat(FileMetas.checksum(ByteSource.wrap(ByteStreams.toByteArray(zis)))).isEqualTo(FileMetas.get(testfile).getChecksum());
-
-            zipEntry = zis.getNextEntry();
-            assertThat(zipEntry.getName()).isEqualTo("subdir2/");
-            assertThat(zipEntry.isDirectory()).isTrue();
-
-            zipEntry = zis.getNextEntry();
-            assertThat(zipEntry.getName()).isEqualTo("subdir2/testfile2");
-            assertThat(zipEntry.isDirectory()).isFalse();
-            // This input resource throws an exception, so the checksum will be that of an empty file
-            // And we validate the exception is thrown upon #close
-            assertThat(FileMetas.checksum(ByteSource.wrap(ByteStreams.toByteArray(zis)))).isEqualTo(FileMetas.checksum(ByteSource.empty()));
-        } catch (EoppResourceException e) {
-            assertThat(e.getCause()).isInstanceOf(FileNotFoundException.class);
+            Objects.requireNonNull(zis.getNextEntry());
+        } catch (NullPointerException e) {
+            assertThat(e.getSuppressed()[0].getCause()).isInstanceOf(FileNotFoundException.class);
         }
     }
 

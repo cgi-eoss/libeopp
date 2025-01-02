@@ -16,10 +16,16 @@
 
 package com.cgi.eoss.eopp.resource;
 
-import com.google.common.io.ByteStreams;
+import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
+import org.apache.commons.compress.archivers.zip.UnixStat;
+import org.apache.commons.compress.archivers.zip.Zip64Mode;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.parallel.InputStreamSupplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
-import org.springframework.lang.Nullable;
 import org.springframework.util.unit.DataSize;
 
 import java.io.BufferedOutputStream;
@@ -28,21 +34,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.nio.file.attribute.FileTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
  * <p>A meta-resource which collects other Resource instances into a zip stream.</p>
  * <p>The zip is assembled on demand when {@link #getInputStream()} is called.</p>
  */
 public class ZipCombiningResource extends AbstractResource {
+
+    private static final Logger log = LoggerFactory.getLogger(ZipCombiningResource.class);
 
     public static final int DEFAULT_BUFFER_SIZE = Math.toIntExact(DataSize.ofMegabytes(1).toBytes());
     public static final int DEFAULT_COMPRESSION_LEVEL = Deflater.DEFAULT_COMPRESSION;
@@ -76,7 +84,7 @@ public class ZipCombiningResource extends AbstractResource {
     @Override
     public String getDescription() {
         return "ZipFile (compression: " + compressionLevel + ") " +
-                "[ " + contents.stream().map(it -> it.resource).filter(Objects::nonNull).map(Resource::getDescription).collect(Collectors.joining(",")) + " ]";
+               "[ " + contents.stream().map(ZipResourceEntry::getResource).filter(Objects::nonNull).map(Resource::getDescription).collect(Collectors.joining(",")) + " ]";
     }
 
     @Override
@@ -85,51 +93,82 @@ public class ZipCombiningResource extends AbstractResource {
         PipedOutputStream pos = new PipedOutputStream();
         PipedInputStream pis = new PipedInputStream(pos);
 
+        // Downloads inputstreams in parallel, then streams to the zip outputstream from those.
+        // Note that this uses a `FileBasedScatterGatherBackingStore` backed by temp files.
+        ParallelScatterZipCreator scatterZipCreator = new ParallelScatterZipCreator();
+
+        // prepare the ZipArchiveEntries, the source streams will be resolved when calling scatterZipCreator#writeTo
+        contents.stream()
+                .map(this::buildZipArchiveEntry)
+                .forEach(entry -> scatterZipCreator.addArchiveEntry(entry.zipArchiveEntry, entry.inputStreamSupplier));
+
         // Use a thread to asynchronously write the zipped resources to the
         // given PipedOutputStream. This thread ensures that the reading from
         // the associated PipedInputStream is not blocked indefinitely while
         // the zip is written to the output buffer but nothing is consuming
         // from the associated pipe. Such behaviour would be fine if the total
         // output size is smaller than the buffer, but this is not guaranteed.
-        CompletableFuture<Void> pipeFuture = CompletableFuture.runAsync(() -> {
-            try (ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(pos, zipBufferSize))) {
+        AtomicReference<EoppResourceException> exRef = new AtomicReference<>();
+        CompletableFuture.runAsync(() -> {
+            try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(new BufferedOutputStream(pos, zipBufferSize))) {
+                zos.setUseZip64(Zip64Mode.Always);
                 zos.setLevel(compressionLevel);
 
-                for (ZipResourceEntry fe : contents) {
-                    ZipEntry ze = new ZipEntry(fe.path);
-                    ze.setLastModifiedTime(fe.lastModified);
-                    zos.putNextEntry(ze);
-                    if (fe.resource != null) {
-                        try (InputStream inputStream = fe.resource.getInputStream()) {
-                            ByteStreams.copy(inputStream, zos);
-                        } finally {
-                            zos.closeEntry();
-                        }
-                    }
+                log.trace("Beginning write to ZipArchiveOutputStream");
+                scatterZipCreator.writeTo(zos);
+                zos.finish();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                exRef.set(new EoppResourceException(e));
+                throw exRef.get();
+            } catch (EoppResourceException e) {
+                exRef.set(e);
+                throw new CompletionException(e);
+            } catch (ExecutionException e) {
+                if (e.getCause() instanceof EoppResourceException eoppResourceException) {
+                    exRef.set(eoppResourceException);
+                } else {
+                    exRef.set(new EoppResourceException(e.getCause()));
                 }
-            } catch (IOException e) {
-                throw new EoppResourceException(e);
+                throw new CompletionException(e);
+            } catch (Exception e) {
+                exRef.set(new EoppResourceException(e));
+                throw new CompletionException(exRef.get());
             }
         });
 
         return new FilterInputStream(pis) {
             @Override
             public void close() throws IOException {
-                try {
-                    pipeFuture.join();
-                } catch (CompletionException e) {
-                    if (e.getCause() instanceof EoppResourceException eoppResourceException) {
-                        throw eoppResourceException;
-                    } else if (e.getCause() instanceof IOException ioException) {
-                        throw ioException;
-                    } else {
-                        throw new IOException(e);
-                    }
-                } finally {
-                    super.close();
-                }
+                // this will have been called from ZipArchiveOutputStream -> PipedOutputStream, so proceed with closing the PipedInputStream as expected
+                super.close();
+                // propagate exceptions if needed
+                if (exRef.get() != null) throw exRef.get();
             }
         };
+    }
+
+    private ZipArchiveEntrySupplier buildZipArchiveEntry(ZipResourceEntry zipResourceEntry) {
+        ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(zipResourceEntry.getPath());
+        zipArchiveEntry.setMethod(ZipEntry.DEFLATED);
+        zipArchiveEntry.setLastModifiedTime(zipResourceEntry.getLastModified());
+        if (zipResourceEntry.getResource() != null) {
+            zipArchiveEntry.setUnixMode(UnixStat.FILE_FLAG | 0644);
+            return new ZipArchiveEntrySupplier(zipArchiveEntry, () -> {
+                log.trace("Adding resource to ZipArchiveOutputStream: {}", zipArchiveEntry.getName());
+                try {
+                    return zipResourceEntry.getResource().getInputStream();
+                } catch (IOException e) {
+                    throw new EoppResourceException(e);
+                }
+            });
+        } else {
+            zipArchiveEntry.setUnixMode(UnixStat.DIR_FLAG | 0755);
+            return new ZipArchiveEntrySupplier(zipArchiveEntry, () -> {
+                log.trace("Adding directory to ZipArchiveOutputStream: {}", zipArchiveEntry.getName());
+                return InputStream.nullInputStream();
+            });
+        }
     }
 
     @Override
@@ -142,48 +181,6 @@ public class ZipCombiningResource extends AbstractResource {
         return super.hashCode();
     }
 
-    public static final class ZipResourceEntry {
-        private final String path;
-        private final FileTime lastModified;
-
-        private final Resource resource;
-
-        public ZipResourceEntry(String path, FileTime lastModified) {
-            this(path, lastModified, null);
-        }
-
-        public ZipResourceEntry(String path, Resource resource) {
-            this.path = path;
-            this.resource = resource;
-            this.lastModified = safeGetFileTime(resource);
-        }
-
-        public ZipResourceEntry(String path, FileTime lastModified, @Nullable Resource resource) {
-            this.path = path;
-            this.lastModified = lastModified;
-            this.resource = resource;
-        }
-
-        private FileTime safeGetFileTime(Resource resource) {
-            try {
-                return FileTime.fromMillis(resource.lastModified());
-            } catch (IOException ignored) {
-                return FileTime.fromMillis(0L);
-            }
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public FileTime getLastModified() {
-            return lastModified;
-        }
-
-        @Nullable
-        public Resource getResource() {
-            return resource;
-        }
+    private record ZipArchiveEntrySupplier(ZipArchiveEntry zipArchiveEntry, InputStreamSupplier inputStreamSupplier) {
     }
-
 }

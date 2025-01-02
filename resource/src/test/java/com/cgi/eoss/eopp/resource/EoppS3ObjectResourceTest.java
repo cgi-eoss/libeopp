@@ -26,28 +26,41 @@ import com.google.common.net.HttpHeaders;
 import com.google.common.truth.extensions.proto.FieldScopes;
 import com.google.common.truth.extensions.proto.ProtoTruth;
 import com.google.protobuf.Timestamp;
+import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.springframework.util.StringUtils;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
+import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.fail;
@@ -56,6 +69,9 @@ import static org.junit.Assert.fail;
 public class EoppS3ObjectResourceTest {
     private MockWebServer server;
     private S3Client s3Client;
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Before
     public void setUp() throws IOException {
@@ -208,6 +224,71 @@ public class EoppS3ObjectResourceTest {
         } catch (Exception expected) {
             assertThat(expected).hasCauseThat().isInstanceOf(S3Exception.class);
             assertThat(expected).hasCauseThat().hasMessageThat().contains("Status Code: 403");
+        }
+    }
+
+    @Test
+    public void testZipS3Resources() throws IOException {
+        server.setDispatcher(new Dispatcher() {
+            @Override
+            public MockResponse dispatch(RecordedRequest recordedRequest) throws InterruptedException {
+                String filename = StringUtils.getFilename(recordedRequest.getPath());
+                final MockResponse mockResponse = new MockResponse()
+                        .setResponseCode(200)
+                        .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                        .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Instant.now().atOffset(ZoneOffset.UTC)))
+                        .setHeader(HttpHeaders.CONTENT_LENGTH, "1024");
+                return switch (Objects.requireNonNull(recordedRequest.getMethod())) {
+                    case "GET" -> mockResponse.setBody(new String(new byte[1024]));
+                    case "HEAD" -> mockResponse;
+                    default -> throw new IllegalStateException("Unexpected value: " + recordedRequest.getMethod());
+                };
+            }
+        });
+
+        EoppResource resource1 = new EoppS3ObjectResource(s3Client, "EODATA", "testfile1");
+        EoppResource resource2 = new EoppS3ObjectResource(s3Client, "EODATA", "testfile2");
+
+        EoppZipCombiningResource zipResource = new EoppZipCombiningResource(List.of(
+                new ZipResourceEntry("subdir1/", FileTime.fromMillis(resource1.lastModified())),
+                new ZipResourceEntry("subdir1/testfile", resource1),
+                new ZipResourceEntry("subdir2/", FileTime.fromMillis(resource2.lastModified())),
+                new ZipResourceEntry("subdir2/testfile2", resource2)
+        ), false);
+        assertThat(zipResource.getDescription()).isEqualTo("ZipFile (compression: -1) [ " + resource1.getDescription() + "," + resource2.getDescription() + " ]");
+        assertThat(zipResource.getFileMeta().getChecksum()).isEmpty();
+        assertThat(zipResource.getFileMeta().getFilename()).isEmpty();
+        assertThat(zipResource.getOriginalSize()).isEqualTo(-1);
+
+        // Save the zip file and check its contents
+
+        Path zipFile = temporaryFolder.newFile().toPath();
+        try (InputStream inputStream = new BufferedInputStream(zipResource.getInputStream())) {
+            Files.copy(inputStream, zipFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(zipFile))) {
+            ZipEntry zipEntry = zis.getNextEntry();
+            assertThat(zipEntry.getName()).isEqualTo("subdir1/");
+            assertThat(zipEntry.isDirectory()).isTrue();
+
+            zipEntry = zis.getNextEntry();
+            assertThat(zipEntry.getName()).isEqualTo("subdir1/testfile");
+            assertThat(zipEntry.isDirectory()).isFalse();
+            byte[] testfile1 = zis.readAllBytes();
+            assertThat(testfile1).hasLength(1024);
+            assertThat(new String(testfile1)).isEqualTo(new String(new byte[1024]));
+
+            zipEntry = zis.getNextEntry();
+            assertThat(zipEntry.getName()).isEqualTo("subdir2/");
+            assertThat(zipEntry.isDirectory()).isTrue();
+
+            zipEntry = zis.getNextEntry();
+            assertThat(zipEntry.getName()).isEqualTo("subdir2/testfile2");
+            assertThat(zipEntry.isDirectory()).isFalse();
+            byte[] testfile2 = zis.readAllBytes();
+            assertThat(testfile2).hasLength(1024);
+            assertThat(new String(testfile2)).isEqualTo(new String(new byte[1024]));
         }
     }
 
