@@ -17,9 +17,9 @@ def libeopp_dependencies():
     maybe(
         http_archive,
         name = "google_bazel_common",
-        sha256 = "ba4700fe928da1574726c9228e8a321907cd166040aed7fbafd0468f13a08fdb",
-        strip_prefix = "bazel-common-ebce2af3f0de560b649dcf98ef732a56b80e829c",
-        urls = ["https://github.com/google/bazel-common/archive/ebce2af3f0de560b649dcf98ef732a56b80e829c.tar.gz"],
+        sha256 = "0df5d1726a6151130767da48a989abb1c8206f0882b4f76c9087df2ac854e107",
+        strip_prefix = "bazel-common-0aa5acbefe37b58cc8f0fbdb510606bbeb19ef8a",
+        urls = ["https://github.com/google/bazel-common/archive/0aa5acbefe37b58cc8f0fbdb510606bbeb19ef8a.tar.gz"],
     )
 
     maybe(
@@ -35,9 +35,9 @@ def libeopp_dependencies():
     maybe(
         http_archive,
         name = "bazel_features",
-        sha256 = "af3d4fb1cf4f25942cb4a933b1ad93a0ea9fe9ee70c2af7f369fb72a67c266e5",
-        strip_prefix = "bazel_features-1.21.0",
-        url = "https://github.com/bazel-contrib/bazel_features/releases/download/v1.21.0/bazel_features-v1.21.0.tar.gz",
+        sha256 = "8b1c9b7558498000f5adebbc584b7bf15b6b2bf181448a66f6b2fc5b4c84231c",
+        strip_prefix = "bazel_features-1.23.0",
+        url = "https://github.com/bazel-contrib/bazel_features/releases/download/v1.23.0/bazel_features-v1.23.0.tar.gz",
     )
 
     maybe(
@@ -76,9 +76,9 @@ def libeopp_dependencies():
     maybe(
         http_archive,
         name = "rules_python",
-        sha256 = "690e0141724abb568267e003c7b6d9a54925df40c275a870a4d934161dc9dd53",
-        strip_prefix = "rules_python-0.40.0",
-        url = "https://github.com/bazelbuild/rules_python/releases/download/0.40.0/rules_python-0.40.0.tar.gz",
+        sha256 = "4f7e2aa1eb9aa722d96498f5ef514f426c1f55161c3c9ae628c857a7128ceb07",
+        strip_prefix = "rules_python-1.0.0",
+        url = "https://github.com/bazelbuild/rules_python/releases/download/1.0.0/rules_python-1.0.0.tar.gz",
     )
 
     maybe(
@@ -95,9 +95,9 @@ def libeopp_dependencies():
         http_archive,
         name = "rules_java",
         urls = [
-            "https://github.com/bazelbuild/rules_java/releases/download/8.6.1/rules_java-8.6.1.tar.gz",
+            "https://github.com/bazelbuild/rules_java/releases/download/8.6.3/rules_java-8.6.3.tar.gz",
         ],
-        sha256 = "c5bc17e17bb62290b1fd8fdd847a2396d3459f337a7e07da7769b869b488ec26",
+        sha256 = "6d8c6d5cd86fed031ee48424f238fa35f33abc9921fd97dd4ae1119a29fc807f",
     )
 
     RULES_JVM_EXTERNAL_TAG = "6.6"
@@ -114,8 +114,8 @@ def libeopp_dependencies():
     maybe(
         http_archive,
         name = "rules_kotlin",
-        sha256 = "3b772976fec7bdcda1d84b9d39b176589424c047eb2175bed09aac630e50af43",
-        url = "https://github.com/bazelbuild/rules_kotlin/releases/download/v1.9.6/rules_kotlin-v1.9.6.tar.gz",
+        sha256 = "dd32f19e73c70f32ccb9a166c615c0ca4aed8e27e72c4a6330c3523eafa1aa55",
+        url = "https://github.com/bazelbuild/rules_kotlin/releases/download/v2.1.0/rules_kotlin-v2.1.0.tar.gz",
     )
 
     maybe(

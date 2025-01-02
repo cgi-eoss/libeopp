@@ -32,27 +32,28 @@ repositories {
 }
 
 // BOMs
-extra["aws-sdk-v2.version"] = "2.29.27"
+extra["aws-sdk-v2.version"] = "2.29.43"
 extra["grpc-java.version"] = "1.68.2"
-extra["kotlin.version"] = "1.9.24"
+extra["kotlin.version"] = "2.1.0"
+extra["kotlinx-coroutines.version"] = "1.10.1"
 extra["okhttp.version"] = "4.12.0"
-extra["opentelemetry.version"] = "1.44.1"
+extra["opentelemetry.version"] = "1.45.0"
 extra["protobuf-java.version"] = "4.29.0"
-extra["spring-boot.version"] = "3.4.0"
+extra["spring-boot.version"] = "3.4.1"
 extra["spring-cloud.version"] = "2024.0.0"
 
 extra["azure-storage-blob.version"] = "12.28.1"
 extra["commons-compress.version"] = "1.27.1"
-extra["docker-java.version"] = "3.4.0"
+extra["docker-java.version"] = "3.4.1"
 extra["failsafe.version"] = "3.3.2"
 extra["google-cloud-storage.version"] = "2.45.0"
 extra["grpc-kotlin.version"] = "1.4.1"
-extra["guava.version"] = "33.2.1-jre"
+extra["guava.version"] = "33.4.0-jre"
 extra["jetbrains-annotations.version"] = "26.0.1"
 extra["jimfs.version"] = "1.3.0"
 extra["json-schema-validator.version"] = "1.5.4"
 extra["jts-core.version"] = "1.20.0"
-extra["pitest.version"] = "1.17.2"
+extra["pitest.version"] = "1.17.3"
 extra["reactor-grpc.version"] = "1.2.4"
 extra["truth.version"] = "1.4.4"
 
@@ -61,11 +62,12 @@ extra["com.google.auto.value:auto-value.version"] = "1.11.0"
 extra["org.apache.tomcat:annotations-api.version"] = "6.0.53"
 
 dependencies {
+    generate(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:${property("kotlin.version")}"))
+    generate(enforcedPlatform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:${property("kotlinx-coroutines.version")}"))
     generate(enforcedPlatform("org.springframework.cloud:spring-cloud-dependencies:${property("spring-cloud.version")}"))
     generate(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:${property("spring-boot.version")}"))
     generate(enforcedPlatform("software.amazon.awssdk:bom:${property("aws-sdk-v2.version")}"))
     generate(enforcedPlatform("com.squareup.okhttp3:okhttp-bom:${property("okhttp.version")}"))
-    generate(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:${property("kotlin.version")}"))
     generate(enforcedPlatform("com.google.protobuf:protobuf-bom:${property("protobuf-java.version")}"))
     generate(enforcedPlatform("io.grpc:grpc-bom:${property("grpc-java.version")}"))
     generate(enforcedPlatform("io.opentelemetry:opentelemetry-bom:${property("opentelemetry.version")}"))
@@ -105,6 +107,9 @@ dependencies {
     generate("org.jetbrains:annotations:${property("jetbrains-annotations.version")}")
     generate("org.jetbrains.kotlin:kotlin-reflect")
     generate("org.jetbrains.kotlin:kotlin-stdlib")
+    generate("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
+    generate("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    generate("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm")
     generate("org.locationtech.jts:jts-core:${property("jts-core.version")}")
     generate("org.mockito:mockito-core")
     generate("org.pitest:pitest-aggregator:${property("pitest.version")}")
