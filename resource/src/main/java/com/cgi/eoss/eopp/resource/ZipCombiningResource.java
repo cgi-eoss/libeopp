@@ -153,7 +153,6 @@ public class ZipCombiningResource extends AbstractResource {
         zipArchiveEntry.setMethod(ZipEntry.DEFLATED);
         zipArchiveEntry.setLastModifiedTime(zipResourceEntry.getLastModified());
         if (zipResourceEntry.getResource() != null) {
-            zipArchiveEntry.setUnixMode(UnixStat.FILE_FLAG | 0644);
             return new ZipArchiveEntrySupplier(zipArchiveEntry, () -> {
                 log.trace("Adding resource to ZipArchiveOutputStream: {}", zipArchiveEntry.getName());
                 try {
@@ -163,7 +162,6 @@ public class ZipCombiningResource extends AbstractResource {
                 }
             });
         } else {
-            zipArchiveEntry.setUnixMode(UnixStat.DIR_FLAG | 0755);
             return new ZipArchiveEntrySupplier(zipArchiveEntry, () -> {
                 log.trace("Adding directory to ZipArchiveOutputStream: {}", zipArchiveEntry.getName());
                 return InputStream.nullInputStream();
