@@ -17,7 +17,6 @@
 package com.cgi.eoss.eopp.resource;
 
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
-import org.apache.commons.compress.archivers.zip.UnixStat;
 import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -39,6 +38,8 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.zip.Deflater;
@@ -51,6 +52,8 @@ import java.util.zip.ZipEntry;
 public class ZipCombiningResource extends AbstractResource {
 
     private static final Logger log = LoggerFactory.getLogger(ZipCombiningResource.class);
+
+    private static final ExecutorService ZIP_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
 
     public static final int DEFAULT_BUFFER_SIZE = Math.toIntExact(DataSize.ofMegabytes(1).toBytes());
     public static final int DEFAULT_COMPRESSION_LEVEL = Deflater.DEFAULT_COMPRESSION;
@@ -85,6 +88,11 @@ public class ZipCombiningResource extends AbstractResource {
     public String getDescription() {
         return "ZipFile (compression: " + compressionLevel + ") " +
                "[ " + contents.stream().map(ZipResourceEntry::getResource).filter(Objects::nonNull).map(Resource::getDescription).collect(Collectors.joining(",")) + " ]";
+    }
+
+    @Override
+    public boolean exists() {
+        return true;
     }
 
     @Override
@@ -135,7 +143,7 @@ public class ZipCombiningResource extends AbstractResource {
                 exRef.set(new EoppResourceException(e));
                 throw new CompletionException(exRef.get());
             }
-        });
+        }, ZIP_EXECUTOR);
 
         return new FilterInputStream(pis) {
             @Override
