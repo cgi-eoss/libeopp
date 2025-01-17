@@ -80,7 +80,7 @@ public class EoppZipCombiningResource extends ZipCombiningResource implements Eo
      *                                    consuming for resources which resolve slowly.
      */
     public EoppZipCombiningResource(List<ZipResourceEntry> contents, @Nullable String filename, boolean calculateDetailedProperties, int bufferSize, int compressionLevel) throws IOException {
-        super(contents, bufferSize, compressionLevel);
+        super(contents, compressionLevel);
 
         this.filename = filename;
 
