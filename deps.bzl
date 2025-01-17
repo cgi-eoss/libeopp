@@ -8,18 +8,18 @@ def libeopp_dependencies():
         http_archive,
         name = "platforms",
         urls = [
-            "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.10/platforms-0.0.10.tar.gz",
-            "https://github.com/bazelbuild/platforms/releases/download/0.0.10/platforms-0.0.10.tar.gz",
+            "https://mirror.bazel.build/github.com/bazelbuild/platforms/releases/download/0.0.11/platforms-0.0.11.tar.gz",
+            "https://github.com/bazelbuild/platforms/releases/download/0.0.11/platforms-0.0.11.tar.gz",
         ],
-        sha256 = "218efe8ee736d26a3572663b374a253c012b716d8af0c07e842e82f238a0a7ee",
+        sha256 = "29742e87275809b5e598dc2f04d86960cc7a55b3067d97221c9abbc9926bff0f",
     )
 
     maybe(
         http_archive,
         name = "google_bazel_common",
-        sha256 = "0df5d1726a6151130767da48a989abb1c8206f0882b4f76c9087df2ac854e107",
-        strip_prefix = "bazel-common-0aa5acbefe37b58cc8f0fbdb510606bbeb19ef8a",
-        urls = ["https://github.com/google/bazel-common/archive/0aa5acbefe37b58cc8f0fbdb510606bbeb19ef8a.tar.gz"],
+        sha256 = "c67b3093b479503a000b6d1fd6a1a9200d8dda15bd95778c57910f3c6cc523e9",
+        strip_prefix = "bazel-common-c23ecd7d15677757c36a4fea830276bec68215c1",
+        urls = ["https://github.com/google/bazel-common/archive/c23ecd7d15677757c36a4fea830276bec68215c1.tar.gz"],
     )
 
     maybe(
@@ -43,9 +43,9 @@ def libeopp_dependencies():
     maybe(
         http_archive,
         name = "aspect_bazel_lib",
-        sha256 = "349aabd3c2b96caeda6181eb0ae1f14f2a1d9f3cd3c8b05d57f709ceb12e9fb3",
-        strip_prefix = "bazel-lib-2.9.4",
-        url = "https://github.com/bazel-contrib/bazel-lib/releases/download/v2.9.4/bazel-lib-v2.9.4.tar.gz",
+        sha256 = "c96db69dd2714a37f3298338a1a42b27e3a2696c3b36dd4441b9bf7a1a12bee0",
+        strip_prefix = "bazel-lib-2.11.0",
+        url = "https://github.com/bazel-contrib/bazel-lib/releases/download/v2.11.0/bazel-lib-v2.11.0.tar.gz",
     )
 
     HERMETIC_CC_TOOLCHAIN_VERSION = "v3.1.1"
@@ -76,9 +76,9 @@ def libeopp_dependencies():
     maybe(
         http_archive,
         name = "rules_python",
-        sha256 = "4f7e2aa1eb9aa722d96498f5ef514f426c1f55161c3c9ae628c857a7128ceb07",
-        strip_prefix = "rules_python-1.0.0",
-        url = "https://github.com/bazelbuild/rules_python/releases/download/1.0.0/rules_python-1.0.0.tar.gz",
+        sha256 = "9c6e26911a79fbf510a8f06d8eedb40f412023cf7fa6d1461def27116bff022c",
+        strip_prefix = "rules_python-1.1.0",
+        url = "https://github.com/bazelbuild/rules_python/releases/download/1.1.0/rules_python-1.1.0.tar.gz",
     )
 
     maybe(
@@ -95,9 +95,9 @@ def libeopp_dependencies():
         http_archive,
         name = "rules_java",
         urls = [
-            "https://github.com/bazelbuild/rules_java/releases/download/8.6.3/rules_java-8.6.3.tar.gz",
+            "https://github.com/bazelbuild/rules_java/releases/download/8.7.1/rules_java-8.7.1.tar.gz",
         ],
-        sha256 = "6d8c6d5cd86fed031ee48424f238fa35f33abc9921fd97dd4ae1119a29fc807f",
+        sha256 = "52e7c1f297bb0c5bcbc79743922682071f6968738e73a2a039b92bad9278a469",
     )
 
     RULES_JVM_EXTERNAL_TAG = "6.6"
