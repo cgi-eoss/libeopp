@@ -59,9 +59,12 @@ kotlin_repositories()
 
 kt_register_toolchains()
 
+load("//third_party/grpc:grpc_repositories.bzl", "IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS", "IO_GRPC_GRPC_KOTLIN_OVERRIDE_TARGETS")
+load("//third_party/java:java_repositories.bzl", "ARTIFACTS", "REPOSITORIES")
 load("//third_party/protobuf:protobuf_dependency_repositories.bzl", "protobuf_dependency_repositories")
+load("//third_party/protobuf:protobuf_repositories.bzl", "COM_GOOGLE_PROTOBUF_JAVA_OVERRIDE_TARGETS")
 
-protobuf_dependency_repositories()
+protobuf_dependency_repositories(ARTIFACTS)
 
 load("@protobuf_maven//:defs.bzl", pinned_protobuf_maven_install = "pinned_maven_install")
 
@@ -76,9 +79,6 @@ load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
 rules_jvm_external_setup()
 
 load("@rules_jvm_external//:defs.bzl", "maven_install")
-load("//third_party/grpc:grpc_repositories.bzl", "IO_GRPC_GRPC_JAVA_OVERRIDE_TARGETS", "IO_GRPC_GRPC_KOTLIN_OVERRIDE_TARGETS")
-load("//third_party/java:java_repositories.bzl", "ARTIFACTS", "REPOSITORIES")
-load("//third_party/protobuf:protobuf_repositories.bzl", "COM_GOOGLE_PROTOBUF_JAVA_OVERRIDE_TARGETS")
 
 maven_install(
     name = "maven",
