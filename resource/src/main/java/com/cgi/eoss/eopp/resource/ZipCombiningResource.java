@@ -16,6 +16,7 @@
 
 package com.cgi.eoss.eopp.resource;
 
+import com.google.common.base.Throwables;
 import org.apache.commons.compress.archivers.zip.ParallelScatterZipCreator;
 import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -25,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
-import org.springframework.util.unit.DataSize;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -39,7 +39,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
@@ -54,7 +54,6 @@ public class ZipCombiningResource extends AbstractResource {
 
     private static final ExecutorService ZIP_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
 
-    public static final int DEFAULT_BUFFER_SIZE = Math.toIntExact(DataSize.ofMegabytes(1).toBytes());
     public static final int DEFAULT_COMPRESSION_LEVEL = Deflater.DEFAULT_COMPRESSION;
 
     private final List<ZipResourceEntry> contents;
@@ -83,7 +82,7 @@ public class ZipCombiningResource extends AbstractResource {
     @Override
     public String getDescription() {
         return "ZipFile (compression: " + compressionLevel + ") " +
-               "[ " + contents.stream().map(ZipResourceEntry::getResource).filter(Objects::nonNull).map(Resource::getDescription).collect(Collectors.joining(",")) + " ]";
+               "[ " + contents.stream().map(ZipResourceEntry::resource).filter(Objects::nonNull).map(Resource::getDescription).collect(Collectors.joining(",")) + " ]";
     }
 
     @Override
@@ -112,8 +111,7 @@ public class ZipCombiningResource extends AbstractResource {
         // from the associated pipe. Such behaviour would be fine if the total
         // output size is smaller than the buffer, but this is not guaranteed.
         CountDownLatch streamOpenedLatch = new CountDownLatch(1);
-        AtomicReference<Exception> exRef = new AtomicReference<>();
-        ZIP_EXECUTOR.submit(() -> {
+        Future<?> zipFuture = ZIP_EXECUTOR.submit(() -> {
             try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(new PipedOutputStream(pis))) {
                 streamOpenedLatch.countDown();
                 zos.setUseZip64(Zip64Mode.Always);
@@ -124,10 +122,14 @@ public class ZipCombiningResource extends AbstractResource {
                 zos.finish();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                exRef.set(e);
+                throw new CompletionException(e);
+            } catch (IOException e) {
+                // Reader has closed the pipe -> normal EOF, swallow
+                if ("Pipe closed".equals(e.getMessage())) {
+                    return;
+                }
                 throw new CompletionException(e);
             } catch (Exception e) {
-                exRef.set(e);
                 throw new CompletionException(e);
             } finally {
                 streamOpenedLatch.countDown();
@@ -141,32 +143,17 @@ public class ZipCombiningResource extends AbstractResource {
             throw new EoppResourceException("Failed to await starting of async zip stream", e);
         }
 
-        return new FilterInputStream(pis) {
-            @Override
-            public void close() throws IOException {
-                // this will have been called from ZipArchiveOutputStream -> PipedOutputStream, so proceed with closing the PipedInputStream as expected
-                super.close();
-                // propagate exceptions if needed
-                if (exRef.get() != null) {
-                    if (exRef.get() instanceof EoppResourceException ex) throw ex;
-                    else if (exRef.get() instanceof CompletionException || exRef.get() instanceof ExecutionException) {
-                        if (exRef.get().getCause() instanceof EoppResourceException ex) throw ex;
-                        else throw new EoppResourceException(exRef.get().getCause());
-                    }
-                    else throw new EoppResourceException(exRef.get());
-                }
-            }
-        };
+        return new ZipPipeStream(pis, zipFuture);
     }
 
     private ZipArchiveEntrySupplier buildZipArchiveEntry(ZipResourceEntry zipResourceEntry) {
-        ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(zipResourceEntry.getPath());
+        ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(zipResourceEntry.path());
         zipArchiveEntry.setMethod(ZipEntry.DEFLATED);
-        zipArchiveEntry.setLastModifiedTime(zipResourceEntry.getLastModified());
-        if (zipResourceEntry.getResource() != null) {
+        zipArchiveEntry.setLastModifiedTime(zipResourceEntry.lastModified());
+        if (zipResourceEntry.resource() != null) {
             return new ZipArchiveEntrySupplier(zipArchiveEntry, () -> {
                 try {
-                    return zipResourceEntry.getResource().getInputStream();
+                    return zipResourceEntry.resource().getInputStream();
                 } catch (IOException e) {
                     throw new EoppResourceException(e);
                 }
@@ -178,14 +165,57 @@ public class ZipCombiningResource extends AbstractResource {
 
     @Override
     public boolean equals(Object o) {
-        return super.equals(o);
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ZipCombiningResource that = (ZipCombiningResource) o;
+        return Objects.equals(contents, that.contents);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(super.hashCode(), contents);
     }
 
     private record ZipArchiveEntrySupplier(ZipArchiveEntry zipArchiveEntry, InputStreamSupplier inputStreamSupplier) {
+    }
+
+    private static class ZipPipeStream extends FilterInputStream {
+        private final Future<?> zipFuture;
+
+        public ZipPipeStream(PipedInputStream pis, Future<?> zipFuture) {
+            super(pis);
+            this.zipFuture = zipFuture;
+        }
+
+        private void checkFuture() {
+            try {
+                zipFuture.get();
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                throw new EoppResourceException(ie.getCause());
+            } catch (ExecutionException ee) {
+                throw new EoppResourceException(Throwables.getRootCause(ee));
+            }
+        }
+
+        @Override
+        public int read() throws IOException {
+            int b = super.read();
+            if (b == -1) checkFuture();
+            return b;
+        }
+
+        @Override
+        public int read(byte[] buf, int off, int len) throws IOException {
+            int n = super.read(buf, off, len);
+            if (n == -1) checkFuture();
+            return n;
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            checkFuture();
+        }
     }
 }

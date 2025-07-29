@@ -1,6 +1,5 @@
+load("@aspect_bazel_lib//lib:tar.bzl", "mtree_mutate", "mtree_spec", "tar")
 load("@rules_java//java:defs.bzl", "java_test")
-load("@rules_pkg//:mappings.bzl", "pkg_filegroup", "pkg_files", "strip_prefix")
-load("@rules_pkg//:pkg.bzl", "pkg_zip")
 
 def _quote(filename, protect = "="):
     """Quote the filename, by escaping = by \\= and \\ by \\\\"""
@@ -37,38 +36,63 @@ def pitest_mutation_coverage_test(
         test_targets = [],
         data = [],
         tags = []):
-    pkg_files(
-        name = "_%s_data_srcs" % name,
-        prefix = "srcs",
-        strip_prefix = strip_prefix.from_root(),
+    mtree_spec(
+        name = "_%s_srcs_mtree_in" % name,
         srcs = srcs,
         testonly = True,
         tags = ["manual"],
     )
 
-    pkg_files(
-        name = "_%s_data_test_srcs" % name,
-        prefix = "test_srcs",
-        strip_prefix = strip_prefix.from_root(),
+    mtree_mutate(
+        name = "_%s_srcs_mtree" % name,
+        mtree = "_%s_srcs_mtree_in" % name,
+        package_dir = "srcs",
+        testonly = True,
+        tags = ["manual"],
+    )
+
+    mtree_spec(
+        name = "_%s_test_srcs_mtree_in" % name,
         srcs = test_srcs,
         testonly = True,
         tags = ["manual"],
     )
 
-    pkg_files(
-        name = "_%s_data_libraries" % name,
-        prefix = "libraries",
-        strip_prefix = strip_prefix.from_root(),
+    mtree_mutate(
+        name = "_%s_test_srcs_mtree" % name,
+        mtree = "_%s_test_srcs_mtree_in" % name,
+        package_dir = "test_srcs",
+        testonly = True,
+        tags = ["manual"],
+    )
+
+    mtree_spec(
+        name = "_%s_libraries_mtree_in" % name,
         srcs = libraries,
         testonly = True,
         tags = ["manual"],
     )
 
-    pkg_files(
-        name = "_%s_data_test_libraries" % name,
-        prefix = "test_libraries",
-        strip_prefix = strip_prefix.from_root(),
+    mtree_mutate(
+        name = "_%s_libraries_mtree" % name,
+        mtree = "_%s_libraries_mtree_in" % name,
+        package_dir = "libraries",
+        testonly = True,
+        tags = ["manual"],
+    )
+
+    mtree_spec(
+        name = "_%s_test_libraries_mtree_in" % name,
         srcs = test_targets,
+        testonly = True,
+        include_runfiles = False,
+        tags = ["manual"],
+    )
+
+    mtree_mutate(
+        name = "_%s_test_libraries_mtree" % name,
+        mtree = "_%s_test_libraries_mtree_in" % name,
+        package_dir = "test_libraries",
         testonly = True,
         tags = ["manual"],
     )
@@ -80,31 +104,42 @@ def pitest_mutation_coverage_test(
         tags = ["manual"],
     )
 
-    pkg_files(
-        name = "_%s_data_test_dependencies" % name,
-        prefix = "test_dependencies",
-        strip_prefix = strip_prefix.from_root(),
-        srcs = [":_%s_data_test_dependencies_files" % name],
+    mtree_spec(
+        name = "_%s_test_dependencies_mtree_in" % name,
+        srcs = ["_%s_data_test_dependencies_files" % name],
+        testonly = True,
+        include_runfiles = False,
+        tags = ["manual"],
+    )
+
+    mtree_mutate(
+        name = "_%s_test_dependencies_mtree" % name,
+        mtree = "_%s_test_dependencies_mtree_in" % name,
+        package_dir = "test_dependencies",
         testonly = True,
         tags = ["manual"],
     )
 
-    pkg_filegroup(
-        name = "_%s_data_filegroup" % name,
+    native.genrule(
+        name = "_%s_data_mtree" % name,
         srcs = [
-            "_%s_data_srcs" % name,
-            "_%s_data_test_srcs" % name,
-            "_%s_data_libraries" % name,
-            "_%s_data_test_libraries" % name,
-            "_%s_data_test_dependencies" % name,
+            ":_%s_srcs_mtree" % name,
+            ":_%s_test_srcs_mtree" % name,
+            ":_%s_libraries_mtree" % name,
+            ":_%s_test_libraries_mtree" % name,
+            ":_%s_test_dependencies_mtree" % name,
         ],
+        outs = ["_%s_data_mtree.mtree" % name],
+        cmd = "cat $(SRCS) | sort >$@",
         testonly = True,
         tags = ["manual"],
     )
 
-    pkg_zip(
-        name = "_%s_data" % name,
-        srcs = ["_%s_data_filegroup" % name],
+    #TODO rewrite pitest to take arguments to the files directly, rather than untarring this
+    tar(
+        name = "_%s_data2" % name,
+        srcs = srcs + test_srcs + libraries + test_targets,
+        mtree = ":_%s_data_mtree" % name,
         testonly = True,
         tags = ["manual"],
     )
@@ -114,18 +149,11 @@ def pitest_mutation_coverage_test(
         test_class = "com.cgi.eoss.eopp.testing.pitest.PitestCoverageTest",
         runtime_deps = ["//tools/pitest:pitest_coverage_test"],
         visibility = ["//visibility:public"],
-        data = [":_%s_data.zip" % name] + data,
+        data = [":_%s_data2" % name] + data,
         jvm_flags = [
-            "-Dlibeopp.pitest.data=$(location :_%s_data.zip)" % name,
+            "-Dlibeopp.pitest.data=$(location :_%s_data2)" % name,
             "-Dlibeopp.pitest.targetClasses=%s" % target_classes,
             "-Dlibeopp.pitest.targetTests=%s" % target_tests,
         ],
         tags = tags,
-    )
-
-    native.filegroup(
-        name = "_%s_pitest_report_support_files" % name,
-        srcs = srcs,
-        tags = ["manual"],
-        visibility = ["//visibility:public"],
     )

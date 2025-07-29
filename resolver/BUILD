@@ -1,5 +1,5 @@
-load("//tools:maven.bzl", "maven_library")
 load("@google_bazel_common//testing:test_defs.bzl", "gen_java_tests")
+load("//tools:maven.bzl", "maven_library")
 
 maven_library(
     name = "resolver",
@@ -53,7 +53,7 @@ maven_library(
         ":resolver",
         "//resource",
         "//resource:okhttp-resource",
-        "@maven//:com_squareup_okhttp3_okhttp",
+        "@maven//:com_squareup_okhttp3_okhttp_jvm",
     ],
 )
 
@@ -71,8 +71,9 @@ gen_java_tests(
         "@maven//:com_google_guava_guava",
         "@maven//:com_google_truth_extensions_truth_proto_extension",
         "@maven//:com_google_truth_truth",
-        "@maven//:com_squareup_okhttp3_mockwebserver",
-        "@maven//:com_squareup_okhttp3_okhttp",
+        "@maven//:com_squareup_okhttp3_mockwebserver3",
+        "@maven//:com_squareup_okhttp3_mockwebserver3_junit4",
+        "@maven//:com_squareup_okhttp3_okhttp_jvm",
         "@maven//:junit_junit",
         "@maven//:org_mockito_mockito_core",
     ],

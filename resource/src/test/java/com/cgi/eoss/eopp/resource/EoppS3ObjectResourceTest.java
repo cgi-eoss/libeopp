@@ -26,11 +26,10 @@ import com.google.common.net.HttpHeaders;
 import com.google.common.truth.extensions.proto.FieldScopes;
 import com.google.common.truth.extensions.proto.ProtoTruth;
 import com.google.protobuf.Timestamp;
-import okhttp3.mockwebserver.Dispatcher;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
-import org.junit.After;
+import mockwebserver3.Dispatcher;
+import mockwebserver3.MockResponse;
+import mockwebserver3.RecordedRequest;
+import mockwebserver3.junit4.MockWebServerRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -67,28 +66,21 @@ import static org.junit.Assert.fail;
 
 @RunWith(JUnit4.class)
 public class EoppS3ObjectResourceTest {
-    private MockWebServer server;
     private S3Client s3Client;
+
+    @Rule
+    public final MockWebServerRule serverRule = new MockWebServerRule();
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Before
     public void setUp() throws IOException {
-        server = new MockWebServer();
-
-        server.start();
-
         s3Client = S3Client.builder()
-                .endpointOverride(server.url("/").uri())
+                .endpointOverride(serverRule.getServer().url("/").uri())
                 .region(Region.EU_WEST_1)
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("default", "default")))
                 .build();
-    }
-
-    @After
-    public void tearDown() throws IOException {
-        server.shutdown();
     }
 
     @Test
@@ -96,12 +88,13 @@ public class EoppS3ObjectResourceTest {
         Path testfile = Files.createTempFile("testfile", null);
         Files.write(testfile, Arrays.asList("first", "second", "third"));
 
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
                 .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())
                 .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
                 .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
                 .setHeader("x-amz-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader(), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
+                .build()
         );
 
         EoppResource resource = new EoppS3ObjectResource(s3Client, "EODATA", "testfile");
@@ -126,9 +119,10 @@ public class EoppS3ObjectResourceTest {
             assertThat(e.getMessage()).isEqualTo("S3 resources may not be resolved as Files");
         }
 
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody(new String(Files.readAllBytes(testfile)))
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
+                .body(new String(Files.readAllBytes(testfile)))
+                .build()
         );
 
         HashingCountingOutputStream os = new HashingCountingOutputStream(ByteStreams.nullOutputStream());
@@ -144,7 +138,7 @@ public class EoppS3ObjectResourceTest {
         Path testfile = Files.createTempFile("testfile", null);
         Files.write(testfile, Arrays.asList("first", "second", "third"));
 
-        server.enqueue(new MockResponse().setResponseCode(404));
+        serverRule.getServer().enqueue(new MockResponse.Builder().code(404).build());
 
         EoppResource resource = new EoppS3ObjectResource(s3Client, "EODATA", "testfile");
         ProtoTruth.assertThat(resource.getFileMeta()).isEqualTo(FileMeta.getDefaultInstance());
@@ -169,18 +163,20 @@ public class EoppS3ObjectResourceTest {
         Path testfile = Files.createTempFile("testfile", null);
         Files.write(testfile, Arrays.asList("first", "second", "third"));
 
-        server.setDispatcher(new RequesterPaysDispatcher());
+        serverRule.getServer().setDispatcher(new RequesterPaysDispatcher());
 
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
                 .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())
                 .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
                 .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
                 .setHeader("x-amz-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader(), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
+                .build()
         );
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody(new String(Files.readAllBytes(testfile)))
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
+                .body(new String(Files.readAllBytes(testfile)))
+                .build()
         );
 
         EoppResource resource = new EoppS3ObjectResource(s3Client, "EODATA", "testfile", true);
@@ -204,18 +200,20 @@ public class EoppS3ObjectResourceTest {
         Path testfile = Files.createTempFile("testfile", null);
         Files.write(testfile, Arrays.asList("first", "second", "third"));
 
-        server.setDispatcher(new RequesterPaysDispatcher());
+        serverRule.getServer().setDispatcher(new RequesterPaysDispatcher());
 
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
                 .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())
                 .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
                 .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
                 .setHeader("x-amz-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader(), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
+                .build()
         );
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody(new String(Files.readAllBytes(testfile)))
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
+                .body(new String(Files.readAllBytes(testfile)))
+                .build()
         );
 
         EoppResource resource = new EoppS3ObjectResource(s3Client, "EODATA", "testfile");
@@ -229,18 +227,18 @@ public class EoppS3ObjectResourceTest {
 
     @Test
     public void testZipS3Resources() throws IOException {
-        server.setDispatcher(new Dispatcher() {
+        serverRule.getServer().setDispatcher(new Dispatcher() {
             @Override
             public MockResponse dispatch(RecordedRequest recordedRequest) throws InterruptedException {
-                String filename = StringUtils.getFilename(recordedRequest.getPath());
-                final MockResponse mockResponse = new MockResponse()
-                        .setResponseCode(200)
+                String filename = StringUtils.getFilename(recordedRequest.getUrl().encodedPath());
+                final MockResponse.Builder mockResponse = new MockResponse.Builder()
+                        .code(200)
                         .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                         .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Instant.now().atOffset(ZoneOffset.UTC)))
                         .setHeader(HttpHeaders.CONTENT_LENGTH, "1024");
                 return switch (Objects.requireNonNull(recordedRequest.getMethod())) {
-                    case "GET" -> mockResponse.setBody(new String(new byte[1024]));
-                    case "HEAD" -> mockResponse;
+                    case "GET" -> mockResponse.body(new String(new byte[1024])).build();
+                    case "HEAD" -> mockResponse.build();
                     default -> throw new IllegalStateException("Unexpected value: " + recordedRequest.getMethod());
                 };
             }

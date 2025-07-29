@@ -2,11 +2,11 @@ load("@bazel_sonarqube//:defs.bzl", "sq_project")
 load("@com_github_grpc_grpc_kotlin//:kt_jvm_grpc.bzl", "kt_jvm_proto_library")
 load("@com_google_protobuf//bazel:java_proto_library.bzl", "java_proto_library")
 load("@com_google_protobuf//bazel:proto_library.bzl", "proto_library")
+load("@com_google_protobuf//bazel:py_proto_library.bzl", "py_proto_library")
 load("@rules_java//java:defs.bzl", "java_library")
 load("@rules_jvm_external//:defs.bzl", "javadoc")
 load("@rules_jvm_external//private/rules:maven_project_jar.bzl", "maven_project_jar")
 load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
-load("@rules_python//python:proto.bzl", "py_proto_library")
 load("//tools/maven_publish:maven_publish.bzl", "maven_publish")
 load("//tools/pitest:pitest.bzl", "pitest_mutation_coverage_test")
 load(":pom_file.bzl", "DEFAULT_POM_VERSION", "pom_file")
@@ -89,7 +89,7 @@ def maven_library(
             srcs = srcs or native.glob([
                 "src/main/java/**/*.java",
                 "src/main/kotlin/**/*.kt",
-            ]),
+            ], allow_empty = True),
             testonly = testonly,
         )
     else:
@@ -166,7 +166,7 @@ def maven_library(
     _test_srcs = test_srcs or native.glob([
         "src/test/java/**/*.java",
         "src/test/kotlin/**/*.kt",
-    ])
+    ], allow_empty = True)
     _test_targets = []
     _test_targets.extend(test_targets)
     if test_suite:
@@ -177,7 +177,7 @@ def maven_library(
         _analysis_srcs = analysis_srcs or srcs_attr or native.glob([
             "src/main/java/**/*.java",
             "src/main/kotlin/**/*.kt",
-        ])
+        ], allow_empty = True)
         sonarqube_project(
             name = name,
             srcs = _analysis_srcs,
@@ -193,7 +193,7 @@ def maven_library(
     if generate_pitest_coverage_target:
         pitest_mutation_coverage_test(
             name = "%s_pitest" % name,
-            srcs = analysis_srcs or srcs,
+            srcs = analysis_srcs or [":%s_srcs" % name],
             libraries = analysis_targets if analysis_targets else [":%s" % name],
             target_classes = ",".join(["%s.*" % p for p in root_packages]),
             target_tests = ",".join(["%s.*" % p for p in root_packages]),

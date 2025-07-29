@@ -66,7 +66,7 @@ public class EoppZipCombiningResource extends ZipCombiningResource implements Eo
      *                                    consuming for resources which resolve slowly.
      */
     public EoppZipCombiningResource(List<ZipResourceEntry> contents, @Nullable String filename, boolean calculateDetailedProperties) throws IOException {
-        this(contents, filename, calculateDetailedProperties, DEFAULT_BUFFER_SIZE, DEFAULT_COMPRESSION_LEVEL);
+        this(contents, filename, calculateDetailedProperties, DEFAULT_COMPRESSION_LEVEL);
     }
 
     /**
@@ -79,7 +79,7 @@ public class EoppZipCombiningResource extends ZipCombiningResource implements Eo
      *                                    zip to capture the final zip file size and checksum. This may be time-
      *                                    consuming for resources which resolve slowly.
      */
-    public EoppZipCombiningResource(List<ZipResourceEntry> contents, @Nullable String filename, boolean calculateDetailedProperties, int bufferSize, int compressionLevel) throws IOException {
+    public EoppZipCombiningResource(List<ZipResourceEntry> contents, @Nullable String filename, boolean calculateDetailedProperties, int compressionLevel) throws IOException {
         super(contents, compressionLevel);
 
         this.filename = filename;
@@ -88,11 +88,11 @@ public class EoppZipCombiningResource extends ZipCombiningResource implements Eo
             Instant resourceLastModified = Instant.ofEpochMilli(0);
             long resourceOriginalSize = 0;
             for (ZipResourceEntry entry : contents) {
-                if (entry.getLastModified().toInstant().isAfter(resourceLastModified)) {
-                    resourceLastModified = entry.getLastModified().toInstant();
+                if (entry.lastModified().toInstant().isAfter(resourceLastModified)) {
+                    resourceLastModified = entry.lastModified().toInstant();
                 }
-                if (entry.getResource() != null) {
-                    resourceOriginalSize += entry.getResource().contentLength();
+                if (entry.resource() != null) {
+                    resourceOriginalSize += entry.resource().contentLength();
                 }
             }
 

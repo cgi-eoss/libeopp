@@ -1,5 +1,6 @@
 # Not all of our dependencies support bzlmod yet
-common --noenable_bzlmod
+common --enable_workspace
+common --enable_bzlmod=false
 
 # Allow the Bazel server to check directory sources for changes. Ensures that the Bazel server
 # notices when a directory changes, if you have a directory listed in the srcs of some target.
@@ -48,6 +49,9 @@ build --explicit_java_test_deps
 # Preserve bazel-bin and bazel-testlogs: https://github.com/bazelbuild/bazel/issues/17081
 #build --use_top_level_targets_for_symlinks=false
 
+# KSP is not threadsafe: https://github.com/google/ksp/issues/1385
+build --worker_max_multiplex_instances=KotlinKsp=1
+
 test --test_env=http_proxy
 test --test_env=https_proxy
 test --test_env=no_proxy
@@ -60,8 +64,10 @@ test --test_env=DOCKER_HOST
 test --test_env=TESTCONTAINERS_RYUK_DISABLED
 test --test_env=TESTCONTAINERS_CHECKS_DISABLE
 
+test --zip_undeclared_test_outputs=true
+
 coverage --collect_code_coverage
 coverage --combined_report=lcov
-coverage --coverage_report_generator=@bazel_sonarqube//:SonarQubeCoverageGenerator
+coverage --coverage_report_generator=@bazel_sonarqube//:sonarqube_coverage_generator
 
 try-import %workspace%/.bazelrc.local

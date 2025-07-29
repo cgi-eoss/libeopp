@@ -26,10 +26,10 @@ import com.google.common.net.HttpHeaders;
 import com.google.common.truth.extensions.proto.FieldScopes;
 import com.google.common.truth.extensions.proto.ProtoTruth;
 import com.google.protobuf.Timestamp;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import org.junit.After;
+import mockwebserver3.MockResponse;
+import mockwebserver3.junit4.MockWebServerRule;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -58,25 +58,18 @@ import static org.junit.Assert.fail;
 public class EoppS3ObjectAsyncResourceTest {
     private static final Logger log = LoggerFactory.getLogger(EoppS3ObjectAsyncResourceTest.class);
 
-    private MockWebServer server;
     private S3AsyncClient asyncS3Client;
+
+    @Rule
+    public final MockWebServerRule serverRule = new MockWebServerRule();
 
     @Before
     public void setUp() throws IOException {
-        server = new MockWebServer();
-
-        server.start();
-
         asyncS3Client = S3AsyncClient.builder()
-                .endpointOverride(server.url("/").uri())
+                .endpointOverride(serverRule.getServer().url("/").uri())
                 .region(Region.EU_WEST_1)
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("default", "default")))
                 .build();
-    }
-
-    @After
-    public void tearDown() throws IOException {
-        server.shutdown();
     }
 
     @Test
@@ -84,12 +77,13 @@ public class EoppS3ObjectAsyncResourceTest {
         Path testfile = Files.createTempFile("testfile", null);
         Files.write(testfile, Arrays.asList("first", "second", "third"));
 
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
                 .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())
                 .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
                 .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
                 .setHeader("x-amz-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader(), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
+                .build()
         );
 
         EoppResource resource = new EoppS3ObjectAsyncResource(asyncS3Client, "EODATA", "testfile");
@@ -114,9 +108,10 @@ public class EoppS3ObjectAsyncResourceTest {
             assertThat(e.getMessage()).isEqualTo("S3 resources may not be resolved as Files");
         }
 
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody(new String(Files.readAllBytes(testfile)))
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
+                .body(new String(Files.readAllBytes(testfile)))
+                .build()
         );
 
         HashingCountingOutputStream os = new HashingCountingOutputStream(ByteStreams.nullOutputStream());
@@ -132,7 +127,7 @@ public class EoppS3ObjectAsyncResourceTest {
         Path testfile = Files.createTempFile("testfile", null);
         Files.write(testfile, Arrays.asList("first", "second", "third"));
 
-        server.enqueue(new MockResponse().setResponseCode(404));
+        serverRule.getServer().enqueue(new MockResponse.Builder().code(404).build());
 
         EoppResource resource = new EoppS3ObjectAsyncResource(asyncS3Client, "EODATA", "testfile");
         ProtoTruth.assertThat(resource.getFileMeta()).isEqualTo(FileMeta.getDefaultInstance());
@@ -157,18 +152,20 @@ public class EoppS3ObjectAsyncResourceTest {
         Path testfile = Files.createTempFile("testfile", null);
         Files.write(testfile, Arrays.asList("first", "second", "third"));
 
-        server.setDispatcher(new RequesterPaysDispatcher());
+        serverRule.getServer().setDispatcher(new RequesterPaysDispatcher());
 
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
                 .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())
                 .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
                 .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
                 .setHeader("x-amz-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader(), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
+                .build()
         );
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody(new String(Files.readAllBytes(testfile)))
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
+                .body(new String(Files.readAllBytes(testfile)))
+                .build()
         );
 
         EoppResource resource = new EoppS3ObjectAsyncResource(asyncS3Client, "EODATA", "testfile", true);
@@ -192,18 +189,20 @@ public class EoppS3ObjectAsyncResourceTest {
         Path testfile = Files.createTempFile("testfile", null);
         Files.write(testfile, Arrays.asList("first", "second", "third"));
 
-        server.setDispatcher(new RequesterPaysDispatcher());
+        serverRule.getServer().setDispatcher(new RequesterPaysDispatcher());
 
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
                 .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())
                 .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
                 .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
                 .setHeader("x-amz-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader(), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
+                .build()
         );
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody(new String(Files.readAllBytes(testfile)))
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
+                .body(new String(Files.readAllBytes(testfile)))
+                .build()
         );
 
         EoppResource resource = new EoppS3ObjectAsyncResource(asyncS3Client, "EODATA", "testfile");

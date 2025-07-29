@@ -24,12 +24,12 @@ import com.cgi.eoss.eopp.util.Timestamps;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.MoreFiles;
 import com.google.common.net.HttpHeaders;
+import mockwebserver3.MockResponse;
+import mockwebserver3.RecordedRequest;
+import mockwebserver3.junit4.MockWebServerRule;
 import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -49,19 +49,12 @@ import static com.google.common.truth.extensions.proto.ProtoTruth.assertThat;
 public class OkHttpResolverTest {
 
     private OkHttpResolver resolver;
-    private MockWebServer server;
+    @Rule
+    public final MockWebServerRule serverRule = new MockWebServerRule();
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         resolver = new OkHttpResolver();
-        server = new MockWebServer();
-
-        server.start();
-    }
-
-    @After
-    public void tearDown() throws IOException {
-        server.shutdown();
     }
 
     @Test
@@ -79,20 +72,22 @@ public class OkHttpResolverTest {
     public void resolveUri() throws IOException, InterruptedException {
         Path testfile = Files.createTempFile("testfile", null);
         Files.write(testfile, Arrays.asList("first", "second", "third"));
-        HttpUrl url = server.url("/testfile");
+        HttpUrl url = serverRule.getServer().url("/testfile");
 
         ZonedDateTime zonedDateTime = ZonedDateTime.now().withNano(0);
 
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
                 .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=testfile")
                 .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(zonedDateTime))
                 .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
                 .setHeader(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader(), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
+                .build()
         );
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody(new String(Files.readAllBytes(testfile)))
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
+                .body(new String(Files.readAllBytes(testfile)))
+                .build()
         );
 
         FileMeta expectedFileMeta = FileMeta.newBuilder()
@@ -114,11 +109,11 @@ public class OkHttpResolverTest {
                 .isEqualTo(expectedFileMeta);
 
         // First a HEAD request for the metadata
-        RecordedRequest headRequest = server.takeRequest();
+        RecordedRequest headRequest = serverRule.getServer().takeRequest();
         assertThat(headRequest.getMethod()).isEqualTo("HEAD");
 
         // Second the GET request for the data
-        RecordedRequest getRequest = server.takeRequest();
+        RecordedRequest getRequest = serverRule.getServer().takeRequest();
         assertThat(getRequest.getMethod()).isEqualTo("GET");
     }
 

@@ -1,23 +1,23 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 
-GRPC_VERSION = "1.69.0"
-GRPC_JAVA_VERSION = "1.69.1"
-GRPC_KOTLIN_VERSION = "1.4.2"
+GRPC_VERSION = "1.73.0"
+GRPC_JAVA_VERSION = "1.73.0"
+GRPC_KOTLIN_VERSION = "1.4.3"
 REACTOR_GRPC_VERSION = "1.2.4"
 
 def grpc_repositories():
     maybe(
         http_archive,
         name = "com_github_grpc_grpc",
-        sha256 = "987763312292c8a6088108173ccde2b336a40f35ae22b5b7b3744e44929aaf9f",
+        sha256 = "0e2569a58ceafcee99286d57bf69ce65f57836bf99309e16962060ebecaca31e",
         strip_prefix = "grpc-%s" % GRPC_VERSION,
         urls = ["https://github.com/grpc/grpc/archive/v%s.zip" % GRPC_VERSION],
     )
     maybe(
         http_archive,
         name = "io_grpc_grpc_java",
-        sha256 = "406d048c2250a239174cc51b6e5a1228bd60dffbf09e0c3c3696acf5a5ec42cc",
+        sha256 = "c9d24e13759edf1bff0feadd4a012a75605ec1d4b2bd95b86f1e0f21d253fe63",
         strip_prefix = "grpc-java-%s" % GRPC_JAVA_VERSION,
         urls = ["https://github.com/grpc/grpc-java/archive/v%s.zip" % GRPC_JAVA_VERSION],
     )
@@ -37,7 +37,7 @@ def grpc_repositories():
         name = "com_github_grpc_grpc_kotlin",
         patch_args = ["-p1"],
         patches = ["@com_cgi_eoss_eopp//third_party/grpc:com_github_grpc_grpc_kotlin.patch"],
-        sha256 = "a218306e681318cbbc3b0e72ec9fe1241b2166b735427a51a3c8921c3250216f",
+        sha256 = "f863eeedea6e2bd0ed30cc79a825b6dfca25357014f56c0d7032baeb13f25fa3",
         strip_prefix = "grpc-kotlin-%s" % GRPC_KOTLIN_VERSION,
         url = "https://github.com/grpc/grpc-kotlin/archive/v%s.zip" % GRPC_KOTLIN_VERSION,
     )

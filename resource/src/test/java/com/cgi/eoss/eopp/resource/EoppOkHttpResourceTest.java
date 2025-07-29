@@ -24,12 +24,11 @@ import com.google.common.net.HttpHeaders;
 import com.google.common.truth.extensions.proto.FieldScopes;
 import com.google.common.truth.extensions.proto.ProtoTruth;
 import com.google.protobuf.Timestamp;
+import mockwebserver3.MockResponse;
+import mockwebserver3.junit4.MockWebServerRule;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -49,36 +48,27 @@ import static org.junit.Assert.fail;
 @RunWith(JUnit4.class)
 public class EoppOkHttpResourceTest {
 
-    private MockWebServer server;
-
-    @Before
-    public void setUp() throws IOException {
-        server = new MockWebServer();
-
-        server.start();
-    }
-
-    @After
-    public void tearDown() throws IOException {
-        server.shutdown();
-    }
+    @Rule
+    public final MockWebServerRule serverRule = new MockWebServerRule();
 
     @Test
     public void testResourceProperties() throws IOException {
         Path testfile = Files.createTempFile("testfile", null);
         Files.write(testfile, Arrays.asList("first", "second", "third"));
-        HttpUrl url = server.url("/testfile");
+        HttpUrl url = serverRule.getServer().url("/testfile");
 
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
                 .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())
                 .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
                 .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
                 .setHeader(EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader(), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
+                .build()
         );
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody(new String(Files.readAllBytes(testfile)))
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
+                .body(new String(Files.readAllBytes(testfile)))
+                .build()
         );
 
         EoppResource resource = new EoppOkHttpResource(new OkHttpClient.Builder().build(), url);

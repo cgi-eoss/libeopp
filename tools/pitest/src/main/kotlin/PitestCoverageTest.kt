@@ -1,5 +1,7 @@
 package com.cgi.eoss.eopp.testing.pitest
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.junit.Assert.fail
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,7 +17,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipInputStream
-import kotlin.streams.toList
 
 @RunWith(JUnit4::class)
 class PitestCoverageTest {
@@ -41,7 +42,7 @@ class PitestCoverageTest {
             ?: Files.createTempDirectory("pitest-inputs-")
         val inputDataPath = Paths.get(inputData)
 
-        extractZip(inputDataPath, pitestInputs)
+        extractTar(inputDataPath, pitestInputs)
 
         // Unjar the classes under test
         val classesDir = Files.createDirectories(pitestInputs.resolve("classes"))
@@ -109,6 +110,31 @@ class PitestCoverageTest {
 
         if (data.maximumAllowedSurvivors > 0 && stats.mutationStatistics.totalSurvivingMutations > data.maximumAllowedSurvivors) {
             fail("Had ${stats.mutationStatistics.totalSurvivingMutations} surviving mutants, but only ${data.maximumAllowedSurvivors} survivors allowed")
+        }
+    }
+
+    private fun extractTar(tarFile: Path, targetDir: Path) {
+        Files.newInputStream(tarFile).use { fis ->
+            TarArchiveInputStream(fis).use { tis ->
+                var entry: TarArchiveEntry? = tis.nextEntry
+                while (entry != null) {
+                    val outPath = targetDir.resolve(entry.name)
+                    if (entry.isDirectory) {
+                        Files.createDirectories(outPath)
+                    } else if (entry.isSymbolicLink) {
+                        // create parent dirs, then symlink
+                        Files.createDirectories(outPath.parent)
+                        Files.createSymbolicLink(outPath, Path.of(entry.linkName))
+                    } else {
+                        // regular file
+                        Files.createDirectories(outPath.parent)
+                        Files.newOutputStream(outPath).use { os ->
+                            tis.copyTo(os)
+                        }
+                    }
+                    entry = tis.nextEntry
+                }
+            }
         }
     }
 

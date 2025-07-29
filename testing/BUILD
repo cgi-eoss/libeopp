@@ -5,10 +5,10 @@ maven_library(
     name = "docker-junit-rules",
     srcs = [
         "src/main/java/com/cgi/eoss/eopp/testing/docker/DockerClientRule.java",
-        "src/main/java/com/cgi/eoss/eopp/testing/docker/DockerRegistryRule.java",
         "src/main/java/com/cgi/eoss/eopp/testing/docker/package-info.java",
     ],
     artifact_name = "libeopp :: testing :: docker-junit-rules",
+    generate_pitest_coverage_target = False,
     generate_sonarqube_project = False,
     group_id = "com.cgi.eoss.eopp.testing",
     root_packages = ["com.cgi.eoss.eopp.testing"],
@@ -32,6 +32,7 @@ maven_library(
         "src/main/java/com/cgi/eoss/eopp/testing/docker/package-info.java",
     ],
     artifact_name = "libeopp :: testing :: testcontainers-modules",
+    generate_pitest_coverage_target = False,
     generate_sonarqube_project = False,
     group_id = "com.cgi.eoss.eopp.testing",
     root_packages = ["com.cgi.eoss.eopp.testing"],
@@ -45,6 +46,9 @@ maven_library(
 gen_java_tests(
     name = "testing_tests",
     srcs = glob(["src/test/java/**/*.java"]),
+    runtime_deps = [
+        "@maven//:ch_qos_logback_logback_classic",
+    ],
     deps = [
         ":docker-junit-rules",
         ":testcontainers-modules",

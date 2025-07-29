@@ -29,13 +29,10 @@ import com.google.common.net.HttpHeaders;
 import com.google.common.truth.extensions.proto.FieldScopes;
 import com.google.common.truth.extensions.proto.ProtoTruth;
 import com.google.protobuf.Timestamp;
-import okhttp3.mockwebserver.Dispatcher;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.QueueDispatcher;
-import okhttp3.mockwebserver.RecordedRequest;
-import org.junit.After;
+import mockwebserver3.MockResponse;
+import mockwebserver3.junit4.MockWebServerRule;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -54,24 +51,17 @@ import static org.junit.Assert.fail;
 
 @RunWith(JUnit4.class)
 public class EoppAzureBlobAsyncResourceTest {
-    private MockWebServer server;
     private BlobServiceAsyncClient blobServiceAsyncClient;
+
+    @Rule
+    public final MockWebServerRule serverRule = new MockWebServerRule();
 
     @Before
     public void setUp() throws IOException {
-        server = new MockWebServer();
-
-        server.start();
-
         blobServiceAsyncClient = new BlobServiceClientBuilder()
-                .endpoint(server.url("/").toString())
+                .endpoint(serverRule.getServer().url("/").toString())
                 .credential(new StorageSharedKeyCredential("default", "default"))
                 .buildAsyncClient();
-    }
-
-    @After
-    public void tearDown() throws IOException {
-        server.shutdown();
     }
 
     @Test
@@ -79,12 +69,13 @@ public class EoppAzureBlobAsyncResourceTest {
         Path testfile = Files.createTempFile("testfile", null);
         Files.write(testfile, Arrays.asList("first", "second", "third"));
 
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
                 .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())
                 .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
                 .setHeader(HttpHeaders.CONTENT_LENGTH, Files.size(testfile))
                 .setHeader("x-ms-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader().replace('-', '_'), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
+                .build()
         );
 
         EoppResource resource = new EoppAzureBlobAsyncResource(blobServiceAsyncClient, "EODATA", "testfile");
@@ -99,8 +90,8 @@ public class EoppAzureBlobAsyncResourceTest {
         assertThat(resource.shouldRetry(new EoppResourceException("error"))).isFalse();
         assertThat(resource.exists()).isTrue();
         assertThat(resource.isReadable()).isTrue();
-        assertThat(resource.getURI()).isEqualTo(server.url("/EODATA/testfile").uri());
-        assertThat(resource.createRelative("otherfile").getURI()).isEqualTo(server.url("/EODATA/otherfile").uri());
+        assertThat(resource.getURI()).isEqualTo(serverRule.getServer().url("/EODATA/testfile").uri());
+        assertThat(resource.createRelative("otherfile").getURI()).isEqualTo(serverRule.getServer().url("/EODATA/otherfile").uri());
 
         try {
             resource.getFile();
@@ -109,14 +100,15 @@ public class EoppAzureBlobAsyncResourceTest {
             assertThat(e.getMessage()).isEqualTo("Azure Blob resources may not be resolved as Files");
         }
 
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(200)
                 .setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + testfile.getFileName())
                 .setHeader(HttpHeaders.LAST_MODIFIED, DateTimeFormatter.RFC_1123_DATE_TIME.format(Files.getLastModifiedTime(testfile).toInstant().atOffset(ZoneOffset.UTC)))
                 .setHeader(HttpHeaders.CONTENT_LENGTH, new String(Files.readAllBytes(testfile)).getBytes().length)
                 .setHeader(HttpHeaders.CONTENT_RANGE, String.format("0-%d/%d", Files.size(testfile) - 1, Files.size(testfile)))
                 .setHeader("x-ms-meta-" + EoppHeaders.PRODUCT_ARCHIVE_CHECKSUM.getHeader().replace('-', '_'), FileMetas.checksum(MoreFiles.asByteSource(testfile)))
-                .setBody(new String(Files.readAllBytes(testfile)))
+                .body(new String(Files.readAllBytes(testfile)))
+                .build()
         );
 
         HashingCountingOutputStream os = new HashingCountingOutputStream(ByteStreams.nullOutputStream());
@@ -132,8 +124,11 @@ public class EoppAzureBlobAsyncResourceTest {
         Path testfile = Files.createTempFile("testfile", null);
         Files.write(testfile, Arrays.asList("first", "second", "third"));
 
-        server.enqueue(new MockResponse().setResponseCode(404)
-                .setHeader("x-ms-error-code", "BlobNotFound"));
+        serverRule.getServer().enqueue(new MockResponse.Builder()
+                .code(404)
+                .setHeader("x-ms-error-code", "BlobNotFound")
+                .build()
+        );
 
         EoppResource resource = new EoppAzureBlobAsyncResource(blobServiceAsyncClient, "EODATA", "testfile");
         ProtoTruth.assertThat(resource.getFileMeta()).isEqualTo(FileMeta.getDefaultInstance());
@@ -142,8 +137,8 @@ public class EoppAzureBlobAsyncResourceTest {
         assertThat(resource.shouldRetry(new EoppResourceException("error"))).isFalse();
         assertThat(resource.exists()).isFalse();
         assertThat(resource.isReadable()).isFalse();
-        assertThat(resource.getURI()).isEqualTo(server.url("/EODATA/testfile").uri());
-        assertThat(resource.createRelative("otherfile").getURI()).isEqualTo(server.url("/EODATA/otherfile").uri());
+        assertThat(resource.getURI()).isEqualTo(serverRule.getServer().url("/EODATA/testfile").uri());
+        assertThat(resource.createRelative("otherfile").getURI()).isEqualTo(serverRule.getServer().url("/EODATA/otherfile").uri());
 
         try {
             resource.getFile();

@@ -31,7 +31,6 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -142,7 +141,7 @@ public class EoppZipCombiningResourceTest {
         };
 
         try {
-            EoppZipCombiningResource zipResource = new EoppZipCombiningResource(List.of(
+            new EoppZipCombiningResource(List.of(
                     new ZipResourceEntry("subdir1/", FileTime.fromMillis(resource.lastModified())),
                     new ZipResourceEntry("subdir1/testfile", resource),
                     new ZipResourceEntry("subdir2/", FileTime.fromMillis(resource2.lastModified())),
@@ -183,9 +182,60 @@ public class EoppZipCombiningResourceTest {
 
         // The stream is returned, but exceptions are suppressed inside
         try (ZipInputStream zis = new ZipInputStream(zipResource.getInputStream())) {
-            Objects.requireNonNull(zis.getNextEntry());
-        } catch (NullPointerException e) {
+            zis.getNextEntry();
+            fail("Expected EoppResourceException");
+        } catch (EoppResourceException e) {
             assertThat(e.getSuppressed()[0].getCause()).isInstanceOf(FileNotFoundException.class);
+        }
+    }
+
+    @Test
+    public void testEqualsHashCode() throws IOException {
+        Path testfile = Files.createTempFile("testfile", null);
+        Files.write(testfile, Arrays.asList("first", "second", "third"));
+        Path testfile2 = Files.createTempFile("testfile2", null);
+        Files.write(testfile2, Arrays.asList("fourth", "fifth", "sixth"));
+
+        EoppResource resource = new EoppPathResource(testfile);
+        EoppResource resource2 = new EoppPathResource(testfile2);
+
+        List<ZipResourceEntry> entries = List.of(
+                new ZipResourceEntry("subdir1/", FileTime.fromMillis(resource.lastModified())),
+                new ZipResourceEntry("subdir1/testfile", resource),
+                new ZipResourceEntry("subdir2/", FileTime.fromMillis(resource2.lastModified())),
+                new ZipResourceEntry("subdir2/testfile2", resource2)
+        );
+
+        EoppZipCombiningResource zipResource = new EoppZipCombiningResource(entries, true);
+        EoppZipCombiningResource zipResource2 = new EoppZipCombiningResource(entries, false);
+
+        assertThat(zipResource).isEqualTo(zipResource2);
+        assertThat(zipResource.hashCode()).isEqualTo(zipResource2.hashCode());
+    }
+
+    @Test
+    public void testZipResourceReadHeader() throws IOException {
+        Path testfile = Files.createTempFile("testfile", null);
+        Files.write(testfile, Arrays.asList("first", "second", "third"));
+        Path testfile2 = Files.createTempFile("testfile2", null);
+        Files.write(testfile2, Arrays.asList("fourth", "fifth", "sixth"));
+
+        EoppResource resource = new EoppPathResource(testfile);
+        EoppResource resource2 = new EoppPathResource(testfile2);
+
+        EoppZipCombiningResource zipResource = new EoppZipCombiningResource(List.of(
+                new ZipResourceEntry("subdir1/", FileTime.fromMillis(resource.lastModified())),
+                new ZipResourceEntry("subdir1/testfile", resource),
+                new ZipResourceEntry("subdir2/", FileTime.fromMillis(resource2.lastModified())),
+                new ZipResourceEntry("subdir2/testfile2", resource2)
+        ), true);
+
+        // Read the first four bytes: \x50\x4b\x03\x04
+        try (InputStream is = zipResource.getInputStream()) {
+            assertThat(is.read()).isEqualTo(0x50);
+            assertThat(is.read()).isEqualTo(0x4b);
+            assertThat(is.read()).isEqualTo(0x03);
+            assertThat(is.read()).isEqualTo(0x04);
         }
     }
 

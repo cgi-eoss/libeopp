@@ -26,7 +26,7 @@ filegroup(
 
 filegroup(
     name = "test_reports",
-    srcs = glob(["bazel-testlogs/**/test.xml"]),
+    srcs = glob(["bazel-testlogs/**/test.xml"], allow_empty=True),
     tags = ["manual"],
     visibility = ["//visibility:public"],
 )

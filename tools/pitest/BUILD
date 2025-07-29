@@ -1,14 +1,19 @@
+load("@rules_java//java:java_binary.bzl", "java_binary")
 load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
 kt_jvm_library(
     name = "pitest_coverage_test",
     srcs = ["src/main/kotlin/PitestCoverageTest.kt"],
     visibility = ["//visibility:public"],
-    runtime_deps = ["@maven//:org_jetbrains_kotlin_kotlin_stdlib_jdk8"],
+    runtime_deps = [
+        "@maven//:ch_qos_logback_logback_classic",
+        "@maven//:org_jetbrains_kotlin_kotlin_stdlib_jdk8",
+    ],
     deps = [
         "@maven//:com_google_guava_guava",
         "@maven//:com_google_truth_truth",
         "@maven//:junit_junit",
+        "@maven//:org_apache_commons_commons_compress",
         "@maven//:org_pitest_pitest",
         "@maven//:org_pitest_pitest_command_line",
         "@maven//:org_pitest_pitest_entry",
